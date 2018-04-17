@@ -13,8 +13,35 @@ final List<String> imgList = [
 void main() => runApp(new CarouselDemo());
 
 class CarouselDemo extends StatelessWidget {
+  CarouselSlider instance;
+
+  nextSlider() {
+    instance.nextPage(duration: new Duration(milliseconds: 300), curve: Curves.linear);
+  }
+
+  prevSlider() {
+    instance.previousPage(duration: new Duration(milliseconds: 800), curve: Curves.easeIn);
+  }
+
   @override
   Widget build(BuildContext context) {
+    instance = new CarouselSlider(
+      items: imgList.map((url) {
+        return new Container(
+          margin: new EdgeInsets.symmetric(horizontal: 5.0),
+          decoration: new BoxDecoration(
+            borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+            image: new DecorationImage(
+              image: new NetworkImage(url),
+              fit: BoxFit.cover
+            )
+          ),
+        );
+      }).toList(),
+      viewportFraction: 0.9,
+      aspectRatio: 2.0,
+    );
+    // print(instance.nextPage());
     return new MaterialApp(
       title: 'demo',
       home: new Scaffold(
@@ -23,22 +50,23 @@ class CarouselDemo extends StatelessWidget {
           children: <Widget>[
             new Padding(
               padding: new EdgeInsets.symmetric(vertical: 15.0),
-              child: new CarouselSlider(
-                items: imgList.map((img) {
-                  return new Container(
-                    margin: new EdgeInsets.symmetric(horizontal: 5.0),
-                    decoration: new BoxDecoration(
-                      borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
-                      image: new DecorationImage(
-                        image: new NetworkImage(img),
-                        fit: BoxFit.cover
-                      )
-                    ),
-                  );
-                }).toList(),
-                aspectRatio: 2.0,
-                viewportFraction: 0.9,
-              )
+              child: instance
+            ),
+            new Row(
+              children: <Widget>[
+                new Expanded(
+                  child: new RaisedButton(
+                    onPressed: nextSlider,
+                    child: new Text('next slider')
+                  ),
+                ),
+                new Expanded(
+                  child: new RaisedButton(
+                    onPressed: prevSlider,
+                    child: new Text(' prev slider')
+                  )
+                )
+              ],
             ),
             new Padding(
               padding: new EdgeInsets.symmetric(vertical: 15.0),
@@ -56,9 +84,10 @@ class CarouselDemo extends StatelessWidget {
                       );
                     },
                   );
-                }).toList()
+                }).toList(),
+                height: 400.0
               )
-            )
+            ),
           ],
         )
       )

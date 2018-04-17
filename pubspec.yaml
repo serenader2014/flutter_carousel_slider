@@ -1,5 +1,5 @@
 name: carousel_slider
-description: A new Flutter project.
+description: A carousel slider widget, support infinite scroll and custom child widget.
 
 dependencies:
   flutter:
