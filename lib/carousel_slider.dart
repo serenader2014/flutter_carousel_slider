@@ -107,13 +107,6 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    widget.pageController.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return getWrapper(
       new PageView.builder(
