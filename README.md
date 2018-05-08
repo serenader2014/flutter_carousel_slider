@@ -1,6 +1,6 @@
 # carousel_slider
 
-A carousel slider widget, support infinite scroll and custom child widget.
+A carousel slider widget, support infinite scroll and custom child widget, with autoplay feature.
 
 ## How to use
 
@@ -22,7 +22,8 @@ new CarouselSlider(
       },
     );
   }).toList(),
-  height: 400.0
+  height: 400.0,
+  autoPlay: true
 )
 ```
 
@@ -35,10 +36,15 @@ For a more detail example please take a look at the `example` folder.
 ```dart
 new CarouselSlider(
   items: items,
-  viewportFraction: viewportFraction,
-  initialPage: initialPage,
-  aspectRatio: aspectRatio,
-  height: height
+  viewportFraction: 0.8,
+  initialPage: 0,
+  aspectRatio: 16/9,
+  height: 400,
+  reverse: false,
+  autoPlay: false,
+  interval: const Duration(seconds: 4),
+  autoPlayCurve: Curves.fastOutSlowIn,
+  autoPlayDuration: const Duration(milliseconds: 800)
 )
 ```
 

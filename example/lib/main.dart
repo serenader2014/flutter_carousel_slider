@@ -85,7 +85,8 @@ class CarouselDemo extends StatelessWidget {
                     },
                   );
                 }).toList(),
-                height: 400.0
+                height: 400.0,
+                autoPlay: true,
               )
             ),
           ],

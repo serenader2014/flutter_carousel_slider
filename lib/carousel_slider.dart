@@ -4,14 +4,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-int remander(int input, int source) {
+int _remander(int input, int source) {
   final int result = input % source;
   return result < 0 ? source + result : result;
 }
 
-int getRealIndex(int position, int base, int length) {
+int _getRealIndex(int position, int base, int length) {
   final int offset = position - base;
-  return remander(offset, length);
+  return _remander(offset, length);
 }
 
 class CarouselSlider extends StatefulWidget {
@@ -22,6 +22,11 @@ class CarouselSlider extends StatefulWidget {
   final double height;
   final PageController pageController;
   final num realPage;
+  final bool autoPlay;
+  final Duration autoPlayDuration;
+  final Curve autoPlayCurve;
+  final Duration interval;
+  final bool reverse;
 
   CarouselSlider({
     @required
@@ -30,7 +35,12 @@ class CarouselSlider extends StatefulWidget {
     this.initialPage: 0,
     this.aspectRatio: 16/9,
     this.height,
-    this.realPage: 10000
+    this.realPage: 10000,
+    this.autoPlay: false,
+    this.interval: const Duration(seconds: 4),
+    this.reverse: false,
+    this.autoPlayCurve: Curves.fastOutSlowIn,
+    this.autoPlayDuration: const Duration(milliseconds: 800)
   }) :
     pageController = new PageController(
       viewportFraction: viewportFraction,
@@ -51,12 +61,12 @@ class CarouselSlider extends StatefulWidget {
   }
 
   jumpToPage(int page) {
-    final index = getRealIndex(pageController.page.toInt(), realPage, items.length);
+    final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
     return pageController.jumpToPage(pageController.page.toInt() + page - index);
   }
 
   animateToPage(int page, {Duration duration, Curve curve}) {
-    final index = getRealIndex(pageController.page.toInt(), realPage, items.length);
+    final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
     return pageController.animateToPage(
       pageController.page.toInt() + page - index, 
       duration: duration,
@@ -72,6 +82,14 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   void initState() {
     super.initState();
     currentPage = widget.initialPage;
+    if (widget.autoPlay) {
+      new Timer.periodic(widget.interval, (_) {
+        widget.pageController.nextPage(
+          duration: widget.autoPlayDuration,
+          curve: widget.autoPlayCurve
+        );
+      });
+    }
   }
 
   getWrapper(Widget child) {
@@ -89,15 +107,23 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    widget.pageController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return getWrapper(
       new PageView.builder(
         onPageChanged: (int index) {
-          currentPage = getRealIndex(index, widget.realPage, widget.items.length);
+          currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
         },
         controller: widget.pageController,
+        reverse: widget.reverse,
         itemBuilder: (BuildContext context, int i) {
-          final int index = getRealIndex(i, 1000, widget.items.length);
+          final int index = _getRealIndex(i, 1000, widget.items.length);
 
           return new AnimatedBuilder(
             animation: widget.pageController,
