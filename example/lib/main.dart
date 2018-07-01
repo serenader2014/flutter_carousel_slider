@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -11,6 +12,17 @@ final List<String> imgList = [
 ];
 
 void main() => runApp(new CarouselDemo());
+
+final Widget placeholder = new Container(color: Colors.grey);
+
+List<T> map<T>(List list, Function handler) {
+  List<T> result = [];
+  for (var i = 0; i < list.length; i  ++) {
+    result.add(handler(i, list[i]));
+  }
+
+  return result;
+}
 
 class CarouselDemo extends StatelessWidget {
   CarouselSlider instance;
@@ -28,18 +40,21 @@ class CarouselDemo extends StatelessWidget {
     instance = new CarouselSlider(
       items: imgList.map((url) {
         return new Container(
-          margin: new EdgeInsets.symmetric(horizontal: 5.0),
-          decoration: new BoxDecoration(
+          margin: new EdgeInsets.all(5.0),
+          child: new ClipRRect(
             borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
-            image: new DecorationImage(
-              image: new NetworkImage(url),
-              fit: BoxFit.cover
+              child: new CachedNetworkImage(
+              imageUrl: url,
+              placeholder: placeholder,
+              fit: BoxFit.cover,
+              width: 1000.0,
             )
-          ),
+          )
         );
       }).toList(),
       viewportFraction: 0.9,
       aspectRatio: 2.0,
+      autoPlay: true,
     );
     // print(instance.nextPage());
     return new MaterialApp(
@@ -71,22 +86,49 @@ class CarouselDemo extends StatelessWidget {
             new Padding(
               padding: new EdgeInsets.symmetric(vertical: 15.0),
               child: new CarouselSlider(
-                items: [1,2,3,4,5].map((i) {
-                  return new Builder(
-                    builder: (BuildContext context) {
-                      return new Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: new EdgeInsets.symmetric(horizontal: 5.0),
-                        decoration: new BoxDecoration(
-                          color: Colors.amber
-                        ),
-                        child: new Text('text $i', style: new TextStyle(fontSize: 16.0),)
-                      );
-                    },
+                items: map<Widget>(imgList, (index, i) {
+                  return new Container(
+                    margin: new EdgeInsets.all(5.0),
+                    child: new ClipRRect(
+                      borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+                      child: new Stack(
+                        children: <Widget>[
+                          new CachedNetworkImage(
+                            imageUrl: i,
+                            fit: BoxFit.cover,
+                            width: 1000.0,
+                            placeholder: placeholder,
+                          ),
+                          new Positioned(
+                            bottom: 0.0,
+                            left: 0.0,
+                            right: 0.0,
+                            child: new Container(
+                              decoration: new BoxDecoration(
+                                gradient: new LinearGradient(
+                                  colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                )
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                              child: new Text('No. $index image',
+                                style: new TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            )
+                          ),
+                        ],
+                      )
+                    )
                   );
                 }).toList(),
-                height: 400.0,
-                autoPlay: true,
+                autoPlay: false,
+                viewportFraction: 0.9,
+                aspectRatio: 2.0,
               )
             ),
           ],

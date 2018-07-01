@@ -44,7 +44,7 @@ class CarouselSlider extends StatefulWidget {
   }) :
     pageController = new PageController(
       viewportFraction: viewportFraction,
-      initialPage: realPage
+      initialPage: realPage + initialPage,
     );
 
   @override
@@ -77,13 +77,14 @@ class CarouselSlider extends StatefulWidget {
 
 class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
   int currentPage;
+  Timer timer;
 
   @override
   void initState() {
     super.initState();
     currentPage = widget.initialPage;
     if (widget.autoPlay) {
-      new Timer.periodic(widget.interval, (_) {
+      timer = new Timer.periodic(widget.interval, (_) {
         widget.pageController.nextPage(
           duration: widget.autoPlayDuration,
           curve: widget.autoPlayCurve
@@ -104,6 +105,12 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
         child: child
       );
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
   }
 
   @override
