@@ -2,6 +2,10 @@
 
 A carousel slider widget, support infinite scroll and custom child widget, with autoplay feature.
 
+## Installation
+
+Add `carousel_slider: ^0.0.6` in your `pubspec.yaml` dependencies.
+
 ## How to use
 
 Simply create a `CarouselSlider` widget, and pass the required params:
