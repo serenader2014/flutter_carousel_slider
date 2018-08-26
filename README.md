@@ -48,7 +48,8 @@ new CarouselSlider(
   autoPlay: false,
   interval: const Duration(seconds: 4),
   autoPlayCurve: Curves.fastOutSlowIn,
-  autoPlayDuration: const Duration(milliseconds: 800)
+  autoPlayDuration: const Duration(milliseconds: 800),
+  updateCallback: someFunction
 )
 ```
 

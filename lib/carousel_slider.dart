@@ -27,6 +27,7 @@ class CarouselSlider extends StatefulWidget {
   final Curve autoPlayCurve;
   final Duration interval;
   final bool reverse;
+  final Function updateCallback;
 
   CarouselSlider({
     @required
@@ -40,7 +41,8 @@ class CarouselSlider extends StatefulWidget {
     this.interval: const Duration(seconds: 4),
     this.reverse: false,
     this.autoPlayCurve: Curves.fastOutSlowIn,
-    this.autoPlayDuration: const Duration(milliseconds: 800)
+    this.autoPlayDuration: const Duration(milliseconds: 800),
+    this.updateCallback,
   }) :
     pageController = new PageController(
       viewportFraction: viewportFraction,
@@ -119,6 +121,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
       new PageView.builder(
         onPageChanged: (int index) {
           currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
+          if (widget.updateCallback != null) widget.updateCallback(currentPage);
         },
         controller: widget.pageController,
         reverse: widget.reverse,
