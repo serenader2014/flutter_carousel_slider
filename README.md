@@ -4,7 +4,7 @@ A carousel slider widget, support infinite scroll and custom child widget, with 
 
 ## Installation
 
-Add `carousel_slider: ^0.0.6` in your `pubspec.yaml` dependencies.
+Add `carousel_slider: ^0.0.7` in your `pubspec.yaml` dependencies.
 
 ## How to use
 
