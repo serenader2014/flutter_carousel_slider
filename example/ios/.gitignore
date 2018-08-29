@@ -12,6 +12,8 @@ build/
 GeneratedPluginRegistrant.h
 GeneratedPluginRegistrant.m
 
+.generated/
+
 *.pbxuser
 *.mode1v3
 *.mode2v3
@@ -40,3 +42,4 @@ Icon?
 /ServiceDefinitions.json
 
 Pods/
+.symlinks/

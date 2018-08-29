@@ -1,4 +1,4 @@
-# example
+# carousel_slider_example
 
 A new Flutter project.
 

@@ -1,7 +1,6 @@
-package com.example.example;
+package com.example.carouselsliderexample;
 
 import android.os.Bundle;
-
 import io.flutter.app.FlutterActivity;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 

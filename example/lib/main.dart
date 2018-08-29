@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -43,9 +42,7 @@ class CarouselDemo extends StatelessWidget {
           margin: new EdgeInsets.all(5.0),
           child: new ClipRRect(
             borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
-              child: new CachedNetworkImage(
-              imageUrl: url,
-              placeholder: placeholder,
+              child: new Image.network(url,
               fit: BoxFit.cover,
               width: 1000.0,
             )
@@ -93,11 +90,9 @@ class CarouselDemo extends StatelessWidget {
                       borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
                       child: new Stack(
                         children: <Widget>[
-                          new CachedNetworkImage(
-                            imageUrl: i,
+                          new Image.network(i,
                             fit: BoxFit.cover,
                             width: 1000.0,
-                            placeholder: placeholder,
                           ),
                           new Positioned(
                             bottom: 0.0,
