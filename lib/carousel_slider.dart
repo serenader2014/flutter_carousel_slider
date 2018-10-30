@@ -4,18 +4,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-int _remander(int input, int source) {
+int _remainder(int input, int source) {
   final int result = input % source;
   return result < 0 ? source + result : result;
 }
 
 int _getRealIndex(int position, int base, int length) {
   final int offset = position - base;
-  return _remander(offset, length);
+  return _remainder(offset, length);
 }
 
 class CarouselSlider extends StatefulWidget {
   final List<Widget> items;
+  final bool distortion;
   final num viewportFraction;
   final num initialPage;
   final double aspectRatio;
@@ -30,11 +31,11 @@ class CarouselSlider extends StatefulWidget {
   final Function updateCallback;
 
   CarouselSlider({
-    @required
-    this.items,
+    @required this.items,
+    this.distortion: true,
     this.viewportFraction: 0.8,
     this.initialPage: 0,
-    this.aspectRatio: 16/9,
+    this.aspectRatio: 16 / 9,
     this.height,
     this.realPage: 10000,
     this.autoPlay: false,
@@ -43,11 +44,10 @@ class CarouselSlider extends StatefulWidget {
     this.autoPlayCurve: Curves.fastOutSlowIn,
     this.autoPlayDuration: const Duration(milliseconds: 800),
     this.updateCallback,
-  }) :
-    pageController = new PageController(
-      viewportFraction: viewportFraction,
-      initialPage: realPage + initialPage,
-    );
+  }) : pageController = new PageController(
+          viewportFraction: viewportFraction,
+          initialPage: realPage + initialPage,
+        );
 
   @override
   _CarouselSliderState createState() {
@@ -63,21 +63,24 @@ class CarouselSlider extends StatefulWidget {
   }
 
   jumpToPage(int page) {
-    final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
-    return pageController.jumpToPage(pageController.page.toInt() + page - index);
+    final index =
+        _getRealIndex(pageController.page.toInt(), realPage, items.length);
+    return pageController
+        .jumpToPage(pageController.page.toInt() + page - index);
   }
 
   animateToPage(int page, {Duration duration, Curve curve}) {
-    final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
+    final index =
+        _getRealIndex(pageController.page.toInt(), realPage, items.length);
     return pageController.animateToPage(
-      pageController.page.toInt() + page - index, 
-      duration: duration,
-      curve: curve
-    );
+        pageController.page.toInt() + page - index,
+        duration: duration,
+        curve: curve);
   }
 }
 
-class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
+class _CarouselSliderState extends State<CarouselSlider>
+    with TickerProviderStateMixin {
   int currentPage;
   Timer timer;
 
@@ -88,24 +91,16 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
     if (widget.autoPlay) {
       timer = new Timer.periodic(widget.interval, (_) {
         widget.pageController.nextPage(
-          duration: widget.autoPlayDuration,
-          curve: widget.autoPlayCurve
-        );
+            duration: widget.autoPlayDuration, curve: widget.autoPlayCurve);
       });
     }
   }
 
   getWrapper(Widget child) {
     if (widget.height != null) {
-      return new Container(
-        height: widget.height,
-        child: child
-      );
+      return new Container(height: widget.height, child: child);
     } else {
-      return new AspectRatio(
-        aspectRatio: widget.aspectRatio,
-        child: child
-      );
+      return new AspectRatio(aspectRatio: widget.aspectRatio, child: child);
     }
   }
 
@@ -117,45 +112,45 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return getWrapper(
-      new PageView.builder(
-        onPageChanged: (int index) {
-          currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
-          if (widget.updateCallback != null) widget.updateCallback(currentPage);
-        },
-        controller: widget.pageController,
-        reverse: widget.reverse,
-        itemBuilder: (BuildContext context, int i) {
-          final int index = _getRealIndex(i, widget.realPage, widget.items.length);
+    return getWrapper(new PageView.builder(
+      onPageChanged: (int index) {
+        currentPage =
+            _getRealIndex(index, widget.realPage, widget.items.length);
+        if (widget.updateCallback != null) widget.updateCallback(currentPage);
+      },
+      controller: widget.pageController,
+      reverse: widget.reverse,
+      itemBuilder: (BuildContext context, int i) {
+        final int index =
+            _getRealIndex(i, widget.realPage, widget.items.length);
 
-          return new AnimatedBuilder(
+        return new AnimatedBuilder(
             animation: widget.pageController,
             builder: (BuildContext context, child) {
-              // on the first render, the pageController.page is null, 
+              // on the first render, the pageController.page is null,
               // this is a dirty hack
-              if (widget.pageController.position.minScrollExtent == null 
-                || widget.pageController.position.maxScrollExtent == null) {
+              if (widget.pageController.position.minScrollExtent == null ||
+                  widget.pageController.position.maxScrollExtent == null) {
                 new Future.delayed(new Duration(microseconds: 1), () {
                   setState(() {});
                 });
                 return new Container();
               }
+
               double value = widget.pageController.page - i;
               value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
-              final double height = widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+              final double height = widget.height ??
+                  MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+              final double distortionValue =
+                  widget.distortion ? Curves.easeOut.transform(value) : 1.0;
 
               return new Center(
-                child: new SizedBox(
-                  height: Curves.easeOut.transform(value) * height,
-                  child: child
-                )
-              );
+                  child: new SizedBox(
+                      height: distortionValue * height, child: child));
             },
-            child: widget.items[index]
-          );
-        },
-      )
-    );
+            child: widget.items[index]);
+      },
+    ));
   }
 }

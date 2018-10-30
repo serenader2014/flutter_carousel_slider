@@ -16,7 +16,7 @@ final Widget placeholder = new Container(color: Colors.grey);
 
 List<T> map<T>(List list, Function handler) {
   List<T> result = [];
-  for (var i = 0; i < list.length; i  ++) {
+  for (var i = 0; i < list.length; i++) {
     result.add(handler(i, list[i]));
   }
 
@@ -27,11 +27,13 @@ class CarouselDemo extends StatelessWidget {
   CarouselSlider instance;
 
   nextSlider() {
-    instance.nextPage(duration: new Duration(milliseconds: 300), curve: Curves.linear);
+    instance.nextPage(
+        duration: new Duration(milliseconds: 300), curve: Curves.linear);
   }
 
   prevSlider() {
-    instance.previousPage(duration: new Duration(milliseconds: 800), curve: Curves.easeIn);
+    instance.previousPage(
+        duration: new Duration(milliseconds: 800), curve: Curves.easeIn);
   }
 
   @override
@@ -42,14 +44,16 @@ class CarouselDemo extends StatelessWidget {
           margin: new EdgeInsets.all(5.0),
           child: new ClipRRect(
             borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
-              child: new Image.network(url,
+            child: new Image.network(
+              url,
               fit: BoxFit.cover,
               width: 1000.0,
-            )
-          )
+            ),
+          ),
         );
       }).toList(),
-      viewportFraction: 0.9,
+      viewportFraction: 1.0,
+      distortion: false,
       aspectRatio: 2.0,
       autoPlay: true,
     );
@@ -62,21 +66,21 @@ class CarouselDemo extends StatelessWidget {
           children: <Widget>[
             new Padding(
               padding: new EdgeInsets.symmetric(vertical: 15.0),
-              child: instance
+              child: instance,
             ),
             new Row(
               children: <Widget>[
                 new Expanded(
                   child: new RaisedButton(
                     onPressed: nextSlider,
-                    child: new Text('next slider')
+                    child: new Text('next slider'),
                   ),
                 ),
                 new Expanded(
                   child: new RaisedButton(
                     onPressed: prevSlider,
-                    child: new Text(' prev slider')
-                  )
+                    child: new Text(' prev slider'),
+                  ),
                 )
               ],
             ),
@@ -87,10 +91,12 @@ class CarouselDemo extends StatelessWidget {
                   return new Container(
                     margin: new EdgeInsets.all(5.0),
                     child: new ClipRRect(
-                      borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+                      borderRadius:
+                          new BorderRadius.all(new Radius.circular(5.0)),
                       child: new Stack(
                         children: <Widget>[
-                          new Image.network(i,
+                          new Image.network(
+                            i,
                             fit: BoxFit.cover,
                             width: 1000.0,
                           ),
@@ -100,35 +106,39 @@ class CarouselDemo extends StatelessWidget {
                             right: 0.0,
                             child: new Container(
                               decoration: new BoxDecoration(
-                                gradient: new LinearGradient(
-                                  colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                )
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                              child: new Text('No. $index image',
+                                  gradient: new LinearGradient(
+                                colors: [
+                                  Color.fromARGB(200, 0, 0, 0),
+                                  Color.fromARGB(0, 0, 0, 0)
+                                ],
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                              )),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 20.0),
+                              child: new Text(
+                                'No. $index image',
                                 style: new TextStyle(
                                   color: Colors.white,
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              )
-                            )
+                              ),
+                            ),
                           ),
                         ],
-                      )
-                    )
+                      ),
+                    ),
                   );
                 }).toList(),
                 autoPlay: false,
                 viewportFraction: 0.9,
                 aspectRatio: 2.0,
-              )
+              ),
             ),
           ],
-        )
-      )
+        ),
+      ),
     );
   }
 }

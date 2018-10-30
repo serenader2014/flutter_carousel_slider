@@ -40,6 +40,7 @@ For a more detail example please take a look at the `example` folder.
 ```dart
 new CarouselSlider(
   items: items,
+  distortion: true,
   viewportFraction: 0.8,
   initialPage: 0,
   aspectRatio: 16/9,
