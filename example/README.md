@@ -1,8 +1,22 @@
 # carousel_slider_example
 
-A new Flutter project.
+This exmaple shows four carousel slider examples:
 
-## Getting Started
+- Image slider with custom button control
+- Image slider with custom caption
+- Image slider with full width display
+- Image slider with indicator
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+![screenshot](./demo_screenshot.png)
+
+# Running
+
+```
+flutter run
+```
+
+# Building
+
+```
+flutter build ios # or flutter build apk
+```

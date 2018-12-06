@@ -175,9 +175,18 @@ class CarouselDemo extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
               child: CarouselSlider(
-                items: child,
+                items: map<Widget>(imgList, (index, i) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(i),
+                        fit: BoxFit.cover
+                      )
+                    ),
+                  );
+                }),
                 autoPlay: false,
-                viewportFraction: 0.8,
+                viewportFraction: 1.0,
                 aspectRatio: 2.0,
                 distortion: false
               )

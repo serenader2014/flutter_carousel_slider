@@ -17,3 +17,7 @@ Fix hard coded number
 # 1.0.0
 
 Added `distortion` option
+
+# 1.0.1
+
+Update doc
