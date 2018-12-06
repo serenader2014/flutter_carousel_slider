@@ -49,7 +49,8 @@ new CarouselSlider(
   interval: const Duration(seconds: 4),
   autoPlayCurve: Curves.fastOutSlowIn,
   autoPlayDuration: const Duration(milliseconds: 800),
-  updateCallback: someFunction
+  updateCallback: someFunction,
+  distortion: false
 )
 ```
 
@@ -74,3 +75,60 @@ Jump to the given page.
 ### `.animateToPage(int page, {Duration duration, Curve curve})`
 
 Animate to the given page.
+
+## Faq
+
+### Can I display a dotted indicator for the slider?
+
+Yes, you can.
+
+```dart
+class CarouselWithIndicator extends StatefulWidget {
+  @override
+  _CarouselWithIndicatorState createState() => _CarouselWithIndicatorState();
+}
+
+class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
+  int _current = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        CarouselSlider(
+          items: child,
+          autoPlay: true,
+          aspectRatio: 2.0,
+          updateCallback: (index) {
+            setState(() {
+              _current = index;
+            });
+          },
+        ),
+        Positioned(
+          top: 0.0,
+          left: 0.0,
+          right: 0.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: map<Widget>(imgList, (index, url) {
+              return Container(
+                width: 8.0,
+                height: 8.0,
+                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _current == index ? Color.fromRGBO(0, 0, 0, 0.9) : Color.fromRGBO(0, 0, 0, 0.4)
+                ),
+              );
+            }),
+          )
+        )
+      ]
+    );
+  }
+}
+
+```
+
+The complete code is located in the example folder.

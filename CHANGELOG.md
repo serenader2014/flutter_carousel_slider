@@ -13,3 +13,7 @@ Fix `initialPage` bug, fix crash when widget is disposed.
 # 0.0.6
 
 Fix hard coded number
+
+# 1.0.0
+
+Added `distortion` option

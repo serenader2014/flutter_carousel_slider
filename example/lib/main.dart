@@ -14,118 +14,178 @@ void main() => runApp(new CarouselDemo());
 
 final Widget placeholder = new Container(color: Colors.grey);
 
+final List child = map<Widget>(imgList, (index, i) {
+  return Container(
+    margin: EdgeInsets.all(5.0),
+    child: ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      child: Stack(
+        children: <Widget>[
+          Image.network(i,
+            fit: BoxFit.cover,
+            width: 1000.0,
+          ),
+          Positioned(
+            bottom: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                )
+              ),
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              child: Text('No. $index image',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            )
+          ),
+        ],
+      )
+    )
+  );
+}).toList();
+
 List<T> map<T>(List list, Function handler) {
   List<T> result = [];
-  for (var i = 0; i < list.length; i  ++) {
+  for (var i = 0; i < list.length; i++) {
     result.add(handler(i, list[i]));
   }
 
   return result;
 }
 
-class CarouselDemo extends StatelessWidget {
-  CarouselSlider instance;
+class CarouselWithIndicator extends StatefulWidget {
+  @override
+  _CarouselWithIndicatorState createState() => _CarouselWithIndicatorState();
+}
 
-  nextSlider() {
-    instance.nextPage(duration: new Duration(milliseconds: 300), curve: Curves.linear);
-  }
-
-  prevSlider() {
-    instance.previousPage(duration: new Duration(milliseconds: 800), curve: Curves.easeIn);
-  }
+class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
+  int _current = 0;
 
   @override
   Widget build(BuildContext context) {
-    instance = new CarouselSlider(
-      items: imgList.map((url) {
-        return new Container(
-          margin: new EdgeInsets.all(5.0),
-          child: new ClipRRect(
-            borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
-              child: new Image.network(url,
-              fit: BoxFit.cover,
-              width: 1000.0,
-            )
+    return Stack(
+      children: [
+        CarouselSlider(
+          items: child,
+          autoPlay: true,
+          aspectRatio: 2.0,
+          updateCallback: (index) {
+            setState(() {
+              _current = index;
+            });
+          },
+        ),
+        Positioned(
+          top: 0.0,
+          left: 0.0,
+          right: 0.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: map<Widget>(imgList, (index, url) {
+              return Container(
+                width: 8.0,
+                height: 8.0,
+                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _current == index ? Color.fromRGBO(0, 0, 0, 0.9) : Color.fromRGBO(0, 0, 0, 0.4)
+                ),
+              );
+            }),
           )
-        );
-      }).toList(),
-      viewportFraction: 0.9,
-      aspectRatio: 2.0,
-      autoPlay: true,
+        )
+      ]
     );
-    // print(instance.nextPage());
-    return new MaterialApp(
+  }
+}
+
+class CarouselDemo extends StatelessWidget {
+  final CarouselSlider instance = CarouselSlider(
+    items: imgList.map((url) {
+      return Container(
+        margin: EdgeInsets.all(5.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            child: Image.network(url,
+            fit: BoxFit.cover,
+            width: 1000.0,
+          )
+        )
+      );
+    }).toList(),
+    viewportFraction: 0.9,
+    aspectRatio: 2.0,
+    autoPlay: true,
+  );
+
+  nextSlider() {
+    instance.nextPage(duration: Duration(milliseconds: 300), curve: Curves.linear);
+  }
+
+  prevSlider() {
+    instance.previousPage(duration: Duration(milliseconds: 800), curve: Curves.easeIn);
+  }
+
+  @override
+  Widget build(BuildContext context) {    // print(instance.nextPage());
+    return MaterialApp(
       title: 'demo',
-      home: new Scaffold(
-        appBar: new AppBar(title: new Text('Carousel slider demo')),
-        body: new ListView(
+      home: Scaffold(
+        appBar: AppBar(title: Text('Carousel slider demo')),
+        body: ListView(
           children: <Widget>[
-            new Padding(
-              padding: new EdgeInsets.symmetric(vertical: 15.0),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
               child: instance
             ),
-            new Row(
+            Row(
               children: <Widget>[
-                new Expanded(
-                  child: new RaisedButton(
+                Expanded(
+                  child: RaisedButton(
                     onPressed: nextSlider,
-                    child: new Text('next slider')
+                    child: Text('next slider')
                   ),
                 ),
-                new Expanded(
-                  child: new RaisedButton(
+                Expanded(
+                  child: RaisedButton(
                     onPressed: prevSlider,
-                    child: new Text(' prev slider')
+                    child: Text(' prev slider')
                   )
                 )
               ],
             ),
-            new Padding(
-              padding: new EdgeInsets.symmetric(vertical: 15.0),
-              child: new CarouselSlider(
-                items: map<Widget>(imgList, (index, i) {
-                  return new Container(
-                    margin: new EdgeInsets.all(5.0),
-                    child: new ClipRRect(
-                      borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
-                      child: new Stack(
-                        children: <Widget>[
-                          new Image.network(i,
-                            fit: BoxFit.cover,
-                            width: 1000.0,
-                          ),
-                          new Positioned(
-                            bottom: 0.0,
-                            left: 0.0,
-                            right: 0.0,
-                            child: new Container(
-                              decoration: new BoxDecoration(
-                                gradient: new LinearGradient(
-                                  colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                )
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                              child: new Text('No. $index image',
-                                style: new TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            )
-                          ),
-                        ],
-                      )
-                    )
-                  );
-                }).toList(),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: CarouselSlider(
+                items: child,
                 autoPlay: false,
                 viewportFraction: 0.9,
                 aspectRatio: 2.0,
               )
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: CarouselSlider(
+                items: child,
+                autoPlay: false,
+                viewportFraction: 0.8,
+                aspectRatio: 2.0,
+                distortion: false
+              )
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: CarouselWithIndicator()
+            )
           ],
         )
       )

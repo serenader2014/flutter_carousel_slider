@@ -4,14 +4,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-int _remander(int input, int source) {
+int _remainder(int input, int source) {
   final int result = input % source;
   return result < 0 ? source + result : result;
 }
 
 int _getRealIndex(int position, int base, int length) {
   final int offset = position - base;
-  return _remander(offset, length);
+  return _remainder(offset, length);
 }
 
 class CarouselSlider extends StatefulWidget {
@@ -28,6 +28,7 @@ class CarouselSlider extends StatefulWidget {
   final Duration interval;
   final bool reverse;
   final Function updateCallback;
+  final bool distortion;
 
   CarouselSlider({
     @required
@@ -43,6 +44,7 @@ class CarouselSlider extends StatefulWidget {
     this.autoPlayCurve: Curves.fastOutSlowIn,
     this.autoPlayDuration: const Duration(milliseconds: 800),
     this.updateCallback,
+    this.distortion: true,
   }) :
     pageController = new PageController(
       viewportFraction: viewportFraction,
@@ -97,12 +99,12 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
 
   getWrapper(Widget child) {
     if (widget.height != null) {
-      return new Container(
+      return Container(
         height: widget.height,
         child: child
       );
     } else {
-      return new AspectRatio(
+      return AspectRatio(
         aspectRatio: widget.aspectRatio,
         child: child
       );
@@ -118,7 +120,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return getWrapper(
-      new PageView.builder(
+      PageView.builder(
         onPageChanged: (int index) {
           currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
           if (widget.updateCallback != null) widget.updateCallback(currentPage);
@@ -128,26 +130,27 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
         itemBuilder: (BuildContext context, int i) {
           final int index = _getRealIndex(i, widget.realPage, widget.items.length);
 
-          return new AnimatedBuilder(
+          return AnimatedBuilder(
             animation: widget.pageController,
             builder: (BuildContext context, child) {
               // on the first render, the pageController.page is null, 
               // this is a dirty hack
               if (widget.pageController.position.minScrollExtent == null 
                 || widget.pageController.position.maxScrollExtent == null) {
-                new Future.delayed(new Duration(microseconds: 1), () {
+                Future.delayed(Duration(microseconds: 1), () {
                   setState(() {});
                 });
-                return new Container();
+                return Container();
               }
               double value = widget.pageController.page - i;
               value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
               final double height = widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+              final double distortionValue = widget.distortion ? Curves.easeOut.transform(value) : 1.0;
 
-              return new Center(
-                child: new SizedBox(
-                  height: Curves.easeOut.transform(value) * height,
+              return Center(
+                child: SizedBox(
+                  height: distortionValue * height,
                   child: child
                 )
               );
