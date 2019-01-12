@@ -4,7 +4,11 @@ A carousel slider widget, support infinite scroll and custom child widget, with 
 
 ## Installation
 
-Add `carousel_slider: ^1.0.1` in your `pubspec.yaml` dependencies.
+Add `carousel_slider: ^1.0.1` in your `pubspec.yaml` dependencies. And import it:
+
+```dart
+import 'package:carousel_slider/carousel_slider.dart';
+```
 
 ## How to use
 
