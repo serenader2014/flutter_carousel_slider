@@ -25,6 +25,7 @@ class CarouselSlider extends StatefulWidget {
   final bool autoPlay;
   final Duration autoPlayDuration;
   final Curve autoPlayCurve;
+  final Duration pauseOnTouchDuration;
   final Duration interval;
   final bool reverse;
   final Function updateCallback;
@@ -43,17 +44,18 @@ class CarouselSlider extends StatefulWidget {
     this.reverse: false,
     this.autoPlayCurve: Curves.fastOutSlowIn,
     this.autoPlayDuration: const Duration(milliseconds: 800),
+    this.pauseOnTouchDuration,
     this.updateCallback,
     this.distortion: true,
   }) :
-    pageController = new PageController(
+    pageController = PageController(
       viewportFraction: viewportFraction,
       initialPage: realPage + initialPage,
     );
 
   @override
   _CarouselSliderState createState() {
-    return new _CarouselSliderState();
+    return _CarouselSliderState();
   }
 
   Future<Null> nextPage({Duration duration, Curve curve}) {
@@ -64,15 +66,15 @@ class CarouselSlider extends StatefulWidget {
     return pageController.previousPage(duration: duration, curve: curve);
   }
 
-  jumpToPage(int page) {
+  void jumpToPage(int page) {
     final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
     return pageController.jumpToPage(pageController.page.toInt() + page - index);
   }
 
-  animateToPage(int page, {Duration duration, Curve curve}) {
+  Future<void> animateToPage(int page, {Duration duration, Curve curve}) {
     final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
     return pageController.animateToPage(
-      pageController.page.toInt() + page - index, 
+      pageController.page.toInt() + page - index,
       duration: duration,
       curve: curve
     );
@@ -87,29 +89,47 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   void initState() {
     super.initState();
     currentPage = widget.initialPage;
-    if (widget.autoPlay) {
-      timer = new Timer.periodic(widget.interval, (_) {
+    timer = getTimer();
+  }
+
+  Timer getTimer() {
+    return Timer.periodic(widget.interval, (_) {
+      if (widget.autoPlay) {
         widget.pageController.nextPage(
           duration: widget.autoPlayDuration,
           curve: widget.autoPlayCurve
         );
+      }
+    });
+  }
+
+  void pauseOnTouch() {
+    setState(() {
+      timer.cancel();
+      timer = Timer(widget.pauseOnTouchDuration, () {
+        setState(() {
+          timer = getTimer();
+          });
       });
+    });
+  }
+
+  Widget getWrapper(Widget child) {
+    if (widget.height != null) {
+      final Widget wrapper = Container(height: widget.height, child: child);
+      return widget.autoPlay && widget.pauseOnTouchDuration != null
+          ? addGestureDetection(wrapper)
+          : wrapper;
+    } else {
+      final Widget wrapper = AspectRatio(aspectRatio: widget.aspectRatio, child: child);
+      return widget.autoPlay && widget.pauseOnTouchDuration != null
+          ? addGestureDetection(wrapper)
+          : wrapper;
     }
   }
 
-  getWrapper(Widget child) {
-    if (widget.height != null) {
-      return Container(
-        height: widget.height,
-        child: child
-      );
-    } else {
-      return AspectRatio(
-        aspectRatio: widget.aspectRatio,
-        child: child
-      );
-    }
-  }
+  Widget addGestureDetection(Widget child) =>
+      GestureDetector(onPanDown: (_) => pauseOnTouch(), child: child);
 
   @override
   void dispose() {
@@ -133,9 +153,9 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
           return AnimatedBuilder(
             animation: widget.pageController,
             builder: (BuildContext context, child) {
-              // on the first render, the pageController.page is null, 
+              // on the first render, the pageController.page is null,
               // this is a dirty hack
-              if (widget.pageController.position.minScrollExtent == null 
+              if (widget.pageController.position.minScrollExtent == null
                 || widget.pageController.position.maxScrollExtent == null) {
                 Future.delayed(Duration(microseconds: 1), () {
                   setState(() {});
