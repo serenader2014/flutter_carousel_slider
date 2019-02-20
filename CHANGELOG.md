@@ -22,7 +22,7 @@ Added `distortion` option
 
 Update doc
 
-# 1.0.2
+# 1.1.0
 
 Added `pauseAutoPlayOnTouch` option
 

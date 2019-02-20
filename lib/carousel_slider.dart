@@ -202,13 +202,9 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   }
 
   void pauseOnTouch() {
-    setState(() {
-      timer.cancel();
-      timer = Timer(widget.pauseAutoPlayOnTouch, () {
-        setState(() {
-          timer = getTimer();
-        });
-      });
+    timer.cancel();
+    timer = Timer(widget.pauseAutoPlayOnTouch, () {
+        timer = getTimer();
     });
   }
 
