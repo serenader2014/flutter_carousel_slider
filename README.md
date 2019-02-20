@@ -1,6 +1,6 @@
 # carousel_slider
 
-A carousel slider widget, support infinite scroll and custom child widget, with autoplay feature.
+A carousel slider widget, support infinite scroll and custom child widget, with auto play feature.
 
 ## Installation
 
@@ -15,47 +15,44 @@ import 'package:carousel_slider/carousel_slider.dart';
 Simply create a `CarouselSlider` widget, and pass the required params:
 
 ```dart
-new CarouselSlider(
+CarouselSlider(
+  height: 400.0,
   items: [1,2,3,4,5].map((i) {
-    return new Builder(
+    return Builder(
       builder: (BuildContext context) {
-        return new Container(
+        return Container(
           width: MediaQuery.of(context).size.width,
-          margin: new EdgeInsets.symmetric(horizontal: 5.0),
-          decoration: new BoxDecoration(
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          decoration: BoxDecoration(
             color: Colors.amber
           ),
-          child: new Text('text $i', style: new TextStyle(fontSize: 16.0),)
+          child: Text('text $i', style: TextStyle(fontSize: 16.0),)
         );
       },
     );
   }).toList(),
-  height: 400.0,
-  autoPlay: true
 )
 ```
-
-For a more detail example please take a look at the `example` folder.
-
-![screenshot](./example/screenshot.gif)
 
 ## Params
 
 ```dart
-new CarouselSlider(
-  items: items,
-  viewportFraction: 0.8,
-  initialPage: 0,
-  aspectRatio: 16/9,
-  height: 400,
-  reverse: false,
-  autoPlay: false,
-  interval: const Duration(seconds: 4),
-  autoPlayCurve: Curves.fastOutSlowIn,
-  autoPlayDuration: const Duration(milliseconds: 800),
-  updateCallback: someFunction,
-  distortion: false
-)
+
+CarouselSlider(
+   items: items,
+   height: 400,
+   aspectRatio: 16/9,
+   viewportFraction: 0.8,
+   initialPage: 0,
+   reverse: false,
+   autoPlay: true,
+   autoPlayInterval: Duration(seconds: 3),
+   autoPlayAnimationDuration: Duration(milliseconds: 800),
+   autoPlayCurve: Curve.fastOutSlowIn,
+   pauseAutoPlayOnTouch: Duration(seconds: 10),
+   enlargeCenterPage: true,
+   onPageChanged: callbackFunction,
+ )
 ```
 
 You can pass the above params to the class. If you pass the `height` params, the `aspectRatio` param will be ignore.
@@ -80,6 +77,22 @@ Jump to the given page.
 
 Animate to the given page.
 
+## Example
+
+Let a carousel slide play automatically or use buttons:
+
+![auto_button_loop.gif](example/auto_button_loop.gif)
+
+Show dot indicator or play carousel in cover mode:
+
+![indicator_fullscreen_loop.gif](example/indicator_fullscreen_loop.gif)
+
+Pause slideshow for a set amount of time on user touch input:
+
+![touch_pause_loop.gif](example/touch_pause_loop.gif)
+
+For a more detail example please take a look at the `example` folder.
+
 ## Faq
 
 ### Can I display a dotted indicator for the slider?
@@ -103,7 +116,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
           items: child,
           autoPlay: true,
           aspectRatio: 2.0,
-          updateCallback: (index) {
+          onPageChangedCallback: (index) {
             setState(() {
               _current = index;
             });
@@ -135,4 +148,19 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
 
 ```
 
-The complete code is located in the example folder.
+### Can I pause the slider if i touch it?
+
+Yes.
+Use the `pauseAutoPlayOnTouch` which takes a duration and when set, enables touch detection.
+Touch Detection is only active if the `autoPlay` property is set to true.
+If the screen is touched it will pause the automatic playback for the set duration.
+if touched again during the time out the timer is reset to the duration passed to `pauseAutoPlayOnTouch`.
+
+This feature can be useful if you want users to be able to interact with the screen and not have the pages continue sliding, forcing the user to repeatedly swipe back.
+One such example could be a commercial advertisement where the customers can react to something they like.
+
+##
+
+The example folder contains an example showcasing all features.
+
+If something is missing, feel free to open a ticket or contribute!

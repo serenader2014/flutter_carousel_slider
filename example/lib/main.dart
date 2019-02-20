@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 
 final List<String> imgList = [
   'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
@@ -14,17 +14,15 @@ void main() => runApp(new CarouselDemo());
 
 final Widget placeholder = new Container(color: Colors.grey);
 
-final List child = map<Widget>(imgList, (index, i) {
-  return Container(
-    margin: EdgeInsets.all(5.0),
-    child: ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-      child: Stack(
-        children: <Widget>[
-          Image.network(i,
-            fit: BoxFit.cover,
-            width: 1000.0,
-          ),
+final List child = map<Widget>(
+  imgList,
+  (index, i) {
+    return Container(
+      margin: EdgeInsets.all(5.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        child: Stack(children: <Widget>[
+          Image.network(i, fit: BoxFit.cover, width: 1000.0),
           Positioned(
             bottom: 0.0,
             left: 0.0,
@@ -35,23 +33,24 @@ final List child = map<Widget>(imgList, (index, i) {
                   colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                )
+                ),
               ),
               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              child: Text('No. $index image',
+              child: Text(
+                'No. $index image',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
-              )
-            )
+              ),
+            ),
           ),
-        ],
-      )
-    )
-  );
-}).toList();
+        ]),
+      ),
+    );
+  },
+).toList();
 
 List<T> map<T>(List list, Function handler) {
   List<T> result = [];
@@ -72,132 +71,196 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CarouselSlider(
-          items: child,
-          autoPlay: true,
-          aspectRatio: 2.0,
-          updateCallback: (index) {
-            setState(() {
-              _current = index;
-            });
+    return Column(children: [
+      CarouselSlider(
+        items: child,
+        autoPlay: true,
+        enlargeCenterPage: true,
+        aspectRatio: 2.0,
+        onPageChanged: (index) {
+          setState(() {
+            _current = index;
+          });
+        },
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: map<Widget>(
+          imgList,
+          (index, url) {
+            return Container(
+              width: 8.0,
+              height: 8.0,
+              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _current == index
+                      ? Color.fromRGBO(0, 0, 0, 0.9)
+                      : Color.fromRGBO(0, 0, 0, 0.4)),
+            );
           },
         ),
-        Positioned(
-          top: 0.0,
-          left: 0.0,
-          right: 0.0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: map<Widget>(imgList, (index, url) {
-              return Container(
-                width: 8.0,
-                height: 8.0,
-                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _current == index ? Color.fromRGBO(0, 0, 0, 0.9) : Color.fromRGBO(0, 0, 0, 0.4)
-                ),
-              );
-            }),
-          )
-        )
-      ]
-    );
+      ),
+    ]);
   }
 }
 
 class CarouselDemo extends StatelessWidget {
-  final CarouselSlider instance = CarouselSlider(
-    items: imgList.map((url) {
-      return Container(
-        margin: EdgeInsets.all(5.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            child: Image.network(url,
-            fit: BoxFit.cover,
-            width: 1000.0,
-          )
-        )
-      );
-    }).toList(),
-    viewportFraction: 0.9,
-    aspectRatio: 2.0,
-    autoPlay: true,
-  );
-
-  nextSlider() {
-    instance.nextPage(duration: Duration(milliseconds: 300), curve: Curves.linear);
-  }
-
-  prevSlider() {
-    instance.previousPage(duration: Duration(milliseconds: 800), curve: Curves.easeIn);
-  }
-
   @override
-  Widget build(BuildContext context) {    // print(instance.nextPage());
+  Widget build(BuildContext context) {
+    //Manually operated Carousel
+    final CarouselSlider manualCarouselDemo = CarouselSlider(
+      items: child,
+      autoPlay: false,
+      enlargeCenterPage: true,
+      viewportFraction: 0.9,
+      aspectRatio: 2.0,
+    );
+
+    //Auto playing carousel
+    final CarouselSlider autoPlayDemo = CarouselSlider(
+      viewportFraction: 0.9,
+      aspectRatio: 2.0,
+      autoPlay: true,
+      enlargeCenterPage: true,
+      items: imgList.map(
+        (url) {
+          return Container(
+            margin: EdgeInsets.all(5.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+                width: 1000.0,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+
+    //Button controlled carousel
+    Widget buttonDemo() {
+      final basicSlider = CarouselSlider(
+        items: child,
+        autoPlay: false,
+        enlargeCenterPage: true,
+        viewportFraction: 0.9,
+        aspectRatio: 2.0,
+      );
+      return Column(children: [
+        basicSlider,
+        Row(children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0),
+              child: RaisedButton(
+                onPressed: () => basicSlider.previousPage(
+                    duration: Duration(milliseconds: 300), curve: Curves.linear),
+                child: Text('prev slider'),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0),
+              child: RaisedButton(
+                onPressed: () => basicSlider.nextPage(
+                    duration: Duration(milliseconds: 300), curve: Curves.linear),
+                child: Text('next slider'),
+              ),
+            ),
+          ),
+        ]),
+      ]);
+    }
+
+    //Pages covers entire carousel
+    final CarouselSlider coverScreenExample = CarouselSlider(
+      viewportFraction: 1.0,
+      aspectRatio: 2.0,
+      autoPlay: false,
+      enlargeCenterPage: false,
+      items: map<Widget>(
+        imgList,
+        (index, i) {
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(image: NetworkImage(i), fit: BoxFit.cover),
+            ),
+          );
+        },
+      ),
+    );
+
+    //User input pauses carousels automatic playback
+    final CarouselSlider touchDetectionDemo = CarouselSlider(
+      viewportFraction: 0.9,
+      aspectRatio: 2.0,
+      autoPlay: true,
+      enlargeCenterPage: true,
+      pauseAutoPlayOnTouch: Duration(seconds: 3),
+      items: imgList.map(
+        (url) {
+          return Container(
+            margin: EdgeInsets.all(5.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+                width: 1000.0,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+
     return MaterialApp(
       title: 'demo',
       home: Scaffold(
         appBar: AppBar(title: Text('Carousel slider demo')),
-        body: ListView(
-          children: <Widget>[
-            Padding(
+        body: ListView(children: <Widget>[
+          Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: instance
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    onPressed: nextSlider,
-                    child: Text('next slider')
-                  ),
-                ),
-                Expanded(
-                  child: RaisedButton(
-                    onPressed: prevSlider,
-                    child: Text(' prev slider')
-                  )
-                )
-              ],
-            ),
-            Padding(
+              child: Column(children: [
+                Text('Manuell Carousel'),
+                manualCarouselDemo,
+              ])),
+          Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: CarouselSlider(
-                items: child,
-                autoPlay: false,
-                viewportFraction: 0.9,
-                aspectRatio: 2.0,
-              )
-            ),
-            Padding(
+              child: Column(children: [
+                Text('Auto Playing Carousel'),
+                autoPlayDemo,
+              ])),
+          Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: CarouselSlider(
-                items: map<Widget>(imgList, (index, i) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(i),
-                        fit: BoxFit.cover
-                      )
-                    ),
-                  );
-                }),
-                autoPlay: false,
-                viewportFraction: 1.0,
-                aspectRatio: 2.0,
-                distortion: false
-              )
-            ),
-            Padding(
+              child: Column(children: [
+                Text('Button Controlled Carousel'),
+                buttonDemo(),
+              ])),
+          Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: CarouselWithIndicator()
-            )
-          ],
-        )
-      )
+              child: Column(children: [
+                Text('Full Screen Carousel'),
+                coverScreenExample,
+              ])),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: Column(children: [
+                Text('Carousel With Indecator'),
+                CarouselWithIndicator(),
+              ])),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: Column(children: [
+                Text('Pause When Touched Carousel'),
+                touchDetectionDemo,
+              ])),
+        ]),
+      ),
     );
   }
 }

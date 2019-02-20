@@ -1,82 +1,184 @@
 library carousel_slider;
 
 import 'dart:async';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/foundation.dart';
-
-int _remainder(int input, int source) {
-  final int result = input % source;
-  return result < 0 ? source + result : result;
-}
-
-int _getRealIndex(int position, int base, int length) {
-  final int offset = position - base;
-  return _remainder(offset, length);
-}
+import 'package:flutter/material.dart';
 
 class CarouselSlider extends StatefulWidget {
-  final List<Widget> items;
-  final num viewportFraction;
-  final num initialPage;
-  final double aspectRatio;
-  final double height;
-  final PageController pageController;
-  final num realPage;
-  final bool autoPlay;
-  final Duration autoPlayDuration;
-  final Curve autoPlayCurve;
-  final Duration interval;
-  final bool reverse;
-  final Function updateCallback;
-  final bool distortion;
-
   CarouselSlider({
-    @required
-    this.items,
+    @required this.items,
+    this.height,
+    this.aspectRatio: 16 / 9,
     this.viewportFraction: 0.8,
     this.initialPage: 0,
-    this.aspectRatio: 16/9,
-    this.height,
     this.realPage: 10000,
-    this.autoPlay: false,
-    this.interval: const Duration(seconds: 4),
     this.reverse: false,
+    this.autoPlay: false,
+    Duration autoPlayInterval,
+    Duration autoPlayAnimationDuration,
     this.autoPlayCurve: Curves.fastOutSlowIn,
-    this.autoPlayDuration: const Duration(milliseconds: 800),
+    this.pauseAutoPlayOnTouch,
+    bool enlargeCenterPage,
+    Function onPageChanged,
+    @Deprecated('Use "autoPlayInterval" instead') 
+    this.interval,
+    @Deprecated('Use "autoPlayAnimationDuration" instead')
+    this.autoPlayDuration,
+    @Deprecated('Use "enlargeCenterPage" instead')
+    this.distortion,
+    @Deprecated('Use "onPageChanged" instead')
     this.updateCallback,
-    this.distortion: true,
-  }) :
-    pageController = new PageController(
-      viewportFraction: viewportFraction,
-      initialPage: realPage + initialPage,
-    );
+  })  : assert(autoPlayInterval == null || interval == null, 'use autoPlayInterval (preferable) or interval (deprecated), but not both.'),
+        assert(autoPlayAnimationDuration == null || autoPlayDuration == null, 'use autoPlayAnimationDuration (preferable) or autoPlayDuration (deprecated), but not both.'),
+        assert(enlargeCenterPage == null || distortion == null, 'use enlargeCenterPage (preferable) or distortion (deprecated), but not both.'),
+        assert(onPageChanged == null || updateCallback == null, 'use onPageChanged (preferable) or updateCallback (deprecated), but not both.'),
+        this.autoPlayInterval = (autoPlayInterval ?? interval) ?? const Duration(seconds: 4),
+        this.enlargeCenterPage = (enlargeCenterPage ?? distortion) ?? false,
+        this.autoPlayAnimationDuration =(autoPlayAnimationDuration ?? autoPlayDuration) ?? const Duration(milliseconds: 800),
+        this.onPageChanged = onPageChanged ?? updateCallback,
+        this.pageController = PageController(
+          viewportFraction: viewportFraction,
+          initialPage: realPage + initialPage,
+        );
 
-  @override
-  _CarouselSliderState createState() {
-    return new _CarouselSliderState();
-  }
+  /// The widgets to be shown in the carousel.
+  final List<Widget> items;
 
-  Future<Null> nextPage({Duration duration, Curve curve}) {
+  /// Set carousel height and overrides any existing [aspectRatio].
+  final double height;
+
+  /// Aspect ratio is used if no height have been declared.
+  /// Defaults to 16:9 aspect ratio.
+  final double aspectRatio;
+
+  /// The fraction of the viewport that each page should occupy.
+  /// Defaults to 0.8, which means each page fills 80% of the carousel.
+  final num viewportFraction;
+
+  /// The page to show when first creating the [CarouselSlider].
+  /// Defaults to 0.
+  final num initialPage;
+
+  /// The actual index of the [PageView].
+  /// Defaults to 10000 to simulate infinite backwards scrolling.
+  final num realPage;
+
+  /// Reverse the order of items if set to true.
+  /// Defaults to false.
+  final bool reverse;
+
+  /// Enables auto play, sliding one page at a time.
+  /// Use [autoPlayInterval] to determent the frequency of slides.
+  /// Defaults to false.
+  final bool autoPlay;
+
+  /// Sets Duration to determent the frequency of slides when
+  /// [autoPlay] is set to true.
+  /// Defaults to 4 seconds.
+  final Duration autoPlayInterval;
+
+  /// (Deprecated, use [autoPlayInterval] instead) Changed for ambiguous intent.
+  /// interval did not explain what the variable was used for.
+  /// Changing it to [autoPlayInterval] describes where it's used and for what.
+  ///
+  /// Sets Duration to determent the frequency of slides when
+  /// [autoPlay] is set to true.
+  /// Defaults to 4 seconds.
+  @deprecated
+  final Duration interval;
+
+  /// (Deprecated, use [autoPlayAnimationDuration] instead) Changed for misleading intent.
+  /// 'autoPlayDuration' implies reference to the duration of the entire auto play instance.
+  /// Changed to 'autoPlayAnimationDuration' to sympathize its referring to the length of
+  /// the animation between the page transitions.
+  ///
+  /// The animation duration between two transitioning pages while in auto playback.
+  /// Defaults to 800 ms.
+  @deprecated
+  final Duration autoPlayDuration;
+
+  /// The animation duration between two transitioning pages while in auto playback.
+  /// Defaults to 800 ms.
+  final Duration autoPlayAnimationDuration;
+
+  /// Determines the animation curve physics.
+  /// Defaults to [Curves.fastOutSlowIn].
+  final Curve autoPlayCurve;
+
+  /// Sets a timer on touch detected that pause the auto play with
+  /// the given [Duration].
+  /// Touch Detection is only active if [autoPlay] is true.
+  final Duration pauseAutoPlayOnTouch;
+
+  /// (Deprecated, use [enlargeCenterPage] instead) Changed for ambiguous intent.
+  /// 'distortion' provided no information on how the image was distorted.
+  /// [enlargeCenterPage] is self documenting, thus making it easier to understand
+  /// the api.
+  ///
+  /// Determines if current page should be larger then the side images,
+  /// creating a feeling of depth in the carousel.
+  /// Defaults to false.
+  @deprecated
+  final bool distortion;
+
+  /// Determines if current page should be larger then the side images,
+  /// creating a feeling of depth in the carousel.
+  /// Defaults to false.
+  final bool enlargeCenterPage;
+
+  /// (Deprecated, use [onPageChanged] instead) Changed for ambiguous intent.
+  /// 'updateCallback' provided no information on when the callback was called.
+  /// Refactored to following the [PageView] naming convention.
+  ///
+  /// Called whenever the page in the center of the viewport changes.
+  @deprecated
+  final Function updateCallback;
+
+  /// Called whenever the page in the center of the viewport changes.
+  final Function onPageChanged;
+
+  /// [pageController] is created using the properties passed to the constructor
+  /// and can be used to control the [PageView] it is passed to.
+  final PageController pageController;
+
+  /// Animates the controlled [CarouselSlider] to the next page.
+  ///
+  /// The animation lasts for the given duration and follows the given curve.
+  /// The returned [Future] resolves when the animation completes.
+  Future<void> nextPage({Duration duration, Curve curve}) {
     return pageController.nextPage(duration: duration, curve: curve);
   }
 
-  Future<Null> previousPage({Duration duration, Curve curve}) {
+  /// Animates the controlled [CarouselSlider] to the previous page.
+  ///
+  /// The animation lasts for the given duration and follows the given curve.
+  /// The returned [Future] resolves when the animation completes.
+  Future<void> previousPage({Duration duration, Curve curve}) {
     return pageController.previousPage(duration: duration, curve: curve);
   }
 
-  jumpToPage(int page) {
+  /// Changes which page is displayed in the controlled [CarouselSlider].
+  ///
+  /// Jumps the page position from its current value to the given value,
+  /// without animation, and without checking if the new value is in range.
+  void jumpToPage(int page) {
     final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
     return pageController.jumpToPage(pageController.page.toInt() + page - index);
   }
 
-  animateToPage(int page, {Duration duration, Curve curve}) {
+  /// Animates the controlled [CarouselSlider] from the current page to the given page.
+  ///
+  /// The animation lasts for the given duration and follows the given curve.
+  /// The returned [Future] resolves when the animation completes.
+  Future<void> animateToPage(int page, {Duration duration, Curve curve}) {
     final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
-    return pageController.animateToPage(
-      pageController.page.toInt() + page - index, 
-      duration: duration,
-      curve: curve
-    );
+    return pageController.animateToPage(pageController.page.toInt() + page - index,
+        duration: duration, curve: curve);
   }
+
+  @override
+  _CarouselSliderState createState() => _CarouselSliderState();
 }
 
 class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
@@ -87,29 +189,45 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   void initState() {
     super.initState();
     currentPage = widget.initialPage;
-    if (widget.autoPlay) {
-      timer = new Timer.periodic(widget.interval, (_) {
-        widget.pageController.nextPage(
-          duration: widget.autoPlayDuration,
-          curve: widget.autoPlayCurve
-        );
+    timer = getTimer();
+  }
+
+  Timer getTimer() {
+    return Timer.periodic(widget.autoPlayInterval, (_) {
+      if (widget.autoPlay) {
+        widget.pageController
+            .nextPage(duration: widget.autoPlayAnimationDuration, curve: widget.autoPlayCurve);
+      }
+    });
+  }
+
+  void pauseOnTouch() {
+    setState(() {
+      timer.cancel();
+      timer = Timer(widget.pauseAutoPlayOnTouch, () {
+        setState(() {
+          timer = getTimer();
+        });
       });
+    });
+  }
+
+  Widget getWrapper(Widget child) {
+    if (widget.height != null) {
+      final Widget wrapper = Container(height: widget.height, child: child);
+      return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
+          ? addGestureDetection(wrapper)
+          : wrapper;
+    } else {
+      final Widget wrapper = AspectRatio(aspectRatio: widget.aspectRatio, child: child);
+      return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
+          ? addGestureDetection(wrapper)
+          : wrapper;
     }
   }
 
-  getWrapper(Widget child) {
-    if (widget.height != null) {
-      return Container(
-        height: widget.height,
-        child: child
-      );
-    } else {
-      return AspectRatio(
-        aspectRatio: widget.aspectRatio,
-        child: child
-      );
-    }
-  }
+  Widget addGestureDetection(Widget child) =>
+      GestureDetector(onPanDown: (_) => pauseOnTouch(), child: child);
 
   @override
   void dispose() {
@@ -119,24 +237,23 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return getWrapper(
-      PageView.builder(
-        onPageChanged: (int index) {
-          currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
-          if (widget.updateCallback != null) widget.updateCallback(currentPage);
-        },
-        controller: widget.pageController,
-        reverse: widget.reverse,
-        itemBuilder: (BuildContext context, int i) {
-          final int index = _getRealIndex(i, widget.realPage, widget.items.length);
+    return getWrapper(PageView.builder(
+      onPageChanged: (int index) {
+        currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
+        if (widget.onPageChanged != null) widget.onPageChanged(currentPage);
+      },
+      controller: widget.pageController,
+      reverse: widget.reverse,
+      itemBuilder: (BuildContext context, int i) {
+        final int index = _getRealIndex(i, widget.realPage, widget.items.length);
 
-          return AnimatedBuilder(
+        return AnimatedBuilder(
             animation: widget.pageController,
             builder: (BuildContext context, child) {
-              // on the first render, the pageController.page is null, 
+              // on the first render, the pageController.page is null,
               // this is a dirty hack
-              if (widget.pageController.position.minScrollExtent == null 
-                || widget.pageController.position.maxScrollExtent == null) {
+              if (widget.pageController.position.minScrollExtent == null ||
+                  widget.pageController.position.maxScrollExtent == null) {
                 Future.delayed(Duration(microseconds: 1), () {
                   setState(() {});
                 });
@@ -145,20 +262,38 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
               double value = widget.pageController.page - i;
               value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
-              final double height = widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
-              final double distortionValue = widget.distortion ? Curves.easeOut.transform(value) : 1.0;
+              final double height =
+                  widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+              final double distortionValue =
+                  widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
 
-              return Center(
-                child: SizedBox(
-                  height: distortionValue * height,
-                  child: child
-                )
-              );
+              return Center(child: SizedBox(height: distortionValue * height, child: child));
             },
-            child: widget.items[index]
-          );
-        },
-      )
-    );
+            child: widget.items[index]);
+      },
+    ));
   }
+}
+
+/// Converts an index of a set size to the corresponding index of a collection of another size
+/// as if they were circular.
+///
+/// Takes a [position] from collection Foo, a [base] from where Foo's index originated
+/// and the [length] of a second collection Baa, for which the correlating index is sought.
+///
+/// For example; We have a Carousel of 10000(simulating infinity) but only 6 images.
+/// We need to repeat the images to give the illusion of a never ending stream.
+/// By calling _getRealIndex with position and base we get an offset.
+/// This offset modulo our length, 6, will return a number between 0 and 5, which represent the image
+/// to be placed in the given position.
+int _getRealIndex(int position, int base, int length) {
+  final int offset = position - base;
+  return _remainder(offset, length);
+}
+
+/// Returns the remainder of the modulo operation [input] % [source], and adjust it for
+/// negative values.
+int _remainder(int input, int source) {
+  final int result = input % source;
+  return result < 0 ? source + result : result;
 }

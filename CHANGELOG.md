@@ -21,3 +21,19 @@ Added `distortion` option
 # 1.0.1
 
 Update doc
+
+# 1.0.2
+
+Added `pauseAutoPlayOnTouch` option
+
+Sets a timer on touch detected that pause the auto play with the given `Duration`.
+Touch Detection is only active if the `autoPlay` property is set to true.
+If screen is touched again during the time out the timer is reset to the given duration.
+
+Added documentation to public properties.
+
+Refactored ambiguous property names and deprecated the old ones.
+
+Updated example project displaying the new feature and refactored the code to follow flutters style guidelines.
+
+Updated .readme
