@@ -21,7 +21,8 @@ class CarouselSlider extends StatefulWidget {
     this.pauseAutoPlayOnTouch,
     bool enlargeCenterPage,
     Function onPageChanged,
-    @Deprecated('Use "autoPlayInterval" instead') 
+    this.scrollDirection: Axis.horizontal,
+    @Deprecated('Use "autoPlayInterval" instead')
     this.interval,
     @Deprecated('Use "autoPlayAnimationDuration" instead')
     this.autoPlayDuration,
@@ -126,6 +127,9 @@ class CarouselSlider extends StatefulWidget {
   /// creating a feeling of depth in the carousel.
   /// Defaults to false.
   final bool enlargeCenterPage;
+
+  /// Scroll direction of this carousel.
+  final Axis scrollDirection;
 
   /// (Deprecated, use [onPageChanged] instead) Changed for ambiguous intent.
   /// 'updateCallback' provided no information on when the callback was called.
@@ -234,6 +238,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return getWrapper(PageView.builder(
+      scrollDirection: widget.scrollDirection,
       onPageChanged: (int index) {
         currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
         if (widget.onPageChanged != null) widget.onPageChanged(currentPage);
