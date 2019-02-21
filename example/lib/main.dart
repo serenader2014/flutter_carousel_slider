@@ -218,6 +218,30 @@ class CarouselDemo extends StatelessWidget {
       ).toList(),
     );
 
+    final CarouselSlider verticalScrollCarousel = CarouselSlider(
+      scrollDirection: Axis.vertical,
+      aspectRatio: 2.0,
+      autoPlay: true,
+      enlargeCenterPage: true,
+      viewportFraction: 0.9,
+      pauseAutoPlayOnTouch: Duration(seconds: 3),
+      items: imgList.map(
+            (url) {
+          return Container(
+            margin: EdgeInsets.all(5.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+                width: 1000.0,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+
     return MaterialApp(
       title: 'demo',
       home: Scaffold(
@@ -258,6 +282,12 @@ class CarouselDemo extends StatelessWidget {
               child: Column(children: [
                 Text('Pause When Touched Carousel'),
                 touchDetectionDemo,
+              ])),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: Column(children: [
+                Text('Vertical scroll carousel'),
+                verticalScrollCarousel,
               ])),
         ]),
       ),
