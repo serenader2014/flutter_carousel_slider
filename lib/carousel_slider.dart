@@ -268,7 +268,13 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
               final double distortionValue =
                   widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
 
-              return Center(child: SizedBox(height: distortionValue * height, child: child));
+              if (widget.scrollDirection == Axis.vertical) {
+                // When scroll vertically, make the horizontal axis scaling.
+                final width = height * widget.aspectRatio;
+                return Center(child: SizedBox(width: distortionValue * width, child: child));
+              } else {
+                return Center(child: SizedBox(height: distortionValue * height, child: child));
+              }
             },
             child: widget.items[index]);
       },
