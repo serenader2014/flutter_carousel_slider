@@ -226,6 +226,54 @@ class CarouselDemo extends StatelessWidget {
       viewportFraction: 0.9,
       pauseAutoPlayOnTouch: Duration(seconds: 3),
       items: imgList.map(
+        (url) {
+          return Container(
+            margin: EdgeInsets.all(5.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+                width: 1000.0,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+
+    final CarouselSlider mainAxisSizeHorizontal = CarouselSlider(
+      scrollDirection: Axis.horizontal,
+      aspectRatio: 2.0,
+      autoPlay: true,
+      enlargeCenterPage: true,
+      viewportFraction: 0.8,
+      mainAxisSize: 200,
+      items: imgList.map(
+        (url) {
+          return Container(
+            margin: EdgeInsets.all(5.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+                width: 1000.0,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+
+    final CarouselSlider mainAxisSizeVertical = CarouselSlider(
+      scrollDirection: Axis.vertical,
+      aspectRatio: 2.0,
+      autoPlay: true,
+      enlargeCenterPage: true,
+      viewportFraction: 0.8,
+      mainAxisSize: 200,
+      items: imgList.map(
             (url) {
           return Container(
             margin: EdgeInsets.all(5.0),
@@ -288,6 +336,18 @@ class CarouselDemo extends StatelessWidget {
               child: Column(children: [
                 Text('Vertical scroll carousel'),
                 verticalScrollCarousel,
+              ])),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: Column(children: [
+                Text('MainAxisSize: 200(horizontal)'),
+                mainAxisSizeHorizontal,
+              ])),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: Column(children: [
+                Text('MainAxisSize: 200(vertical)'),
+                mainAxisSizeVertical,
               ])),
         ]),
       ),

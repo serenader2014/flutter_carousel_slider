@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class CarouselSlider extends StatefulWidget {
   CarouselSlider({
     @required this.items,
-    this.height,
+    this.mainAxisSize,
     this.aspectRatio: 16 / 9,
     this.viewportFraction: 0.8,
     this.initialPage: 0,
@@ -46,8 +46,8 @@ class CarouselSlider extends StatefulWidget {
   /// The widgets to be shown in the carousel.
   final List<Widget> items;
 
-  /// Set carousel height and overrides any existing [aspectRatio].
-  final double height;
+  /// When scroll horizontally, the mainAxisSize represents the width, otherwise the height.
+  final double mainAxisSize;
 
   /// Aspect ratio is used if no height have been declared.
   /// Defaults to 16:9 aspect ratio.
@@ -181,6 +181,19 @@ class CarouselSlider extends StatefulWidget {
         duration: duration, curve: curve);
   }
 
+  double getCrossAxisSize(BuildContext context) {
+      assert(aspectRatio > 0, "Aspect ratio must greater than zero.");
+      if (scrollDirection == Axis.horizontal) {
+        return mainAxisSize != null
+            ? mainAxisSize / aspectRatio
+            : MediaQuery.of(context).size.width / aspectRatio;
+      } else {
+        return mainAxisSize != null
+            ? mainAxisSize * aspectRatio
+            : MediaQuery.of(context).size.width;
+      }
+  }
+
   @override
   _CarouselSliderState createState() => _CarouselSliderState();
 }
@@ -212,9 +225,14 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
     });
   }
 
-  Widget getWrapper(Widget child) {
-    if (widget.height != null) {
-      final Widget wrapper = Container(height: widget.height, child: child);
+  Widget getWrapper(BuildContext context, Widget child) {
+    if (widget.mainAxisSize != null) {
+      Widget wrapper;
+      if (widget.scrollDirection == Axis.horizontal) {
+        wrapper = Container(width: widget.mainAxisSize, height: widget.getCrossAxisSize(context), child: child);
+      } else {
+        wrapper = Container(width: widget.getCrossAxisSize(context), height: widget.mainAxisSize, child: child);
+      }
       return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
           ? addGestureDetection(wrapper)
           : wrapper;
@@ -237,7 +255,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return getWrapper(PageView.builder(
+    return getWrapper(context, PageView.builder(
       scrollDirection: widget.scrollDirection,
       onPageChanged: (int index) {
         currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
@@ -263,17 +281,13 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
               double value = widget.pageController.page - i;
               value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
-              final double height =
-                  widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
               final double distortionValue =
                   widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
 
               if (widget.scrollDirection == Axis.vertical) {
-                // When scroll vertically, make the horizontal axis scaling.
-                final width = height * widget.aspectRatio;
-                return Center(child: SizedBox(width: distortionValue * width, child: child));
+                return Center(child: SizedBox(width: distortionValue * widget.getCrossAxisSize(context), child: child));
               } else {
-                return Center(child: SizedBox(height: distortionValue * height, child: child));
+                return Center(child: SizedBox(height: distortionValue * widget.getCrossAxisSize(context), child: child));
               }
             },
             child: widget.items[index]);
