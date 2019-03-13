@@ -4,7 +4,7 @@ A carousel slider widget, support infinite scroll and custom child widget, with 
 
 ## Installation
 
-Add `carousel_slider: ^1.1.0` in your `pubspec.yaml` dependencies. And import it:
+Add `carousel_slider: ^1.2.0` in your `pubspec.yaml` dependencies. And import it:
 
 ```dart
 import 'package:carousel_slider/carousel_slider.dart';
@@ -44,6 +44,7 @@ CarouselSlider(
    aspectRatio: 16/9,
    viewportFraction: 0.8,
    initialPage: 0,
+   enableInfiniteScroll: true,
    reverse: false,
    autoPlay: true,
    autoPlayInterval: Duration(seconds: 3),
@@ -52,6 +53,7 @@ CarouselSlider(
    pauseAutoPlayOnTouch: Duration(seconds: 10),
    enlargeCenterPage: true,
    onPageChanged: callbackFunction,
+   scrollDirection: Axis.horizontal,
  )
 ```
 
@@ -158,6 +160,11 @@ if touched again during the time out the timer is reset to the duration passed t
 
 This feature can be useful if you want users to be able to interact with the screen and not have the pages continue sliding, forcing the user to repeatedly swipe back.
 One such example could be a commercial advertisement where the customers can react to something they like.
+
+### Can I disable the infinite loop mode?
+
+Yes. This was added by popular demand in patch `1.2.0`.  
+Just set the constructor argument `enableInfiniteScroll` to false.
 
 ##
 

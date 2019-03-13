@@ -218,6 +218,17 @@ class CarouselDemo extends StatelessWidget {
       ).toList(),
     );
 
+    //Non-looping manual Carousel
+    final CarouselSlider nonLoopingCarousel = CarouselSlider(
+      items: child,
+      enableInfiniteScroll: false,
+      autoPlay: false,
+      enlargeCenterPage: true,
+      viewportFraction: 0.9,
+      aspectRatio: 2.0,
+      );
+
+    //Vertical carousel
     final CarouselSlider verticalScrollCarousel = CarouselSlider(
       scrollDirection: Axis.vertical,
       aspectRatio: 2.0,
@@ -226,7 +237,7 @@ class CarouselDemo extends StatelessWidget {
       viewportFraction: 0.9,
       pauseAutoPlayOnTouch: Duration(seconds: 3),
       items: imgList.map(
-            (url) {
+        (url) {
           return Container(
             margin: EdgeInsets.all(5.0),
             child: ClipRRect(
@@ -282,6 +293,12 @@ class CarouselDemo extends StatelessWidget {
               child: Column(children: [
                 Text('Pause When Touched Carousel'),
                 touchDetectionDemo,
+              ])),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0),
+              child: Column(children: [
+                Text('No infinity scroll carousel'),
+                nonLoopingCarousel,
               ])),
           Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0),

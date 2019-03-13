@@ -37,3 +37,12 @@ Refactored ambiguous property names and deprecated the old ones.
 Updated example project displaying the new feature and refactored the code to follow flutters style guidelines.
 
 Updated .readme
+
+# 1.2.0
+
+Introducing two new features,
+Vertical scroll and enable/disable infinite scroll .
+
+Pass an `Axis` as the `scrollDirection` argument to specify direction.  
+Use `enableInfiniteScroll` to toggle between finite and infinite scroll mode.
+When `enableInfiniteScroll` is set to `false` the carousel will not scroll past the first or last item.

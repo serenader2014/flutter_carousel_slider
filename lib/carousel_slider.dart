@@ -12,7 +12,8 @@ class CarouselSlider extends StatefulWidget {
     this.aspectRatio: 16 / 9,
     this.viewportFraction: 0.8,
     this.initialPage: 0,
-    this.realPage: 10000,
+    int realPage: 10000,
+    this.enableInfiniteScroll: true,
     this.reverse: false,
     this.autoPlay: false,
     Duration autoPlayInterval,
@@ -20,27 +21,29 @@ class CarouselSlider extends StatefulWidget {
     this.autoPlayCurve: Curves.fastOutSlowIn,
     this.pauseAutoPlayOnTouch,
     bool enlargeCenterPage,
-    Function onPageChanged,
+    Function(int index) onPageChanged,
     this.scrollDirection: Axis.horizontal,
-    @Deprecated('Use "autoPlayInterval" instead')
-    this.interval,
-    @Deprecated('Use "autoPlayAnimationDuration" instead')
-    this.autoPlayDuration,
-    @Deprecated('Use "enlargeCenterPage" instead')
-    this.distortion,
-    @Deprecated('Use "onPageChanged" instead')
-    this.updateCallback,
-  })  : assert(autoPlayInterval == null || interval == null, 'use autoPlayInterval (preferable) or interval (deprecated), but not both.'),
-        assert(autoPlayAnimationDuration == null || autoPlayDuration == null, 'use autoPlayAnimationDuration (preferable) or autoPlayDuration (deprecated), but not both.'),
-        assert(enlargeCenterPage == null || distortion == null, 'use enlargeCenterPage (preferable) or distortion (deprecated), but not both.'),
-        assert(onPageChanged == null || updateCallback == null, 'use onPageChanged (preferable) or updateCallback (deprecated), but not both.'),
+    @Deprecated('Use "autoPlayInterval" instead') this.interval,
+    @Deprecated('Use "autoPlayAnimationDuration" instead') this.autoPlayDuration,
+    @Deprecated('Use "enlargeCenterPage" instead') this.distortion,
+    @Deprecated('Use "onPageChanged" instead') this.updateCallback,
+  })  : assert(autoPlayInterval == null || interval == null,
+            'use autoPlayInterval (preferable) or interval (deprecated), but not both.'),
+        assert(autoPlayAnimationDuration == null || autoPlayDuration == null,
+            'use autoPlayAnimationDuration (preferable) or autoPlayDuration (deprecated), but not both.'),
+        assert(enlargeCenterPage == null || distortion == null,
+            'use enlargeCenterPage (preferable) or distortion (deprecated), but not both.'),
+        assert(onPageChanged == null || updateCallback == null,
+            'use onPageChanged (preferable) or updateCallback (deprecated), but not both.'),
         this.autoPlayInterval = (autoPlayInterval ?? interval) ?? const Duration(seconds: 4),
         this.enlargeCenterPage = (enlargeCenterPage ?? distortion) ?? false,
-        this.autoPlayAnimationDuration =(autoPlayAnimationDuration ?? autoPlayDuration) ?? const Duration(milliseconds: 800),
+        this.autoPlayAnimationDuration =
+            (autoPlayAnimationDuration ?? autoPlayDuration) ?? const Duration(milliseconds: 800),
         this.onPageChanged = onPageChanged ?? updateCallback,
+        this.realPage = enableInfiniteScroll ? realPage + initialPage : initialPage,
         this.pageController = PageController(
           viewportFraction: viewportFraction,
-          initialPage: realPage + initialPage,
+          initialPage: enableInfiniteScroll ? realPage + initialPage : initialPage,
         );
 
   /// The widgets to be shown in the carousel.
@@ -50,31 +53,45 @@ class CarouselSlider extends StatefulWidget {
   final double height;
 
   /// Aspect ratio is used if no height have been declared.
+  ///
   /// Defaults to 16:9 aspect ratio.
   final double aspectRatio;
 
   /// The fraction of the viewport that each page should occupy.
+  ///
   /// Defaults to 0.8, which means each page fills 80% of the carousel.
   final num viewportFraction;
 
-  /// The page to show when first creating the [CarouselSlider].
+  /// The initial page to show when first creating the [CarouselSlider].
+  ///
   /// Defaults to 0.
   final num initialPage;
 
   /// The actual index of the [PageView].
+  ///
+  /// This value can be ignored unless you know the carousel will be scrolled
+  /// backwards more then 10000 pages.
   /// Defaults to 10000 to simulate infinite backwards scrolling.
   final num realPage;
 
+  ///Determines if carousel should loop infinitely or be limited to item length.
+  ///
+  ///Defaults to true, i.e. infinite loop.
+  final bool enableInfiniteScroll;
+
   /// Reverse the order of items if set to true.
+  ///
   /// Defaults to false.
   final bool reverse;
 
   /// Enables auto play, sliding one page at a time.
+  ///
   /// Use [autoPlayInterval] to determent the frequency of slides.
   /// Defaults to false.
   final bool autoPlay;
 
   /// Sets Duration to determent the frequency of slides when
+  ///
   /// [autoPlay] is set to true.
   /// Defaults to 4 seconds.
   final Duration autoPlayInterval;
@@ -100,15 +117,18 @@ class CarouselSlider extends StatefulWidget {
   final Duration autoPlayDuration;
 
   /// The animation duration between two transitioning pages while in auto playback.
+  ///
   /// Defaults to 800 ms.
   final Duration autoPlayAnimationDuration;
 
   /// Determines the animation curve physics.
+  ///
   /// Defaults to [Curves.fastOutSlowIn].
   final Curve autoPlayCurve;
 
   /// Sets a timer on touch detected that pause the auto play with
   /// the given [Duration].
+  ///
   /// Touch Detection is only active if [autoPlay] is true.
   final Duration pauseAutoPlayOnTouch;
 
@@ -125,10 +145,13 @@ class CarouselSlider extends StatefulWidget {
 
   /// Determines if current page should be larger then the side images,
   /// creating a feeling of depth in the carousel.
+  ///
   /// Defaults to false.
   final bool enlargeCenterPage;
 
-  /// Scroll direction of this carousel.
+  /// The axis along which the page view scrolls.
+  ///
+  /// Defaults to [Axis.horizontal].
   final Axis scrollDirection;
 
   /// (Deprecated, use [onPageChanged] instead) Changed for ambiguous intent.
@@ -140,7 +163,7 @@ class CarouselSlider extends StatefulWidget {
   final Function updateCallback;
 
   /// Called whenever the page in the center of the viewport changes.
-  final Function onPageChanged;
+  final Function(int index) onPageChanged;
 
   /// [pageController] is created using the properties passed to the constructor
   /// and can be used to control the [PageView] it is passed to.
@@ -186,13 +209,11 @@ class CarouselSlider extends StatefulWidget {
 }
 
 class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
-  int currentPage;
   Timer timer;
 
   @override
   void initState() {
     super.initState();
-    currentPage = widget.initialPage;
     timer = getTimer();
   }
 
@@ -208,7 +229,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   void pauseOnTouch() {
     timer.cancel();
     timer = Timer(widget.pauseAutoPlayOnTouch, () {
-        timer = getTimer();
+      timer = getTimer();
     });
   }
 
@@ -239,38 +260,43 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   Widget build(BuildContext context) {
     return getWrapper(PageView.builder(
       scrollDirection: widget.scrollDirection,
-      onPageChanged: (int index) {
-        currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
-        if (widget.onPageChanged != null) widget.onPageChanged(currentPage);
-      },
       controller: widget.pageController,
       reverse: widget.reverse,
+      itemCount: widget.enableInfiniteScroll ? null : widget.items.length,
+      onPageChanged: (int index) {
+        int currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
+        if (widget.onPageChanged != null) {
+          widget.onPageChanged(currentPage);
+        }
+      },
       itemBuilder: (BuildContext context, int i) {
-        final int index = _getRealIndex(i, widget.realPage, widget.items.length);
+        final int index =
+            _getRealIndex(i + widget.initialPage, widget.realPage, widget.items.length);
 
         return AnimatedBuilder(
-            animation: widget.pageController,
-            builder: (BuildContext context, child) {
-              // on the first render, the pageController.page is null,
-              // this is a dirty hack
-              if (widget.pageController.position.minScrollExtent == null ||
-                  widget.pageController.position.maxScrollExtent == null) {
-                Future.delayed(Duration(microseconds: 1), () {
-                  setState(() {});
-                });
-                return Container();
-              }
-              double value = widget.pageController.page - i;
-              value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
+          animation: widget.pageController,
+          child: widget.items[index],
+          builder: (BuildContext context, child) {
+            // on the first render, the pageController.page is null,
+            // this is a dirty hack
+            if (widget.pageController.position.minScrollExtent == null ||
+                widget.pageController.position.maxScrollExtent == null) {
+              Future.delayed(Duration(microseconds: 1), () {
+                setState(() {});
+              });
+              return Container();
+            }
+            double value = widget.pageController.page - i;
+            value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
-              final double height =
-                  widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
-              final double distortionValue =
-                  widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
+            final double height =
+                widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+            final double distortionValue =
+                widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
 
-              return Center(child: SizedBox(height: distortionValue * height, child: child));
-            },
-            child: widget.items[index]);
+            return Center(child: SizedBox(height: distortionValue * height, child: child));
+          },
+        );
       },
     ));
   }
