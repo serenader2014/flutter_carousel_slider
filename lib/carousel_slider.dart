@@ -11,6 +11,7 @@ class CarouselSlider extends StatefulWidget {
     this.height,
     this.aspectRatio: 16 / 9,
     this.viewportFraction: 0.8,
+    this.itemWidth,
     this.initialPage: 0,
     int realPage: 10000,
     this.enableInfiniteScroll: true,
@@ -61,7 +62,10 @@ class CarouselSlider extends StatefulWidget {
   ///
   /// Defaults to 0.8, which means each page fills 80% of the carousel.
   final num viewportFraction;
-
+  
+  /// The absolute width of each item inside its page.
+  final double itemWidth;
+  
   /// The initial page to show when first creating the [CarouselSlider].
   ///
   /// Defaults to 0.
@@ -291,10 +295,12 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
 
             final double height =
                 widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+            final double width =
+                widget.itemWidth ?? MediaQuery.of(context).size.width;
             final double distortionValue =
                 widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
 
-            return Center(child: SizedBox(height: distortionValue * height, child: child));
+            return Center(child: SizedBox(height: distortionValue * height, width: width, child: child));
           },
         );
       },
