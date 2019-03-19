@@ -21,25 +21,12 @@ class CarouselSlider extends StatefulWidget {
     this.autoPlayCurve: Curves.fastOutSlowIn,
     this.pauseAutoPlayOnTouch,
     bool enlargeCenterPage,
-    Function(int index) onPageChanged,
-    this.scrollDirection: Axis.horizontal,
-    @Deprecated('Use "autoPlayInterval" instead') this.interval,
-    @Deprecated('Use "autoPlayAnimationDuration" instead') this.autoPlayDuration,
-    @Deprecated('Use "enlargeCenterPage" instead') this.distortion,
-    @Deprecated('Use "onPageChanged" instead') this.updateCallback,
-  })  : assert(autoPlayInterval == null || interval == null,
-            'use autoPlayInterval (preferable) or interval (deprecated), but not both.'),
-        assert(autoPlayAnimationDuration == null || autoPlayDuration == null,
-            'use autoPlayAnimationDuration (preferable) or autoPlayDuration (deprecated), but not both.'),
-        assert(enlargeCenterPage == null || distortion == null,
-            'use enlargeCenterPage (preferable) or distortion (deprecated), but not both.'),
-        assert(onPageChanged == null || updateCallback == null,
-            'use onPageChanged (preferable) or updateCallback (deprecated), but not both.'),
-        this.autoPlayInterval = (autoPlayInterval ?? interval) ?? const Duration(seconds: 4),
-        this.enlargeCenterPage = (enlargeCenterPage ?? distortion) ?? false,
+    this.onPageChanged,
+    this.scrollDirection: Axis.horizontal
+  })  : this.autoPlayInterval = autoPlayInterval ?? const Duration(seconds: 4),
+        this.enlargeCenterPage = enlargeCenterPage ?? false,
         this.autoPlayAnimationDuration =
-            (autoPlayAnimationDuration ?? autoPlayDuration) ?? const Duration(milliseconds: 800),
-        this.onPageChanged = onPageChanged ?? updateCallback,
+            autoPlayAnimationDuration ?? const Duration(milliseconds: 800),
         this.realPage = enableInfiniteScroll ? realPage + initialPage : initialPage,
         this.pageController = PageController(
           viewportFraction: viewportFraction,
@@ -96,26 +83,6 @@ class CarouselSlider extends StatefulWidget {
   /// Defaults to 4 seconds.
   final Duration autoPlayInterval;
 
-  /// (Deprecated, use [autoPlayInterval] instead) Changed for ambiguous intent.
-  /// interval did not explain what the variable was used for.
-  /// Changing it to [autoPlayInterval] describes where it's used and for what.
-  ///
-  /// Sets Duration to determent the frequency of slides when
-  /// [autoPlay] is set to true.
-  /// Defaults to 4 seconds.
-  @deprecated
-  final Duration interval;
-
-  /// (Deprecated, use [autoPlayAnimationDuration] instead) Changed for misleading intent.
-  /// 'autoPlayDuration' implies reference to the duration of the entire auto play instance.
-  /// Changed to 'autoPlayAnimationDuration' to sympathize its referring to the length of
-  /// the animation between the page transitions.
-  ///
-  /// The animation duration between two transitioning pages while in auto playback.
-  /// Defaults to 800 ms.
-  @deprecated
-  final Duration autoPlayDuration;
-
   /// The animation duration between two transitioning pages while in auto playback.
   ///
   /// Defaults to 800 ms.
@@ -132,17 +99,6 @@ class CarouselSlider extends StatefulWidget {
   /// Touch Detection is only active if [autoPlay] is true.
   final Duration pauseAutoPlayOnTouch;
 
-  /// (Deprecated, use [enlargeCenterPage] instead) Changed for ambiguous intent.
-  /// 'distortion' provided no information on how the image was distorted.
-  /// [enlargeCenterPage] is self documenting, thus making it easier to understand
-  /// the api.
-  ///
-  /// Determines if current page should be larger then the side images,
-  /// creating a feeling of depth in the carousel.
-  /// Defaults to false.
-  @deprecated
-  final bool distortion;
-
   /// Determines if current page should be larger then the side images,
   /// creating a feeling of depth in the carousel.
   ///
@@ -153,14 +109,6 @@ class CarouselSlider extends StatefulWidget {
   ///
   /// Defaults to [Axis.horizontal].
   final Axis scrollDirection;
-
-  /// (Deprecated, use [onPageChanged] instead) Changed for ambiguous intent.
-  /// 'updateCallback' provided no information on when the callback was called.
-  /// Refactored to following the [PageView] naming convention.
-  ///
-  /// Called whenever the page in the center of the viewport changes.
-  @deprecated
-  final Function updateCallback;
 
   /// Called whenever the page in the center of the viewport changes.
   final Function(int index) onPageChanged;
@@ -294,7 +242,11 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
             final double distortionValue =
                 widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
 
-            return Center(child: SizedBox(height: distortionValue * height, child: child));
+            if (widget.scrollDirection == Axis.horizontal) {
+              return Center(child: SizedBox(height: distortionValue * height, child: child));
+            } else {
+              return Center(child: SizedBox(width: distortionValue * MediaQuery.of(context).size.width, child: child));
+            }
           },
         );
       },

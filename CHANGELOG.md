@@ -46,3 +46,13 @@ Vertical scroll and enable/disable infinite scroll .
 Pass an `Axis` as the `scrollDirection` argument to specify direction.  
 Use `enableInfiniteScroll` to toggle between finite and infinite scroll mode.
 When `enableInfiniteScroll` is set to `false` the carousel will not scroll past the first or last item.
+
+# 1.3.0
+
+## Breaking change
+
+- Remove the deprecated param: `interval`, `autoPlayDuration`, `distortion`, `updateCallback`. Please use the new param.
+
+## Bugfix
+
+-  Fix `enlargeCenterPage` option is not working in `vertical` carousel slider.
