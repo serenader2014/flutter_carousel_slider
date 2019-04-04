@@ -6,28 +6,24 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CarouselSlider extends StatefulWidget {
-  CarouselSlider({
-    @required this.items,
-    this.height,
-    this.aspectRatio: 16 / 9,
-    this.viewportFraction: 0.8,
-    this.initialPage: 0,
-    int realPage: 10000,
-    this.enableInfiniteScroll: true,
-    this.reverse: false,
-    this.autoPlay: false,
-    Duration autoPlayInterval,
-    Duration autoPlayAnimationDuration,
-    this.autoPlayCurve: Curves.fastOutSlowIn,
-    this.pauseAutoPlayOnTouch,
-    bool enlargeCenterPage,
-    this.onPageChanged,
-    this.scrollDirection: Axis.horizontal
-  })  : this.autoPlayInterval = autoPlayInterval ?? const Duration(seconds: 4),
-        this.enlargeCenterPage = enlargeCenterPage ?? false,
-        this.autoPlayAnimationDuration =
-            autoPlayAnimationDuration ?? const Duration(milliseconds: 800),
-        this.realPage = enableInfiniteScroll ? realPage + initialPage : initialPage,
+  CarouselSlider(
+      {@required this.items,
+      this.height,
+      this.aspectRatio: 16 / 9,
+      this.viewportFraction: 0.8,
+      this.initialPage: 0,
+      int realPage: 10000,
+      this.enableInfiniteScroll: true,
+      this.reverse: false,
+      this.autoPlay: false,
+      this.autoPlayInterval: const Duration(seconds: 4),
+      this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+      this.autoPlayCurve: Curves.fastOutSlowIn,
+      this.pauseAutoPlayOnTouch,
+      this.enlargeCenterPage = false,
+      this.onPageChanged,
+      this.scrollDirection: Axis.horizontal})
+      : this.realPage = enableInfiniteScroll ? realPage + initialPage : initialPage,
         this.pageController = PageController(
           viewportFraction: viewportFraction,
           initialPage: enableInfiniteScroll ? realPage + initialPage : initialPage,
@@ -245,7 +241,9 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
             if (widget.scrollDirection == Axis.horizontal) {
               return Center(child: SizedBox(height: distortionValue * height, child: child));
             } else {
-              return Center(child: SizedBox(width: distortionValue * MediaQuery.of(context).size.width, child: child));
+              return Center(
+                  child: SizedBox(
+                      width: distortionValue * MediaQuery.of(context).size.width, child: child));
             }
           },
         );
