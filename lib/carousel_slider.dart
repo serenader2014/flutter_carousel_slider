@@ -154,11 +154,13 @@ class CarouselSlider extends StatefulWidget {
 
 class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
   Timer timer;
+  double _page;
 
   @override
   void initState() {
     super.initState();
     timer = getTimer();
+    _page = (widget.enableInfiniteScroll ? widget.realPage + widget.initialPage : widget.initialPage).toDouble();
   }
 
   Timer getTimer() {
@@ -202,52 +204,52 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return getWrapper(PageView.builder(
-      scrollDirection: widget.scrollDirection,
-      controller: widget.pageController,
-      reverse: widget.reverse,
-      itemCount: widget.enableInfiniteScroll ? null : widget.items.length,
-      onPageChanged: (int index) {
-        int currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
-        if (widget.onPageChanged != null) {
-          widget.onPageChanged(currentPage);
+    return getWrapper(NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification notification) {
+        if (notification is ScrollUpdateNotification) {
+          setState(() {
+            _page = widget.pageController.page;
+          });
         }
       },
-      itemBuilder: (BuildContext context, int i) {
-        final int index =
-            _getRealIndex(i + widget.initialPage, widget.realPage, widget.items.length);
+      child: PageView.builder(
+        scrollDirection: widget.scrollDirection,
+        controller: widget.pageController,
+        reverse: widget.reverse,
+        itemCount: widget.enableInfiniteScroll ? null : widget.items.length,
+        onPageChanged: (int index) {
+          int currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
+          if (widget.onPageChanged != null) {
+            widget.onPageChanged(currentPage);
+          }
+        },
+        itemBuilder: (BuildContext context, int i) {
+          final int index =
+              _getRealIndex(i + widget.initialPage, widget.realPage, widget.items.length);
 
-        return AnimatedBuilder(
-          animation: widget.pageController,
-          child: widget.items[index],
-          builder: (BuildContext context, child) {
-            // on the first render, the pageController.page is null,
-            // this is a dirty hack
-            if (widget.pageController.position.minScrollExtent == null ||
-                widget.pageController.position.maxScrollExtent == null) {
-              Future.delayed(Duration(microseconds: 1), () {
-                setState(() {});
-              });
-              return Container();
-            }
-            double value = widget.pageController.page - i;
-            value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
+          return AnimatedBuilder(
+            animation: widget.pageController,
+            child: widget.items[index],
+            builder: (BuildContext context, child) {
+              double value = _page - i;
+              value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
-            final double height =
-                widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
-            final double distortionValue =
-                widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
+              final double height =
+                  widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+              final double distortionValue =
+                  widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
 
-            if (widget.scrollDirection == Axis.horizontal) {
-              return Center(child: SizedBox(height: distortionValue * height, child: child));
-            } else {
-              return Center(
-                  child: SizedBox(
-                      width: distortionValue * MediaQuery.of(context).size.width, child: child));
-            }
-          },
-        );
-      },
+              if (widget.scrollDirection == Axis.horizontal) {
+                return Center(child: SizedBox(height: distortionValue * height, child: child));
+              } else {
+                return Center(
+                    child: SizedBox(
+                        width: distortionValue * MediaQuery.of(context).size.width, child: child));
+              }
+            },
+          );
+        },
+      ),
     ));
   }
 }
