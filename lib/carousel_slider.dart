@@ -14,6 +14,7 @@ class CarouselSlider extends StatefulWidget {
       this.initialPage: 0,
       int realPage: 10000,
       this.enableInfiniteScroll: true,
+      this.enableScroll: true,
       this.reverse: false,
       this.autoPlay: false,
       this.autoPlayInterval: const Duration(seconds: 4),
@@ -61,6 +62,11 @@ class CarouselSlider extends StatefulWidget {
   ///
   ///Defaults to true, i.e. infinite loop.
   final bool enableInfiniteScroll;
+
+  ///Determines if carousel should be scrollable by user.
+  ///
+  ///Defaults to true, i.e. scroll always allowed.
+  final bool enableScroll;
 
   /// Reverse the order of items if set to true.
   ///
@@ -206,6 +212,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
       scrollDirection: widget.scrollDirection,
       controller: widget.pageController,
       reverse: widget.reverse,
+      physics: widget.enableScroll ? null : NeverScrollableScrollPhysics(),
       itemCount: widget.enableInfiniteScroll ? null : widget.items.length,
       onPageChanged: (int index) {
         int currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
