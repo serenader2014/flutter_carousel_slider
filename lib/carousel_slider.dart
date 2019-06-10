@@ -215,7 +215,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
       },
       itemBuilder: (BuildContext context, int i) {
         final int index =
-            _getRealIndex(i + widget.initialPage, widget.realPage, widget.items.length);
+            _getRealIndex(i, widget.realPage, widget.items.length);
 
         return AnimatedBuilder(
           animation: widget.pageController,
