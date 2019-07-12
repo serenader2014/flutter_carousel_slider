@@ -208,7 +208,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
       reverse: widget.reverse,
       itemCount: widget.enableInfiniteScroll ? null : widget.items.length,
       onPageChanged: (int index) {
-        int currentPage = _getRealIndex(index, widget.realPage, widget.items.length);
+        int currentPage = _getRealIndex(index + widget.initialPage, widget.realPage, widget.items.length);
         if (widget.onPageChanged != null) {
           widget.onPageChanged(currentPage);
         }
