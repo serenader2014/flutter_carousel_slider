@@ -22,6 +22,7 @@ class CarouselSlider extends StatefulWidget {
       this.pauseAutoPlayOnTouch,
       this.enlargeCenterPage = false,
       this.onPageChanged,
+        this.scrollPhysics,
       this.scrollDirection: Axis.horizontal})
       : this.realPage = enableInfiniteScroll ? realPage + initialPage : initialPage,
         this.pageController = PageController(
@@ -108,6 +109,17 @@ class CarouselSlider extends StatefulWidget {
 
   /// Called whenever the page in the center of the viewport changes.
   final Function(int index) onPageChanged;
+
+  /// How the carousel should respond to user input.
+  ///
+  /// For example, determines how the items continues to animate after the
+  /// user stops dragging the page view.
+  ///
+  /// The physics are modified to snap to page boundaries using
+  /// [PageScrollPhysics] prior to being used.
+  ///
+  /// Defaults to matching platform conventions.
+  final ScrollPhysics scrollPhysics;
 
   /// [pageController] is created using the properties passed to the constructor
   /// and can be used to control the [PageView] it is passed to.
@@ -203,6 +215,7 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return getWrapper(PageView.builder(
+      physics: widget.scrollPhysics,
       scrollDirection: widget.scrollDirection,
       controller: widget.pageController,
       reverse: widget.reverse,

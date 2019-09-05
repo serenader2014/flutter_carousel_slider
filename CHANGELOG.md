@@ -56,3 +56,9 @@ When `enableInfiniteScroll` is set to `false` the carousel will not scroll past 
 ## Bugfix
 
 -  Fix `enlargeCenterPage` option is not working in `vertical` carousel slider.
+
+## 1.3.1
+
+Fixed onPage indexing bug
+
+Added scroll physics option

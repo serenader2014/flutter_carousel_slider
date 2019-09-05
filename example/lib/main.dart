@@ -221,6 +221,7 @@ class CarouselDemo extends StatelessWidget {
     //Non-looping manual Carousel
     final CarouselSlider nonLoopingCarousel = CarouselSlider(
       items: child,
+      scrollPhysics: BouncingScrollPhysics(),
       enableInfiniteScroll: false,
       autoPlay: false,
       enlargeCenterPage: true,
