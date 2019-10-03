@@ -30,7 +30,10 @@ final List child = map<Widget>(
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                  colors: [
+                    Color.fromARGB(200, 0, 0, 0),
+                    Color.fromARGB(0, 0, 0, 0)
+                  ],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                 ),
@@ -122,6 +125,7 @@ class CarouselDemo extends StatelessWidget {
       viewportFraction: 0.9,
       aspectRatio: 2.0,
       autoPlay: true,
+      autoPlayInterval: Duration(seconds: 1),
       enlargeCenterPage: true,
       items: imgList.map(
         (url) {
@@ -157,7 +161,8 @@ class CarouselDemo extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               child: RaisedButton(
                 onPressed: () => basicSlider.previousPage(
-                    duration: Duration(milliseconds: 300), curve: Curves.linear),
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.linear),
                 child: Text('prev slider'),
               ),
             ),
@@ -167,7 +172,8 @@ class CarouselDemo extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               child: RaisedButton(
                 onPressed: () => basicSlider.nextPage(
-                    duration: Duration(milliseconds: 300), curve: Curves.linear),
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.linear),
                 child: Text('next slider'),
               ),
             ),
@@ -199,8 +205,9 @@ class CarouselDemo extends StatelessWidget {
       viewportFraction: 0.9,
       aspectRatio: 2.0,
       autoPlay: true,
+      autoPlayInterval: Duration(seconds: 6),
+      pauseAutoPlayWhileTouching: true,
       enlargeCenterPage: true,
-      pauseAutoPlayOnTouch: Duration(seconds: 3),
       items: imgList.map(
         (url) {
           return Container(
@@ -236,7 +243,6 @@ class CarouselDemo extends StatelessWidget {
       autoPlay: true,
       enlargeCenterPage: true,
       viewportFraction: 0.9,
-      pauseAutoPlayOnTouch: Duration(seconds: 3),
       items: imgList.map(
         (url) {
           return Container(

@@ -9,3 +9,5 @@ build/
 ios/.generated/
 packages
 .flutter-plugins
+
+example/ios/Flutter/flutter_export_environment.sh
