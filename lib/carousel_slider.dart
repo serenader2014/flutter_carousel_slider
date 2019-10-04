@@ -283,10 +283,12 @@ class _CarouselSliderState extends State<CarouselSlider>
       onLongPressEnd: (_) => playOnTouchEnd(),
       child: child);
 
-  @override
+  @protected
+  @mustCallSuper
   void dispose() {
     super.dispose();
     timer?.cancel();
+    elapsedSecondsTimer?.cancel();
   }
 
   @override
