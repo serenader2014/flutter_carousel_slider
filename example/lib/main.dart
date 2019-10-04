@@ -125,7 +125,6 @@ class CarouselDemo extends StatelessWidget {
       viewportFraction: 0.9,
       aspectRatio: 2.0,
       autoPlay: true,
-      autoPlayInterval: Duration(seconds: 1),
       enlargeCenterPage: true,
       items: imgList.map(
         (url) {
