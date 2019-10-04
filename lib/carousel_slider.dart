@@ -173,6 +173,7 @@ class _CarouselSliderState extends State<CarouselSlider>
   Timer timer;
   Timer elapsedSecondsTimer;
   var elapsedSeconds;
+  var willDeactivate;
 
   @override
   void initState() {
@@ -180,6 +181,19 @@ class _CarouselSliderState extends State<CarouselSlider>
     timer = getTimer();
     elapsedSeconds = 0;
     elapsedSecondsTimer = getElapsedSecondsTimer();
+  }
+
+  @override
+  void deactivate() {
+    willDeactivate = true;
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    elapsedSecondsTimer?.cancel();
+    super.dispose();
   }
 
   Timer getTimer() {
@@ -238,6 +252,10 @@ class _CarouselSliderState extends State<CarouselSlider>
           duration: widget.autoPlayAnimationDuration,
           curve: widget.autoPlayCurve);
 
+      if (willDeactivate) {
+        return null;
+      }
+
       setState(() {
         elapsedSeconds = 0;
         elapsedSecondsTimer = getElapsedSecondsTimer();
@@ -282,14 +300,6 @@ class _CarouselSliderState extends State<CarouselSlider>
       onLongPress: () => pauseOnTouch(),
       onLongPressEnd: (_) => playOnTouchEnd(),
       child: child);
-
-  @protected
-  @mustCallSuper
-  void dispose() {
-    super.dispose();
-    timer?.cancel();
-    elapsedSecondsTimer?.cancel();
-  }
 
   @override
   Widget build(BuildContext context) {
