@@ -204,7 +204,7 @@ class _CarouselSliderState extends State<CarouselSlider>
 
     return Timer.periodic(widget.autoPlayInterval, (_) {
       if (widget.autoPlay) {
-        var shouldGoNext = (widget.items.length - 1) > (currentIndex + 1);
+        var shouldGoNext = (widget.items.length - 1) >= (currentIndex + 1);
         if (shouldGoNext) {
            widget.pageController.nextPage(
             duration: widget.autoPlayAnimationDuration,
