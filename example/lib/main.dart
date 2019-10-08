@@ -204,6 +204,7 @@ class CarouselDemo extends StatelessWidget {
       viewportFraction: 0.9,
       aspectRatio: 2.0,
       autoPlay: true,
+      enableInfiniteScroll: false,
       autoPlayInterval: Duration(seconds: 6),
       pauseAutoPlayWhileTouching: true,
       enlargeCenterPage: true,

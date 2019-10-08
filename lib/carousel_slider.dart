@@ -174,6 +174,7 @@ class _CarouselSliderState extends State<CarouselSlider>
   Timer elapsedSecondsTimer;
   var elapsedSeconds;
   var willDeactivate;
+  var currentIndex = 0;
 
   @override
   void initState() {
@@ -203,9 +204,12 @@ class _CarouselSliderState extends State<CarouselSlider>
 
     return Timer.periodic(widget.autoPlayInterval, (_) {
       if (widget.autoPlay) {
-        widget.pageController.nextPage(
+        var shouldGoNext = (widget.items.length - 1) > (currentIndex + 1);
+        if (shouldGoNext) {
+           widget.pageController.nextPage(
             duration: widget.autoPlayAnimationDuration,
-            curve: widget.autoPlayCurve);
+            curve: widget.autoPlayCurve); 
+        }       
       }
     });
   }
@@ -312,6 +316,11 @@ class _CarouselSliderState extends State<CarouselSlider>
       onPageChanged: (int index) {
         int currentPage = _getRealIndex(
             index + widget.initialPage, widget.realPage, widget.items.length);
+
+        setState(() {
+          currentIndex = currentPage;
+        });
+
         if (widget.onPageChanged != null) {
           widget.onPageChanged(currentPage);
           resetTimers();
