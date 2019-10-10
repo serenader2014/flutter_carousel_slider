@@ -20,6 +20,8 @@ class CarouselSlider extends StatefulWidget {
       this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
       this.autoPlayCurve: Curves.fastOutSlowIn,
       this.pauseAutoPlayWhileTouching,
+      this.onLongPress,
+      this.onLongPressEnd,
       this.enlargeCenterPage = false,
       this.onPageChanged,
       this.scrollPhysics,
@@ -94,6 +96,12 @@ class CarouselSlider extends StatefulWidget {
 
   /// Pauses the auto play while the user is touching the carousel area
   final bool pauseAutoPlayWhileTouching;
+
+  // Callback that executes on Gesture event onLongPress
+  final Function onLongPress;
+
+  // Callback that executes on Gesture event onLongPressEnd
+  final Function onLongPressEnd;
 
   /// Determines if current page should be larger then the side images,
   /// creating a feeling of depth in the carousel.
@@ -171,17 +179,16 @@ class CarouselSlider extends StatefulWidget {
 class _CarouselSliderState extends State<CarouselSlider>
     with TickerProviderStateMixin {
   Timer timer;
-  Timer elapsedSecondsTimer;
-  var elapsedSeconds;
-  var willDeactivate;
+  bool willDeactivate = false;
+  int timerUpdatedAt;
+  int cachedUsedMilliseconds;
   var currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    timerUpdatedAt = new DateTime.now().millisecondsSinceEpoch;
     timer = getTimer();
-    elapsedSeconds = 0;
-    elapsedSecondsTimer = getElapsedSecondsTimer();
   }
 
   @override
@@ -193,7 +200,6 @@ class _CarouselSliderState extends State<CarouselSlider>
   @override
   void dispose() {
     timer?.cancel();
-    elapsedSecondsTimer?.cancel();
     super.dispose();
   }
 
@@ -202,42 +208,32 @@ class _CarouselSliderState extends State<CarouselSlider>
       return null;
     }
 
-    return Timer.periodic(widget.autoPlayInterval, (_) {
+    int diffMilliseconds =
+        (new DateTime.now().millisecondsSinceEpoch) - timerUpdatedAt;
+    Duration timerDuration =
+        widget.autoPlayInterval - Duration(milliseconds: diffMilliseconds);
+    print('timerDuration');
+    print(timerDuration);
+
+    var timer = Timer.periodic(timerDuration, (_) {
       if (widget.autoPlay) {
         var shouldGoNext = (widget.items.length - 1) >= (currentIndex + 1);
         if (shouldGoNext) {
-           widget.pageController.nextPage(
-            duration: widget.autoPlayAnimationDuration,
-            curve: widget.autoPlayCurve); 
-        }       
+          widget.pageController.nextPage(
+              duration: widget.autoPlayAnimationDuration,
+              curve: widget.autoPlayCurve);
+        }
       }
     });
-  }
 
-  Timer getElapsedSecondsTimer() {
-    if ((widget.autoPlay == false) ||
-        (widget.pauseAutoPlayWhileTouching == null)) {
-      return null;
-    }
-
-    return Timer.periodic(Duration(seconds: 1), (_) {
-      var elapsedDuration = Duration(seconds: elapsedSeconds);
-      if (elapsedDuration >= widget.autoPlayInterval) {
-        return setState(() {
-          elapsedSeconds = 0;
-        });
-      }
-
-      setState(() {
-        elapsedSeconds++;
-      });
-    });
+    return timer;
   }
 
   void pauseOnTouch() {
     if (widget.pauseAutoPlayWhileTouching == true) {
+      cachedUsedMilliseconds =
+          (new DateTime.now().millisecondsSinceEpoch) - timerUpdatedAt;
       timer.cancel();
-      elapsedSecondsTimer.cancel();
     }
   }
 
@@ -248,8 +244,7 @@ class _CarouselSliderState extends State<CarouselSlider>
   }
 
   void resetAutoPlayTimer() {
-    Duration elapsedDuration = Duration(seconds: elapsedSeconds);
-    Duration untilNextPage = widget.autoPlayInterval - elapsedDuration;
+    Duration untilNextPage = widget.autoPlayInterval;
 
     Timer(untilNextPage, () {
       widget.pageController.nextPage(
@@ -257,30 +252,26 @@ class _CarouselSliderState extends State<CarouselSlider>
           curve: widget.autoPlayCurve);
 
       if (willDeactivate) {
-        return null;
+        return;
       }
 
       setState(() {
-        elapsedSeconds = 0;
-        elapsedSecondsTimer = getElapsedSecondsTimer();
+        timerUpdatedAt = (new DateTime.now().millisecondsSinceEpoch) -
+            cachedUsedMilliseconds;
         timer = getTimer();
       });
     });
   }
 
   void resetTimers() {
-    if ((widget.autoPlay == false) ||
-        (timer == null) ||
-        (elapsedSecondsTimer == null)) {
+    if ((widget.autoPlay == false) || timer == null) {
       return null;
     }
 
     timer.cancel();
-    elapsedSecondsTimer.cancel();
 
     setState(() {
-      elapsedSeconds = 0;
-      elapsedSecondsTimer = getElapsedSecondsTimer();
+      timerUpdatedAt = (new DateTime.now().millisecondsSinceEpoch);
       timer = getTimer();
     });
   }
@@ -301,8 +292,20 @@ class _CarouselSliderState extends State<CarouselSlider>
   }
 
   Widget addGestureDetection(Widget child) => GestureDetector(
-      onLongPress: () => pauseOnTouch(),
-      onLongPressEnd: (_) => playOnTouchEnd(),
+      onLongPress: () {
+        pauseOnTouch();
+
+        if (widget.onLongPress != null) {
+          widget.onLongPress();
+        }
+      },
+      onLongPressEnd: (_) {
+        playOnTouchEnd();
+
+        if (widget.onLongPressEnd != null) {
+          widget.onLongPressEnd();
+        }
+      },
       child: child);
 
   @override

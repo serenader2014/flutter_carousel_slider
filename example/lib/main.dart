@@ -264,7 +264,7 @@ class CarouselDemo extends StatelessWidget {
     CarouselSlider getFullScreenCarousel(BuildContext mediaContext) {
       return CarouselSlider(
         autoPlay: true,
-        viewportFraction: 1.0,
+        viewportFraction: 0.8,
         aspectRatio: MediaQuery.of(mediaContext).size.aspectRatio,
         items: imgList.map(
           (url) {
