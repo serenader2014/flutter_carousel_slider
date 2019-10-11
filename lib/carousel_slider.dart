@@ -244,22 +244,14 @@ class _CarouselSliderState extends State<CarouselSlider>
   }
 
   void resetAutoPlayTimer() {
-    Duration untilNextPage = widget.autoPlayInterval;
+    if (willDeactivate) {
+      return;
+    }
 
-    Timer(untilNextPage, () {
-      widget.pageController.nextPage(
-          duration: widget.autoPlayAnimationDuration,
-          curve: widget.autoPlayCurve);
-
-      if (willDeactivate) {
-        return;
-      }
-
-      setState(() {
-        timerUpdatedAt = (new DateTime.now().millisecondsSinceEpoch) -
-            cachedUsedMilliseconds;
-        timer = getTimer();
-      });
+    setState(() {
+      timerUpdatedAt = (new DateTime.now().millisecondsSinceEpoch) -
+          cachedUsedMilliseconds;
+      timer = getTimer();
     });
   }
 
