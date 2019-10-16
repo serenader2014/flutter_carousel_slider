@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 
 class CarouselSlider extends StatefulWidget {
   CarouselSlider(
-      {@required this.items,
+      {@required this.onDemandItemContent,
+      @required this.onDemandItemsCount,
       this.height,
       this.aspectRatio: 16 / 9,
       this.viewportFraction: 0.8,
@@ -22,16 +23,27 @@ class CarouselSlider extends StatefulWidget {
       this.pauseAutoPlayOnTouch,
       this.enlargeCenterPage = false,
       this.onPageChanged,
-        this.scrollPhysics,
-      this.scrollDirection: Axis.horizontal})
-      : this.realPage = enableInfiniteScroll ? realPage + initialPage : initialPage,
+      this.scrollPhysics,
+      this.scrollDirection: Axis.horizontal,
+      this.onWidgetCreated})
+      : this.realPage =
+            enableInfiniteScroll ? realPage + initialPage : initialPage,
         this.pageController = PageController(
           viewportFraction: viewportFraction,
-          initialPage: enableInfiniteScroll ? realPage + initialPage : initialPage,
-        );
+          initialPage:
+              enableInfiniteScroll ? realPage + initialPage : initialPage,
+        ) {
+    if (onWidgetCreated != null) onWidgetCreated(this);
+  }
 
-  /// The widgets to be shown in the carousel.
-  final List<Widget> items;
+  /// The function that will be call when building carousel and for calculate item position
+  final int Function() onDemandItemsCount;
+
+  /// The function that will be call when building demand item with next/prev position
+  final Widget Function(int position) onDemandItemContent;
+
+  /// The function that will be call after widget creation
+  void Function(CarouselSlider sender) onWidgetCreated;
 
   /// Set carousel height and overrides any existing [aspectRatio].
   final double height;
@@ -146,8 +158,10 @@ class CarouselSlider extends StatefulWidget {
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
   void jumpToPage(int page) {
-    final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
-    return pageController.jumpToPage(pageController.page.toInt() + page - index);
+    final index = _getRealIndex(
+        pageController.page.toInt(), realPage, onDemandItemsCount());
+    return pageController
+        .jumpToPage(pageController.page.toInt() + page - index);
   }
 
   /// Animates the controlled [CarouselSlider] from the current page to the given page.
@@ -155,16 +169,20 @@ class CarouselSlider extends StatefulWidget {
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> animateToPage(int page, {Duration duration, Curve curve}) {
-    final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
-    return pageController.animateToPage(pageController.page.toInt() + page - index,
-        duration: duration, curve: curve);
+    final index = _getRealIndex(
+        pageController.page.toInt(), realPage, onDemandItemsCount());
+    return pageController.animateToPage(
+        pageController.page.toInt() + page - index,
+        duration: duration,
+        curve: curve);
   }
 
   @override
   _CarouselSliderState createState() => _CarouselSliderState();
 }
 
-class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
+class _CarouselSliderState extends State<CarouselSlider>
+    with TickerProviderStateMixin {
   Timer timer;
 
   @override
@@ -176,8 +194,9 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   Timer getTimer() {
     return Timer.periodic(widget.autoPlayInterval, (_) {
       if (widget.autoPlay) {
-        widget.pageController
-            .nextPage(duration: widget.autoPlayAnimationDuration, curve: widget.autoPlayCurve);
+        widget.pageController.nextPage(
+            duration: widget.autoPlayAnimationDuration,
+            curve: widget.autoPlayCurve);
       }
     });
   }
@@ -196,7 +215,8 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
           ? addGestureDetection(wrapper)
           : wrapper;
     } else {
-      final Widget wrapper = AspectRatio(aspectRatio: widget.aspectRatio, child: child);
+      final Widget wrapper =
+          AspectRatio(aspectRatio: widget.aspectRatio, child: child);
       return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
           ? addGestureDetection(wrapper)
           : wrapper;
@@ -219,20 +239,22 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
       scrollDirection: widget.scrollDirection,
       controller: widget.pageController,
       reverse: widget.reverse,
-      itemCount: widget.enableInfiniteScroll ? null : widget.items.length,
+      itemCount:
+          widget.enableInfiniteScroll ? null : widget.onDemandItemsCount(),
       onPageChanged: (int index) {
-        int currentPage = _getRealIndex(index + widget.initialPage, widget.realPage, widget.items.length);
+        int currentPage = _getRealIndex(index + widget.initialPage,
+            widget.realPage, widget.onDemandItemsCount());
         if (widget.onPageChanged != null) {
           widget.onPageChanged(currentPage);
         }
       },
       itemBuilder: (BuildContext context, int i) {
-        final int index =
-            _getRealIndex(i + widget.initialPage, widget.realPage, widget.items.length);
+        final int index = _getRealIndex(i + widget.initialPage, widget.realPage,
+            widget.onDemandItemsCount());
 
         return AnimatedBuilder(
           animation: widget.pageController,
-          child: widget.items[index],
+          child: widget.onDemandItemContent(index),
           builder: (BuildContext context, child) {
             // on the first render, the pageController.page is null,
             // this is a dirty hack
@@ -246,17 +268,22 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
             double value = widget.pageController.page - i;
             value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
-            final double height =
-                widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
-            final double distortionValue =
-                widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
+            final double height = widget.height ??
+                MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+            final double distortionValue = widget.enlargeCenterPage
+                ? Curves.easeOut.transform(value)
+                : 1.0;
 
             if (widget.scrollDirection == Axis.horizontal) {
-              return Center(child: SizedBox(height: distortionValue * height, child: child));
+              return Center(
+                  child:
+                      SizedBox(height: distortionValue * height, child: child));
             } else {
               return Center(
                   child: SizedBox(
-                      width: distortionValue * MediaQuery.of(context).size.width, child: child));
+                      width:
+                          distortionValue * MediaQuery.of(context).size.width,
+                      child: child));
             }
           },
         );
