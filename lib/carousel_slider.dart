@@ -212,8 +212,6 @@ class _CarouselSliderState extends State<CarouselSlider>
         (new DateTime.now().millisecondsSinceEpoch) - timerUpdatedAt;
     Duration timerDuration =
         widget.autoPlayInterval - Duration(milliseconds: diffMilliseconds);
-    print('timerDuration');
-    print(timerDuration);
 
     var timer = Timer.periodic(timerDuration, (_) {
       if (widget.autoPlay) {
