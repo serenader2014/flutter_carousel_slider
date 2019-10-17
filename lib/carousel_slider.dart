@@ -239,7 +239,9 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
             if (widget.pageController.position.minScrollExtent == null ||
                 widget.pageController.position.maxScrollExtent == null) {
               Future.delayed(Duration(microseconds: 1), () {
-                setState(() {});
+	        if (this.mounted) {
+                  setState(() {});
+		}
               });
               return Container();
             }
