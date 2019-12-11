@@ -22,12 +22,14 @@ class CarouselSlider extends StatefulWidget {
       this.pauseAutoPlayOnTouch,
       this.enlargeCenterPage = false,
       this.onPageChanged,
-        this.scrollPhysics,
+      this.scrollPhysics,
       this.scrollDirection: Axis.horizontal})
-      : this.realPage = enableInfiniteScroll ? realPage + initialPage : initialPage,
+      : this.realPage =
+            enableInfiniteScroll ? realPage + initialPage : initialPage,
         this.pageController = PageController(
           viewportFraction: viewportFraction,
-          initialPage: enableInfiniteScroll ? realPage + initialPage : initialPage,
+          initialPage:
+              enableInfiniteScroll ? realPage + initialPage : initialPage,
         );
 
   /// The widgets to be shown in the carousel.
@@ -146,8 +148,12 @@ class CarouselSlider extends StatefulWidget {
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
   void jumpToPage(int page) {
-    final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
-    return pageController.jumpToPage(pageController.page.toInt() + page - index);
+    final index =
+        _getRealIndex(pageController.page.toInt(), realPage, items.length);
+    if (index == null) return;
+
+    return pageController
+        .jumpToPage(pageController.page.toInt() + page - index);
   }
 
   /// Animates the controlled [CarouselSlider] from the current page to the given page.
@@ -155,16 +161,22 @@ class CarouselSlider extends StatefulWidget {
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> animateToPage(int page, {Duration duration, Curve curve}) {
-    final index = _getRealIndex(pageController.page.toInt(), realPage, items.length);
-    return pageController.animateToPage(pageController.page.toInt() + page - index,
-        duration: duration, curve: curve);
+    final index =
+        _getRealIndex(pageController.page.toInt(), realPage, items.length);
+    if (index == null) return Future<void>.value();
+
+    return pageController.animateToPage(
+        pageController.page.toInt() + page - index,
+        duration: duration,
+        curve: curve);
   }
 
   @override
   _CarouselSliderState createState() => _CarouselSliderState();
 }
 
-class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
+class _CarouselSliderState extends State<CarouselSlider>
+    with TickerProviderStateMixin {
   Timer timer;
 
   @override
@@ -176,8 +188,9 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
   Timer getTimer() {
     return Timer.periodic(widget.autoPlayInterval, (_) {
       if (widget.autoPlay) {
-        widget.pageController
-            .nextPage(duration: widget.autoPlayAnimationDuration, curve: widget.autoPlayCurve);
+        widget.pageController.nextPage(
+            duration: widget.autoPlayAnimationDuration,
+            curve: widget.autoPlayCurve);
       }
     });
   }
@@ -196,7 +209,8 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
           ? addGestureDetection(wrapper)
           : wrapper;
     } else {
-      final Widget wrapper = AspectRatio(aspectRatio: widget.aspectRatio, child: child);
+      final Widget wrapper =
+          AspectRatio(aspectRatio: widget.aspectRatio, child: child);
       return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
           ? addGestureDetection(wrapper)
           : wrapper;
@@ -221,18 +235,19 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
       reverse: widget.reverse,
       itemCount: widget.enableInfiniteScroll ? null : widget.items.length,
       onPageChanged: (int index) {
-        int currentPage = _getRealIndex(index + widget.initialPage, widget.realPage, widget.items.length);
+        int currentPage = _getRealIndex(
+            index + widget.initialPage, widget.realPage, widget.items.length);
         if (widget.onPageChanged != null) {
           widget.onPageChanged(currentPage);
         }
       },
       itemBuilder: (BuildContext context, int i) {
-        final int index =
-            _getRealIndex(i + widget.initialPage, widget.realPage, widget.items.length);
+        final int index = _getRealIndex(
+            i + widget.initialPage, widget.realPage, widget.items.length);
 
         return AnimatedBuilder(
           animation: widget.pageController,
-          child: widget.items[index],
+          child: index != null ? widget.items[index] : null,
           builder: (BuildContext context, child) {
             // on the first render, the pageController.page is null,
             // this is a dirty hack
@@ -246,17 +261,22 @@ class _CarouselSliderState extends State<CarouselSlider> with TickerProviderStat
             double value = widget.pageController.page - i;
             value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
-            final double height =
-                widget.height ?? MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
-            final double distortionValue =
-                widget.enlargeCenterPage ? Curves.easeOut.transform(value) : 1.0;
+            final double height = widget.height ??
+                MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
+            final double distortionValue = widget.enlargeCenterPage
+                ? Curves.easeOut.transform(value)
+                : 1.0;
 
             if (widget.scrollDirection == Axis.horizontal) {
-              return Center(child: SizedBox(height: distortionValue * height, child: child));
+              return Center(
+                  child:
+                      SizedBox(height: distortionValue * height, child: child));
             } else {
               return Center(
                   child: SizedBox(
-                      width: distortionValue * MediaQuery.of(context).size.width, child: child));
+                      width:
+                          distortionValue * MediaQuery.of(context).size.width,
+                      child: child));
             }
           },
         );
@@ -284,6 +304,11 @@ int _getRealIndex(int position, int base, int length) {
 /// Returns the remainder of the modulo operation [input] % [source], and adjust it for
 /// negative values.
 int _remainder(int input, int source) {
-  final int result = input % source;
-  return result < 0 ? source + result : result;
+  try {
+    final int result = input % source;
+    return result < 0 ? source + result : result;
+  } on IntegerDivisionByZeroException catch (e) {
+    print('[CarouselSlider] $e');
+    return null;
+  }
 }

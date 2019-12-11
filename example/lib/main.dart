@@ -30,7 +30,10 @@ final List child = map<Widget>(
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                  colors: [
+                    Color.fromARGB(200, 0, 0, 0),
+                    Color.fromARGB(0, 0, 0, 0)
+                  ],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                 ),
@@ -157,7 +160,8 @@ class CarouselDemo extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               child: RaisedButton(
                 onPressed: () => basicSlider.previousPage(
-                    duration: Duration(milliseconds: 300), curve: Curves.linear),
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.linear),
                 child: Text('prev slider'),
               ),
             ),
@@ -167,7 +171,8 @@ class CarouselDemo extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               child: RaisedButton(
                 onPressed: () => basicSlider.nextPage(
-                    duration: Duration(milliseconds: 300), curve: Curves.linear),
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.linear),
                 child: Text('next slider'),
               ),
             ),
