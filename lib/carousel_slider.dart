@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 
 class CarouselSlider extends StatefulWidget {
   CarouselSlider(
-      {@required this.onDemandItemContent,
-      @required this.onDemandItemsCount,
+      {@required this.items,
       this.height,
       this.aspectRatio: 16 / 9,
       this.viewportFraction: 0.8,
@@ -28,6 +27,8 @@ class CarouselSlider extends StatefulWidget {
       this.onWidgetCreated})
       : this.realPage =
             enableInfiniteScroll ? realPage + initialPage : initialPage,
+        this.itemCount = items.length,
+        this.itemBuilder = null,
         this.pageController = PageController(
           viewportFraction: viewportFraction,
           initialPage:
@@ -36,11 +37,46 @@ class CarouselSlider extends StatefulWidget {
     if (onWidgetCreated != null) onWidgetCreated(this);
   }
 
-  /// The function that will be call when building carousel and for calculate item position
-  final int Function() onDemandItemsCount;
+  /// The on demand item builder constructor
+  CarouselSlider.builder(
+      {@required this.itemCount,
+      @required this.itemBuilder,
+      this.height,
+      this.aspectRatio: 16 / 9,
+      this.viewportFraction: 0.8,
+      this.initialPage: 0,
+      int realPage: 10000,
+      this.enableInfiniteScroll: true,
+      this.reverse: false,
+      this.autoPlay: false,
+      this.autoPlayInterval: const Duration(seconds: 4),
+      this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+      this.autoPlayCurve: Curves.fastOutSlowIn,
+      this.pauseAutoPlayOnTouch,
+      this.enlargeCenterPage = false,
+      this.onPageChanged,
+      this.scrollPhysics,
+      this.scrollDirection: Axis.horizontal,
+      this.onWidgetCreated})
+      : this.realPage =
+            enableInfiniteScroll ? realPage + initialPage : initialPage,
+        this.items = null,
+        this.pageController = PageController(
+          viewportFraction: viewportFraction,
+          initialPage:
+              enableInfiniteScroll ? realPage + initialPage : initialPage,
+        ) {
+    if (onWidgetCreated != null) onWidgetCreated(this);
+  }
 
-  /// The function that will be call when building demand item with next/prev position
-  final Widget Function(int position) onDemandItemContent;
+  /// The widgets to be shown in the carousel of default constructor
+  final List<Widget> items;
+
+  /// The widget item builder that will be used to build item on demand
+  final IndexedWidgetBuilder itemBuilder;
+
+  /// The widgets count that should be shown at carousel
+  final int itemCount;
 
   /// The function that will be call after widget creation
   void Function(CarouselSlider sender) onWidgetCreated;
@@ -158,8 +194,8 @@ class CarouselSlider extends StatefulWidget {
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
   void jumpToPage(int page) {
-    final index = _getRealIndex(
-        pageController.page.toInt(), realPage, onDemandItemsCount());
+    final index =
+        _getRealIndex(pageController.page.toInt(), realPage, itemCount);
     return pageController
         .jumpToPage(pageController.page.toInt() + page - index);
   }
@@ -169,8 +205,8 @@ class CarouselSlider extends StatefulWidget {
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> animateToPage(int page, {Duration duration, Curve curve}) {
-    final index = _getRealIndex(
-        pageController.page.toInt(), realPage, onDemandItemsCount());
+    final index =
+        _getRealIndex(pageController.page.toInt(), realPage, itemCount);
     return pageController.animateToPage(
         pageController.page.toInt() + page - index,
         duration: duration,
@@ -239,22 +275,23 @@ class _CarouselSliderState extends State<CarouselSlider>
       scrollDirection: widget.scrollDirection,
       controller: widget.pageController,
       reverse: widget.reverse,
-      itemCount:
-          widget.enableInfiniteScroll ? null : widget.onDemandItemsCount(),
+      itemCount: widget.enableInfiniteScroll ? null : widget.itemCount,
       onPageChanged: (int index) {
-        int currentPage = _getRealIndex(index + widget.initialPage,
-            widget.realPage, widget.onDemandItemsCount());
+        int currentPage = _getRealIndex(
+            index + widget.initialPage, widget.realPage, widget.itemCount);
         if (widget.onPageChanged != null) {
           widget.onPageChanged(currentPage);
         }
       },
       itemBuilder: (BuildContext context, int i) {
-        final int index = _getRealIndex(i + widget.initialPage, widget.realPage,
-            widget.onDemandItemsCount());
+        final int index = _getRealIndex(
+            i + widget.initialPage, widget.realPage, widget.itemCount);
 
         return AnimatedBuilder(
           animation: widget.pageController,
-          child: widget.onDemandItemContent(index),
+          child: (widget.items != null)
+              ? widget.items[index]
+              : widget.itemBuilder(context, index),
           builder: (BuildContext context, child) {
             // on the first render, the pageController.page is null,
             // this is a dirty hack
@@ -311,6 +348,7 @@ int _getRealIndex(int position, int base, int length) {
 /// Returns the remainder of the modulo operation [input] % [source], and adjust it for
 /// negative values.
 int _remainder(int input, int source) {
+  if (source == 0) return 0;
   final int result = input % source;
   return result < 0 ? source + result : result;
 }
