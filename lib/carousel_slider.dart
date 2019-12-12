@@ -23,8 +23,7 @@ class CarouselSlider extends StatefulWidget {
       this.enlargeCenterPage = false,
       this.onPageChanged,
       this.scrollPhysics,
-      this.scrollDirection: Axis.horizontal,
-      this.onWidgetCreated})
+      this.scrollDirection: Axis.horizontal})
       : this.realPage =
             enableInfiniteScroll ? realPage + initialPage : initialPage,
         this.itemCount = items.length,
@@ -33,9 +32,7 @@ class CarouselSlider extends StatefulWidget {
           viewportFraction: viewportFraction,
           initialPage:
               enableInfiniteScroll ? realPage + initialPage : initialPage,
-        ) {
-    if (onWidgetCreated != null) onWidgetCreated(this);
-  }
+        );
 
   /// The on demand item builder constructor
   CarouselSlider.builder(
@@ -56,8 +53,7 @@ class CarouselSlider extends StatefulWidget {
       this.enlargeCenterPage = false,
       this.onPageChanged,
       this.scrollPhysics,
-      this.scrollDirection: Axis.horizontal,
-      this.onWidgetCreated})
+      this.scrollDirection: Axis.horizontal})
       : this.realPage =
             enableInfiniteScroll ? realPage + initialPage : initialPage,
         this.items = null,
@@ -65,9 +61,7 @@ class CarouselSlider extends StatefulWidget {
           viewportFraction: viewportFraction,
           initialPage:
               enableInfiniteScroll ? realPage + initialPage : initialPage,
-        ) {
-    if (onWidgetCreated != null) onWidgetCreated(this);
-  }
+        );
 
   /// The widgets to be shown in the carousel of default constructor
   final List<Widget> items;
@@ -77,9 +71,6 @@ class CarouselSlider extends StatefulWidget {
 
   /// The widgets count that should be shown at carousel
   final int itemCount;
-
-  /// The function that will be call after widget creation
-  void Function(CarouselSlider sender) onWidgetCreated;
 
   /// Set carousel height and overrides any existing [aspectRatio].
   final double height;
