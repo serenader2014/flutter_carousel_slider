@@ -59,6 +59,22 @@ CarouselSlider(
 
 You can pass the above params to the class. If you pass the `height` params, the `aspectRatio` param will be ignore.
 
+## Build item widgets on demand
+
+This method will save memory and build item when it will be visible.
+Can be used to build different child item widgets related to content or by item index.
+
+```dart
+
+CarouselSlider.builder(
+   itemCount: 15,
+   itemBuilder: (BuildContext context, int itemIndex) =>
+        Container(
+            child: Text(itemIndex.toString()),
+        ),
+   )
+```
+
 ## Instance methods
 
 You can use the instance methods to programmatically take control of the pageView's position.
