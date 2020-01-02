@@ -133,6 +133,17 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
 
   @override
   Widget build(BuildContext context) {
+  int _current = 0;
+
+  var items = [0, 1, 2, 3, 4];
+
+  @override
+  Widget build(BuildContext context) {
+    var children = items
+        .map((i) =>
+            Container(child: Text('text $i', style: TextStyle(fontSize: 16.0))))
+        .toList();
+
     return Stack(children: [
       CarouselSlider(
         items: children,
@@ -150,7 +161,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
           right: 0.0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: children.map((index) {
+            children: items.map((index) {
               return Container(
                 width: 8.0,
                 height: 8.0,
