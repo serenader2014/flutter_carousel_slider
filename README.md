@@ -124,43 +124,46 @@ class CarouselWithIndicator extends StatefulWidget {
 }
 
 class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
-  int _current = 0;
+    int _current = 0;
+
+  var children = [1, 2, 3, 4, 5]
+      .map((i) =>
+          Container(child: Text('text $i', style: TextStyle(fontSize: 16.0))))
+      .toList();
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CarouselSlider(
-          items: child,
-          autoPlay: true,
-          aspectRatio: 2.0,
-          onPageChangedCallback: (index) {
-            setState(() {
-              _current = index;
-            });
-          },
-        ),
-        Positioned(
+    return Stack(children: [
+      CarouselSlider(
+        items: children,
+        autoPlay: true,
+        aspectRatio: 2.0,
+        onPageChanged: (index) {
+          setState(() {
+            _current = index;
+          });
+        },
+      ),
+      Positioned(
           top: 0.0,
           left: 0.0,
           right: 0.0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: map<Widget>(imgList, (index, url) {
+            children: children.map((index) {
               return Container(
                 width: 8.0,
                 height: 8.0,
                 margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _current == index ? Color.fromRGBO(0, 0, 0, 0.9) : Color.fromRGBO(0, 0, 0, 0.4)
-                ),
+                    shape: BoxShape.circle,
+                    color: _current == index
+                        ? Color.fromRGBO(0, 0, 0, 0.9)
+                        : Color.fromRGBO(0, 0, 0, 0.4)),
               );
-            }),
-          )
-        )
-      ]
-    );
+            }).toList(),
+          ))
+    ]);
   }
 }
 
