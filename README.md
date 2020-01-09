@@ -49,7 +49,7 @@ CarouselSlider(
    autoPlay: true,
    autoPlayInterval: Duration(seconds: 3),
    autoPlayAnimationDuration: Duration(milliseconds: 800),
-   autoPlayCurve: Curve.fastOutSlowIn,
+   autoPlayCurve: Curves.fastOutSlowIn,
    pauseAutoPlayOnTouch: Duration(seconds: 10),
    enlargeCenterPage: true,
    onPageChanged: callbackFunction,
