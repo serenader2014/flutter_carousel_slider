@@ -22,6 +22,7 @@ class CarouselSlider extends StatefulWidget {
       this.pauseAutoPlayOnTouch,
       this.enlargeCenterPage = false,
       this.onPageChanged,
+      this.onScrolled,
       this.scrollPhysics,
       this.scrollDirection: Axis.horizontal})
       : this.realPage =
@@ -52,6 +53,7 @@ class CarouselSlider extends StatefulWidget {
       this.pauseAutoPlayOnTouch,
       this.enlargeCenterPage = false,
       this.onPageChanged,
+      this.onScrolled,
       this.scrollPhysics,
       this.scrollDirection: Axis.horizontal})
       : this.realPage =
@@ -149,6 +151,9 @@ class CarouselSlider extends StatefulWidget {
   /// Called whenever the page in the center of the viewport changes.
   final Function(int index) onPageChanged;
 
+  /// Called whenever the carousel is scrolled
+  final ValueChanged<double> onScrolled;
+
   /// How the carousel should respond to user input.
   ///
   /// For example, determines how the items continues to animate after the
@@ -158,7 +163,7 @@ class CarouselSlider extends StatefulWidget {
   /// [PageScrollPhysics] prior to being used.
   ///
   /// Defaults to matching platform conventions.
-  final ScrollPhysics scrollPhysics;
+  final ScrollPhysics scrollPhysics; 
 
   /// [pageController] is created using the properties passed to the constructor
   /// and can be used to control the [PageView] it is passed to.
@@ -234,18 +239,25 @@ class _CarouselSliderState extends State<CarouselSlider>
   }
 
   Widget getWrapper(Widget child) {
+    Widget wrapper;
+    
     if (widget.height != null) {
-      final Widget wrapper = Container(height: widget.height, child: child);
-      return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
-          ? addGestureDetection(wrapper)
-          : wrapper;
+      wrapper = Container(height: widget.height, child: child);
     } else {
-      final Widget wrapper =
+      wrapper =
           AspectRatio(aspectRatio: widget.aspectRatio, child: child);
-      return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
-          ? addGestureDetection(wrapper)
-          : wrapper;
     }
+
+    Widget listenerWrapper = NotificationListener(onNotification: (notification) {
+      if (widget.onScrolled != null && notification is ScrollUpdateNotification) {
+        widget.onScrolled(widget.pageController.page);
+      }
+      return false;
+    }, child: wrapper,);
+
+    return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
+    ? addGestureDetection(listenerWrapper)
+    : listenerWrapper;
   }
 
   Widget addGestureDetection(Widget child) =>
@@ -304,7 +316,7 @@ class _CarouselSliderState extends State<CarouselSlider>
 
             if (widget.scrollDirection == Axis.horizontal) {
               return Center(
-                  child:
+                  child: 
                       SizedBox(height: distortionValue * height, child: child));
             } else {
               return Center(
