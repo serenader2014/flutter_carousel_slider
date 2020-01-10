@@ -1,3 +1,9 @@
+# 1.4.1
+
+## Fix
+
+- Fix `animateTo()/jumpTo()` with non-zero initialPage
+
 # 1.4.0
 
 ## Add
