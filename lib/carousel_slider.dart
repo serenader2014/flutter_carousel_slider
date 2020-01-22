@@ -17,6 +17,8 @@ class CarouselSlider extends StatefulWidget {
       this.reverse: false,
       this.autoPlay: false,
       this.autoPlayInterval: const Duration(seconds: 4),
+      this.autoPlayForEachSlideEnable: false,
+      this.autoplayIntervals,
       this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
       this.autoPlayCurve: Curves.fastOutSlowIn,
       this.pauseAutoPlayOnTouch,
@@ -46,6 +48,8 @@ class CarouselSlider extends StatefulWidget {
       this.enableInfiniteScroll: true,
       this.reverse: false,
       this.autoPlay: false,
+      this.autoPlayForEachSlideEnable: false,
+      this.autoplayIntervals,
       this.autoPlayInterval: const Duration(seconds: 4),
       this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
       this.autoPlayCurve: Curves.fastOutSlowIn,
@@ -119,6 +123,16 @@ class CarouselSlider extends StatefulWidget {
   /// Defaults to 4 seconds.
   final Duration autoPlayInterval;
 
+  /// Enables auto play for varying time .
+  ///
+  /// Use [autoPlayForEachSlideEnable] to create custom time pause for each slide
+  /// Defaults to false.
+  final bool autoPlayForEachSlideEnable;
+
+  /// Sets Durations for each slide when
+  /// [autoPlayForEachSlideEnable] is set to true.
+  final List<Duration> autoplayIntervals;
+
   /// The animation duration between two transitioning pages while in auto playback.
   ///
   /// Defaults to 800 ms.
@@ -185,9 +199,8 @@ class CarouselSlider extends StatefulWidget {
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
   void jumpToPage(int page) {
-    final index =
-        _getRealIndex(
-            pageController.page.toInt(), realPage - initialPage, itemCount);
+    final index = _getRealIndex(
+        pageController.page.toInt(), realPage - initialPage, itemCount);
     return pageController
         .jumpToPage(pageController.page.toInt() + page - index);
   }
@@ -197,9 +210,8 @@ class CarouselSlider extends StatefulWidget {
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> animateToPage(int page, {Duration duration, Curve curve}) {
-    final index =
-        _getRealIndex(
-            pageController.page.toInt(), realPage - initialPage, itemCount);
+    final index = _getRealIndex(
+        pageController.page.toInt(), realPage - initialPage, itemCount);
     return pageController.animateToPage(
         pageController.page.toInt() + page - index,
         duration: duration,
@@ -213,6 +225,7 @@ class CarouselSlider extends StatefulWidget {
 class _CarouselSliderState extends State<CarouselSlider>
     with TickerProviderStateMixin {
   Timer timer;
+  int _currentPage = 0;
 
   @override
   void initState() {
@@ -221,11 +234,23 @@ class _CarouselSliderState extends State<CarouselSlider>
   }
 
   Timer getTimer() {
-    return widget.autoPlay ? Timer.periodic(widget.autoPlayInterval, (_) {
+    if (timer != null) {
+      timer.cancel();
+    }
+    if (!widget.autoPlay) {
+      return null;
+    }
+    return Timer.periodic(getAutoplayInterval(), (_) {
       widget.pageController.nextPage(
           duration: widget.autoPlayAnimationDuration,
           curve: widget.autoPlayCurve);
-    }) : null;
+    });
+  }
+
+  getAutoplayInterval() {
+    return widget.autoPlayForEachSlideEnable
+        ? widget.autoplayIntervals[_currentPage]
+        : widget.autoPlayInterval;
   }
 
   void pauseOnTouch() {
@@ -272,6 +297,10 @@ class _CarouselSliderState extends State<CarouselSlider>
             index + widget.initialPage, widget.realPage, widget.itemCount);
         if (widget.onPageChanged != null) {
           widget.onPageChanged(currentPage);
+          _currentPage = currentPage;
+          if (widget.autoPlayForEachSlideEnable) {
+            timer = getTimer();
+          }
         }
       },
       itemBuilder: (BuildContext context, int i) {
@@ -289,9 +318,9 @@ class _CarouselSliderState extends State<CarouselSlider>
             if (widget.pageController.position.minScrollExtent == null ||
                 widget.pageController.position.maxScrollExtent == null) {
               Future.delayed(Duration(microseconds: 1), () {
-	        if (this.mounted) {
+                if (this.mounted) {
                   setState(() {});
-		}
+                }
               });
               return Container();
             }

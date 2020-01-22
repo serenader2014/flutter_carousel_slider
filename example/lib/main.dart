@@ -30,7 +30,10 @@ final List child = map<Widget>(
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                  colors: [
+                    Color.fromARGB(200, 0, 0, 0),
+                    Color.fromARGB(0, 0, 0, 0)
+                  ],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                 ),
@@ -75,6 +78,60 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
       CarouselSlider(
         items: child,
         autoPlay: true,
+        enlargeCenterPage: true,
+        aspectRatio: 2.0,
+        onPageChanged: (index) {
+          setState(() {
+            _current = index;
+          });
+        },
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: map<Widget>(
+          imgList,
+          (index, url) {
+            return Container(
+              width: 8.0,
+              height: 8.0,
+              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _current == index
+                      ? Color.fromRGBO(0, 0, 0, 0.9)
+                      : Color.fromRGBO(0, 0, 0, 0.4)),
+            );
+          },
+        ),
+      ),
+    ]);
+  }
+}
+
+class CarouselWithCustomDelay extends StatefulWidget {
+  @override
+  _CarouselWithCustomDelayState createState() =>
+      _CarouselWithCustomDelayState();
+}
+
+class _CarouselWithCustomDelayState extends State<CarouselWithCustomDelay> {
+  int _current = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      CarouselSlider(
+        items: child,
+        autoPlay: true,
+        autoPlayForEachSlideEnable: true,
+        autoplayIntervals: [
+          Duration(seconds: 1),
+          Duration(seconds: 10),
+          Duration(seconds: 5),
+          Duration(seconds: 2),
+          Duration(seconds: 3),
+          Duration(seconds: 15)
+        ],
         enlargeCenterPage: true,
         aspectRatio: 2.0,
         onPageChanged: (index) {
@@ -286,10 +343,9 @@ class CarouselDemo extends StatelessWidget {
       return CarouselSlider.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 15,
-        itemBuilder: (BuildContext context, int itemIndex) =>
-            Container(
-              child: Text(itemIndex.toString()),
-            ),
+        itemBuilder: (BuildContext context, int itemIndex) => Container(
+          child: Text(itemIndex.toString()),
+        ),
       );
     }
 
@@ -328,6 +384,12 @@ class CarouselDemo extends StatelessWidget {
                 child: Column(children: [
                   Text('Carousel With Indecator'),
                   CarouselWithIndicator(),
+                ])),
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0),
+                child: Column(children: [
+                  Text('Carousel With custom Delay'),
+                  CarouselWithCustomDelay(),
                 ])),
             Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0),
