@@ -221,10 +221,14 @@ class _CarouselSliderState extends State<CarouselSlider>
   }
 
   Timer getTimer() {
-    return widget.autoPlay ? Timer.periodic(widget.autoPlayInterval, (_) {
-      widget.pageController.nextPage(
-          duration: widget.autoPlayAnimationDuration,
-          curve: widget.autoPlayCurve);
+    return widget.autoPlay ? Timer.periodic(widget.autoPlayInterval, (timer) {
+      if(!widget.autoPlay){
+        timer.cancel();
+      } else {
+        widget.pageController.nextPage(
+            duration: widget.autoPlayAnimationDuration,
+            curve: widget.autoPlayCurve);
+      }
     }) : null;
   }
 
