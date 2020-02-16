@@ -20,6 +20,7 @@ class CarouselSlider extends StatefulWidget {
       this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
       this.autoPlayCurve: Curves.fastOutSlowIn,
       this.pauseAutoPlayOnTouch,
+      this.pauseAutoplayOnLongPress = false,
       this.enlargeCenterPage = false,
       this.onPageChanged,
       this.scrollPhysics,
@@ -50,6 +51,7 @@ class CarouselSlider extends StatefulWidget {
       this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
       this.autoPlayCurve: Curves.fastOutSlowIn,
       this.pauseAutoPlayOnTouch,
+      this.pauseAutoplayOnLongPress = false,
       this.enlargeCenterPage = false,
       this.onPageChanged,
       this.scrollPhysics,
@@ -134,6 +136,14 @@ class CarouselSlider extends StatefulWidget {
   ///
   /// Touch Detection is only active if [autoPlay] is true.
   final Duration pauseAutoPlayOnTouch;
+  
+  ///Pause autoplay on long press start, start autoplay on long press
+  ///end. Remember the remaining time of the current page when the autoplay
+  ///is resumed.
+  ///
+  /// Touch Detection is only active if [autoPlay] is true.
+  /// pauseAutoPlayOnTouch should be null for this to be functional
+  final bool pauseAutoplayOnLongPress;
 
   /// Determines if current page should be larger then the side images,
   /// creating a feeling of depth in the carousel.
@@ -213,19 +223,27 @@ class CarouselSlider extends StatefulWidget {
 class _CarouselSliderState extends State<CarouselSlider>
     with TickerProviderStateMixin {
   Timer timer;
+  Stopwatch stopWatch;
 
   @override
   void initState() {
     super.initState();
     timer = getTimer();
+    stopWatch = Stopwatch();
+    stopWatch.start();
   }
 
   Timer getTimer() {
     return widget.autoPlay ? Timer.periodic(widget.autoPlayInterval, (_) {
-      widget.pageController.nextPage(
-          duration: widget.autoPlayAnimationDuration,
-          curve: widget.autoPlayCurve);
+      stopWatch.reset();
+      _navigateToNextPage();
     }) : null;
+  }
+
+  void _navigateToNextPage() {
+    widget.pageController.nextPage(
+        duration: widget.autoPlayAnimationDuration,
+        curve: widget.autoPlayCurve);
   }
 
   void pauseOnTouch() {
@@ -234,29 +252,60 @@ class _CarouselSliderState extends State<CarouselSlider>
       timer = getTimer();
     });
   }
+  
+  void pauseOnLongPressStart() {
+    stopWatch.stop();
+    timer.cancel();
+  }
+
+  void resumeOnLongPressEnd() {
+    stopWatch.start();
+    timer = Timer(widget.autoPlayInterval - stopWatch.elapsed, () {
+      stopWatch.reset();
+      _navigateToNextPage();
+      timer = getTimer();
+    });
+  }
+
 
   Widget getWrapper(Widget child) {
     if (widget.height != null) {
       final Widget wrapper = Container(height: widget.height, child: child);
       return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
           ? addGestureDetection(wrapper)
-          : wrapper;
+          : widget.pauseAutoplayOnLongPress ? addLongPressGestureDetection(
+          wrapper) : wrapper;
     } else {
       final Widget wrapper =
-          AspectRatio(aspectRatio: widget.aspectRatio, child: child);
+      AspectRatio(aspectRatio: widget.aspectRatio, child: child);
       return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
           ? addGestureDetection(wrapper)
-          : wrapper;
+          : widget.pauseAutoplayOnLongPress ? addLongPressGestureDetection(
+          wrapper) : wrapper;
     }
   }
 
-  Widget addGestureDetection(Widget child) =>
-      GestureDetector(onPanDown: (_) => pauseOnTouch(), child: child);
+  Widget addGestureDetection(Widget child) {
+    return GestureDetector(
+        onPanDown: (_) => pauseOnTouch(),
+        child: child
+    );
+  }
+
+  Widget addLongPressGestureDetection(Widget child) {
+    return GestureDetector(
+        onLongPressStart: (_) => pauseOnLongPressStart(),
+        onLongPressEnd: (_) => resumeOnLongPressEnd(),
+        child: child
+    );
+  }
+      
 
   @override
   void dispose() {
     super.dispose();
     timer?.cancel();
+    stopWatch?.reset();
   }
 
   @override

@@ -223,6 +223,29 @@ class CarouselDemo extends StatelessWidget {
       ).toList(),
     );
 
+    final CarouselSlider longPressDemo = CarouselSlider(
+      viewportFraction: 0.9,
+      aspectRatio: 2.0,
+      autoPlay: true,
+      enlargeCenterPage: true,
+      pauseAutoplayOnLongPress: true,
+      items: imgList.map(
+            (url) {
+          return Container(
+            margin: EdgeInsets.all(5.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+                width: 1000.0,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+
     //Non-looping manual Carousel
     final CarouselSlider nonLoopingCarousel = CarouselSlider(
       items: child,
@@ -334,6 +357,12 @@ class CarouselDemo extends StatelessWidget {
                 child: Column(children: [
                   Text('Pause When Touched Carousel'),
                   touchDetectionDemo,
+                ])),
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0),
+                child: Column(children: [
+                  Text('Pause When Long Press is Started'),
+                  longPressDemo,
                 ])),
             Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0),
