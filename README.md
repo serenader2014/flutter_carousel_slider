@@ -62,7 +62,7 @@ CarouselSlider(
  )
 ```
 
-You can pass the above params to the class. If you pass the `height` paramater, the `aspectRatio` paramater will be ignored.
+You can pass the above params to the class. If you pass the `height` parameter, the `aspectRatio` parameter will be ignored.
 
 ## Build item widgets on demand
 
