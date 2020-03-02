@@ -1,10 +1,15 @@
 # carousel_slider
 
-A carousel slider widget, support infinite scroll and custom child widget, with auto play feature.
+A carousel slider widget.
+
+## Supports 
+* Infinite scroll 
+* Custom child widgets
+* Auto play
 
 ## Installation
 
-Add `carousel_slider: ^1.4.1` in your `pubspec.yaml` dependencies. And import it:
+Add `carousel_slider: ^1.4.1` to your `pubspec.yaml` dependencies. And import it:
 
 ```dart
 import 'package:carousel_slider/carousel_slider.dart';
@@ -57,12 +62,12 @@ CarouselSlider(
  )
 ```
 
-You can pass the above params to the class. If you pass the `height` params, the `aspectRatio` param will be ignore.
+You can pass the above params to the class. If you pass the `height` paramater, the `aspectRatio` paramater will be ignored.
 
 ## Build item widgets on demand
 
-This method will save memory and build item when it will be visible.
-Can be used to build different child item widgets related to content or by item index.
+This method will save memory by building items once it becomes necessary. This way they won't be built if they're not currently meant to be visible on screen.
+It can be used to build different child item widgets related to content or by item index.
 
 ```dart
 
@@ -109,7 +114,7 @@ Pause slideshow for a set amount of time on user touch input:
 
 ![touch_pause_loop.gif](example/touch_pause_loop.gif)
 
-For a more detail example please take a look at the `example` folder.
+For a more detailed example please take a look at the `example` folder.
 
 ## Faq
 
