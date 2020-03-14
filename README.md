@@ -134,7 +134,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
           items: child,
           autoPlay: true,
           aspectRatio: 2.0,
-          onPageChangedCallback: (index) {
+          onPageChanged: (index) {
             setState(() {
               _current = index;
             });
