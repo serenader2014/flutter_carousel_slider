@@ -16,13 +16,13 @@ final Widget placeholder = Container(color: Colors.grey);
 
 final List child = map<Widget>(
   imgList,
-  (index, i) {
+  (index, img) {
     return Container(
       margin: EdgeInsets.all(5.0),
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         child: Stack(children: <Widget>[
-          Image.network(i, fit: BoxFit.cover, width: 1000.0),
+          Image.network(img, fit: BoxFit.cover, width: 1000.0),
           Positioned(
             bottom: 0.0,
             left: 0.0,
