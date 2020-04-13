@@ -21,7 +21,7 @@ Simply create a `CarouselSlider` widget, and pass the required params:
 
 ```dart
 CarouselSlider(
-  height: 400.0,
+  CarouselOptions(height: 400.0),
   items: [1,2,3,4,5].map((i) {
     return Builder(
       builder: (BuildContext context) {
@@ -45,20 +45,22 @@ CarouselSlider(
 
 CarouselSlider(
    items: items,
-   height: 400,
-   aspectRatio: 16/9,
-   viewportFraction: 0.8,
-   initialPage: 0,
-   enableInfiniteScroll: true,
-   reverse: false,
-   autoPlay: true,
-   autoPlayInterval: Duration(seconds: 3),
-   autoPlayAnimationDuration: Duration(milliseconds: 800),
-   autoPlayCurve: Curves.fastOutSlowIn,
-   pauseAutoPlayOnTouch: Duration(seconds: 10),
-   enlargeCenterPage: true,
-   onPageChanged: callbackFunction,
-   scrollDirection: Axis.horizontal,
+   CarouselOptions(
+      height: 400,
+      aspectRatio: 16/9,
+      viewportFraction: 0.8,
+      initialPage: 0,
+      enableInfiniteScroll: true,
+      reverse: false,
+      autoPlay: true,
+      autoPlayInterval: Duration(seconds: 3),
+      autoPlayAnimationDuration: Duration(milliseconds: 800),
+      autoPlayCurve: Curves.fastOutSlowIn,
+      pauseAutoPlayOnTouch: Duration(seconds: 10),
+      enlargeCenterPage: true,
+      onPageChanged: callbackFunction,
+      scrollDirection: Axis.horizontal,
+   )
  )
 ```
 
@@ -80,9 +82,28 @@ CarouselSlider.builder(
    )
 ```
 
-## Instance methods
+## Controller methods
 
 You can use the instance methods to programmatically take control of the pageView's position.
+
+
+```dart 
+class CarouselDemo extends StatelessWidget {
+  CarouselController buttonCarouselController = CarouselController();
+
+ @override
+  Widget build(BuildContext context) => CarouselSlider(
+      items: child,
+      carouselController: buttonCarouselController,
+      options: CarouselOptions(
+        autoPlay: false,
+        enlargeCenterPage: true,
+        viewportFraction: 0.9,
+        aspectRatio: 2.0,
+        initialPage: 2,
+      ));
+}
+```
 
 ### `.nextPage({Duration duration, Curve curve})`
 
