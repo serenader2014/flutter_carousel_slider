@@ -2,78 +2,13 @@ library carousel_slider;
 
 import 'dart:async';
 
+import 'package:carousel_slider/carousel_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class CarouselSlider extends StatefulWidget {
-  CarouselSlider(
-      {@required this.items,
-      this.height,
-      this.aspectRatio: 16 / 9,
-      this.viewportFraction: 0.8,
-      this.initialPage: 0,
-      int realPage: 10000,
-      this.enableInfiniteScroll: true,
-      this.reverse: false,
-      this.autoPlay: false,
-      this.autoPlayInterval: const Duration(seconds: 4),
-      this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
-      this.autoPlayCurve: Curves.fastOutSlowIn,
-      this.pauseAutoPlayOnTouch,
-      this.enlargeCenterPage = false,
-      this.onPageChanged,
-      this.onScrolled,
-      this.scrollPhysics,
-      this.scrollDirection: Axis.horizontal})
-      : this.realPage =
-            enableInfiniteScroll ? realPage + initialPage : initialPage,
-        this.itemCount = items.length,
-        this.itemBuilder = null,
-        this.pageController = PageController(
-          viewportFraction: viewportFraction,
-          initialPage:
-              enableInfiniteScroll ? realPage + initialPage : initialPage,
-        );
+enum CarouselPageChangedReason { timed, manual, controller }
 
-  /// The on demand item builder constructor
-  CarouselSlider.builder(
-      {@required this.itemCount,
-      @required this.itemBuilder,
-      this.height,
-      this.aspectRatio: 16 / 9,
-      this.viewportFraction: 0.8,
-      this.initialPage: 0,
-      int realPage: 10000,
-      this.enableInfiniteScroll: true,
-      this.reverse: false,
-      this.autoPlay: false,
-      this.autoPlayInterval: const Duration(seconds: 4),
-      this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
-      this.autoPlayCurve: Curves.fastOutSlowIn,
-      this.pauseAutoPlayOnTouch,
-      this.enlargeCenterPage = false,
-      this.onPageChanged,
-      this.onScrolled,
-      this.scrollPhysics,
-      this.scrollDirection: Axis.horizontal})
-      : this.realPage =
-            enableInfiniteScroll ? realPage + initialPage : initialPage,
-        this.items = null,
-        this.pageController = PageController(
-          viewportFraction: viewportFraction,
-          initialPage:
-              enableInfiniteScroll ? realPage + initialPage : initialPage,
-        );
-
-  /// The widgets to be shown in the carousel of default constructor
-  final List<Widget> items;
-
-  /// The widget item builder that will be used to build item on demand
-  final IndexedWidgetBuilder itemBuilder;
-
-  /// The widgets count that should be shown at carousel
-  final int itemCount;
-
+class CarouselOptions {
   /// Set carousel height and overrides any existing [aspectRatio].
   final double height;
 
@@ -91,13 +26,6 @@ class CarouselSlider extends StatefulWidget {
   ///
   /// Defaults to 0.
   final num initialPage;
-
-  /// The actual index of the [PageView].
-  ///
-  /// This value can be ignored unless you know the carousel will be scrolled
-  /// backwards more then 10000 pages.
-  /// Defaults to 10000 to simulate infinite backwards scrolling.
-  final num realPage;
 
   ///Determines if carousel should loop infinitely or be limited to item length.
   ///
@@ -149,7 +77,7 @@ class CarouselSlider extends StatefulWidget {
   final Axis scrollDirection;
 
   /// Called whenever the page in the center of the viewport changes.
-  final Function(int index) onPageChanged;
+  final Function(int index, CarouselPageChangedReason reason) onPageChanged;
 
   /// Called whenever the carousel is scrolled
   final ValueChanged<double> onScrolled;
@@ -163,18 +91,103 @@ class CarouselSlider extends StatefulWidget {
   /// [PageScrollPhysics] prior to being used.
   ///
   /// Defaults to matching platform conventions.
-  final ScrollPhysics scrollPhysics; 
+  final ScrollPhysics scrollPhysics;
 
-  /// [pageController] is created using the properties passed to the constructor
-  /// and can be used to control the [PageView] it is passed to.
-  final PageController pageController;
+  CarouselOptions(
+      {this.height,
+      this.aspectRatio: 16 / 9,
+      this.viewportFraction: 0.8,
+      this.initialPage: 0,
+      this.enableInfiniteScroll: true,
+      this.reverse: false,
+      this.autoPlay: false,
+      this.autoPlayInterval: const Duration(seconds: 4),
+      this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+      this.autoPlayCurve: Curves.fastOutSlowIn,
+      this.pauseAutoPlayOnTouch,
+      this.enlargeCenterPage = false,
+      this.onPageChanged,
+      this.onScrolled,
+      this.scrollPhysics,
+      this.scrollDirection: Axis.horizontal,
+      carouselController});
+}
+
+class CarouselSlider extends StatefulWidget {
+  /// [CarouselOptions] to create a [CarouselState] with
+  ///
+  /// This property must not be null
+  final CarouselOptions options;
+
+  /// The widgets to be shown in the carousel of default constructor
+  final List<Widget> items;
+
+  /// The widget item builder that will be used to build item on demand
+  final IndexedWidgetBuilder itemBuilder;
+
+  /// A [MapController], used to control the map.
+  final CarouselControllerImpl _carouselController;
+
+  final int itemCount;
+
+  CarouselSlider({@required this.items, this.options, carouselController})
+      : itemBuilder = null,
+        itemCount = items != null ? items.length : 0,
+        _carouselController = carouselController ?? CarouselController();
+
+  /// The on demand item builder constructor
+  CarouselSlider.builder(
+      {@required this.itemCount,
+      @required this.itemBuilder,
+      this.options,
+      carouselController})
+      : items = null,
+        _carouselController = carouselController ?? CarouselController();
+
+  @override
+  CarouselSliderState createState() => CarouselSliderState(_carouselController);
+}
+
+abstract class CarouselController {
+  bool get ready;
+
+  Future<Null> get onReady;
+
+  void nextPage({Duration duration, Curve curve});
+
+  void previousPage({Duration duration, Curve curve});
+
+  void jumpToPage(int page);
+
+  void animateToPage(int page, {Duration duration, Curve curve});
+
+  factory CarouselController() => CarouselControllerImpl();
+}
+
+class CarouselControllerImpl implements CarouselController {
+  final Completer<Null> _readyCompleter = Completer<Null>();
+
+  CarouselState _state;
+
+  set state(CarouselState state) {
+    _state = state;
+    if (!_readyCompleter.isCompleted) {
+      _readyCompleter.complete();
+    }
+  }
+
+  @override
+  bool get ready => _state != null;
+
+  @override
+  Future<Null> get onReady => _readyCompleter.future;
 
   /// Animates the controlled [CarouselSlider] to the next page.
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> nextPage({Duration duration, Curve curve}) {
-    return pageController.nextPage(duration: duration, curve: curve);
+    return _state.pageController.nextPage(duration: duration, curve: curve);
   }
 
   /// Animates the controlled [CarouselSlider] to the previous page.
@@ -182,7 +195,7 @@ class CarouselSlider extends StatefulWidget {
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> previousPage({Duration duration, Curve curve}) {
-    return pageController.previousPage(duration: duration, curve: curve);
+    return _state.pageController.previousPage(duration: duration, curve: curve);
   }
 
   /// Changes which page is displayed in the controlled [CarouselSlider].
@@ -190,11 +203,12 @@ class CarouselSlider extends StatefulWidget {
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
   void jumpToPage(int page) {
-    final index =
-        _getRealIndex(
-            pageController.page.toInt(), realPage - initialPage, itemCount);
-    return pageController
-        .jumpToPage(pageController.page.toInt() + page - index);
+    final index = _getRealIndex(_state.pageController.page.toInt(),
+        _state.realPage - _state.initialPage, _state.itemCount);
+
+    final int pageToJump = _state.pageController.page.toInt() + page - index;
+    print(_state.pageController.page.toInt());
+    return _state.pageController.jumpToPage(pageToJump);
   }
 
   /// Animates the controlled [CarouselSlider] from the current page to the given page.
@@ -202,68 +216,118 @@ class CarouselSlider extends StatefulWidget {
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> animateToPage(int page, {Duration duration, Curve curve}) {
-    final index =
-        _getRealIndex(
-            pageController.page.toInt(), realPage - initialPage, itemCount);
-    return pageController.animateToPage(
-        pageController.page.toInt() + page - index,
+    final index = _getRealIndex(_state.pageController.page.toInt(),
+        _state.realPage - _state.initialPage, _state.itemCount);
+    return _state.pageController.animateToPage(
+        _state.pageController.page.toInt() + page - index,
         duration: duration,
         curve: curve);
   }
-
-  @override
-  _CarouselSliderState createState() => _CarouselSliderState();
 }
 
-class _CarouselSliderState extends State<CarouselSlider>
+class CarouselSliderState extends State<CarouselSlider>
     with TickerProviderStateMixin {
+  final CarouselControllerImpl carouselController;
   Timer timer;
+
+  @override
+  CarouselOptions get options => widget.options ?? CarouselOptions();
+
+  @override
+  CarouselState carouselState;
+
+  /// mode is related to why the page is being changed
+  CarouselPageChangedReason mode = CarouselPageChangedReason.controller;
+
+  CarouselSliderState(this.carouselController);
+
+  @override
+  void didUpdateWidget(CarouselSlider oldWidget) {
+    carouselState.options = options;
+    carouselState.itemCount = widget.itemCount;
+    super.didUpdateWidget(oldWidget);
+  }
 
   @override
   void initState() {
     super.initState();
+    carouselState = CarouselState(this.options);
+
+    carouselState.itemCount = widget.itemCount;
+    carouselController.state = carouselState;
+    carouselState.realPage = options.enableInfiniteScroll
+        ? carouselState.realPage + carouselState.initialPage
+        : carouselState.initialPage;
     timer = getTimer();
+
+    carouselState.initialPage = widget.options.initialPage;
+
+    PageController pageController = PageController(
+      viewportFraction: options.viewportFraction,
+      initialPage: carouselState.realPage,
+    );
+
+    carouselState.pageController = pageController;
   }
 
   Timer getTimer() {
-    return widget.autoPlay ? Timer.periodic(widget.autoPlayInterval, (_) {
-      widget.pageController.nextPage(
-          duration: widget.autoPlayAnimationDuration,
-          curve: widget.autoPlayCurve);
-    }) : null;
+    return widget.options.autoPlay
+        ? Timer.periodic(widget.options.autoPlayInterval, (_) {
+            CarouselPageChangedReason previousReason = mode;
+            mode = CarouselPageChangedReason.timed;
+            carouselState.pageController
+                .nextPage(
+                    duration: widget.options.autoPlayAnimationDuration,
+                    curve: widget.options.autoPlayCurve)
+                .then((_) => mode = previousReason);
+          })
+        : null;
   }
 
   void pauseOnTouch() {
     timer.cancel();
-    timer = Timer(widget.pauseAutoPlayOnTouch, () {
+    timer = Timer(widget.options.pauseAutoPlayOnTouch, () {
       timer = getTimer();
     });
   }
 
   Widget getWrapper(Widget child) {
     Widget wrapper;
-    
-    if (widget.height != null) {
-      wrapper = Container(height: widget.height, child: child);
+    if (widget.options.height != null) {
+      wrapper = Container(height: widget.options.height, child: child);
     } else {
       wrapper =
-          AspectRatio(aspectRatio: widget.aspectRatio, child: child);
+          AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
     }
 
-    Widget listenerWrapper = NotificationListener(onNotification: (notification) {
-      if (widget.onScrolled != null && notification is ScrollUpdateNotification) {
-        widget.onScrolled(widget.pageController.page);
-      }
-      return false;
-    }, child: wrapper,);
+    Widget listenerWrapper = NotificationListener(
+      onNotification: (notification) {
+        if (widget.options.onScrolled != null &&
+            notification is ScrollUpdateNotification) {
+          widget.options.onScrolled(carouselState.pageController.page);
+        }
+        return false;
+      },
+      child: wrapper,
+    );
 
-    return widget.autoPlay && widget.pauseAutoPlayOnTouch != null
-    ? addGestureDetection(listenerWrapper)
-    : listenerWrapper;
+    return widget.options.autoPlay &&
+            widget.options.pauseAutoPlayOnTouch != null
+        ? addGestureDetection(listenerWrapper)
+        : listenerWrapper;
+  }
+
+  void onPanDown() {
+    if (widget.options.autoPlay &&
+        widget.options.pauseAutoPlayOnTouch != null) {
+      pauseOnTouch();
+    }
+
+    mode = CarouselPageChangedReason.manual;
   }
 
   Widget addGestureDetection(Widget child) =>
-      GestureDetector(onPanDown: (_) => pauseOnTouch(), child: child);
+      GestureDetector(onPanDown: (_) => onPanDown(), child: child);
 
   @override
   void dispose() {
@@ -274,51 +338,53 @@ class _CarouselSliderState extends State<CarouselSlider>
   @override
   Widget build(BuildContext context) {
     return getWrapper(PageView.builder(
-      physics: widget.scrollPhysics,
-      scrollDirection: widget.scrollDirection,
-      controller: widget.pageController,
-      reverse: widget.reverse,
-      itemCount: widget.enableInfiniteScroll ? null : widget.itemCount,
+      physics: widget.options.scrollPhysics,
+      scrollDirection: widget.options.scrollDirection,
+      controller: carouselState.pageController,
+      reverse: widget.options.reverse,
+      itemCount: widget.options.enableInfiniteScroll ? null : widget.itemCount,
       onPageChanged: (int index) {
-        int currentPage = _getRealIndex(
-            index + widget.initialPage, widget.realPage, widget.itemCount);
-        if (widget.onPageChanged != null) {
-          widget.onPageChanged(currentPage);
+        int currentPage = _getRealIndex(index + carouselState.initialPage,
+            carouselState.realPage, widget.itemCount);
+        if (widget.options.onPageChanged != null) {
+          widget.options.onPageChanged(currentPage, mode);
         }
+        mode = CarouselPageChangedReason.controller;
       },
       itemBuilder: (BuildContext context, int i) {
-        final int index = _getRealIndex(
-            i + widget.initialPage, widget.realPage, widget.itemCount);
+        final int index = _getRealIndex(i + carouselState.initialPage,
+            carouselState.realPage, widget.itemCount);
 
         return AnimatedBuilder(
-          animation: widget.pageController,
+          animation: carouselState.pageController,
           child: (widget.items != null)
               ? widget.items[index]
               : widget.itemBuilder(context, index),
           builder: (BuildContext context, child) {
             // on the first render, the pageController.page is null,
             // this is a dirty hack
-            if (widget.pageController.position.minScrollExtent == null ||
-                widget.pageController.position.maxScrollExtent == null) {
+            if (carouselState.pageController.position.minScrollExtent == null ||
+                carouselState.pageController.position.maxScrollExtent == null) {
               Future.delayed(Duration(microseconds: 1), () {
-	        if (this.mounted) {
+                if (this.mounted) {
                   setState(() {});
-		}
+                }
               });
               return Container();
             }
-            double value = widget.pageController.page - i;
+            double value = carouselState.pageController.page - i;
             value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
 
-            final double height = widget.height ??
-                MediaQuery.of(context).size.width * (1 / widget.aspectRatio);
-            final double distortionValue = widget.enlargeCenterPage
+            final double height = widget.options.height ??
+                MediaQuery.of(context).size.width *
+                    (1 / widget.options.aspectRatio);
+            final double distortionValue = widget.options.enlargeCenterPage
                 ? Curves.easeOut.transform(value)
                 : 1.0;
 
-            if (widget.scrollDirection == Axis.horizontal) {
+            if (widget.options.scrollDirection == Axis.horizontal) {
               return Center(
-                  child: 
+                  child:
                       SizedBox(height: distortionValue * height, child: child));
             } else {
               return Center(

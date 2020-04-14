@@ -30,7 +30,10 @@ final List child = map<Widget>(
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)],
+                  colors: [
+                    Color.fromARGB(200, 0, 0, 0),
+                    Color.fromARGB(0, 0, 0, 0)
+                  ],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                 ),
@@ -74,14 +77,15 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
     return Column(children: [
       CarouselSlider(
         items: child,
-        autoPlay: true,
-        enlargeCenterPage: true,
-        aspectRatio: 2.0,
-        onPageChanged: (index) {
-          setState(() {
-            _current = index;
-          });
-        },
+        options: CarouselOptions(
+            autoPlay: true,
+            enlargeCenterPage: true,
+            aspectRatio: 2.0,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _current = index;
+              });
+            }),
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -106,23 +110,28 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
 }
 
 class CarouselDemo extends StatelessWidget {
+  CarouselController buttonCarouselController = CarouselController();
+
   @override
   Widget build(BuildContext context) {
     //Manually operated Carousel
     final CarouselSlider manualCarouselDemo = CarouselSlider(
-      items: child,
-      autoPlay: false,
-      enlargeCenterPage: true,
-      viewportFraction: 0.9,
-      aspectRatio: 2.0,
-    );
+        items: child,
+        options: CarouselOptions(
+          autoPlay: false,
+          enlargeCenterPage: true,
+          viewportFraction: 0.9,
+          aspectRatio: 2.0,
+        ));
 
     //Auto playing carousel
     final CarouselSlider autoPlayDemo = CarouselSlider(
-      viewportFraction: 0.9,
-      aspectRatio: 2.0,
-      autoPlay: true,
-      enlargeCenterPage: true,
+      options: CarouselOptions(
+        viewportFraction: 0.9,
+        aspectRatio: 2.0,
+        autoPlay: true,
+        enlargeCenterPage: true,
+      ),
       items: imgList.map(
         (url) {
           return Container(
@@ -143,26 +152,28 @@ class CarouselDemo extends StatelessWidget {
     //Button controlled carousel
     Widget buttonDemo() {
       final basicSlider = CarouselSlider(
-        items: child,
-        autoPlay: false,
-        enlargeCenterPage: true,
-        viewportFraction: 0.9,
-        aspectRatio: 2.0,
-        initialPage: 2,
-      );
+          items: child,
+          carouselController: buttonCarouselController,
+          options: CarouselOptions(
+            autoPlay: false,
+            enlargeCenterPage: true,
+            viewportFraction: 0.9,
+            aspectRatio: 2.0,
+            initialPage: 2,
+          ));
       return Column(children: [
         basicSlider,
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Flexible(
             child: RaisedButton(
-              onPressed: () => basicSlider.previousPage(
+              onPressed: () => buttonCarouselController.previousPage(
                   duration: Duration(milliseconds: 300), curve: Curves.linear),
               child: Text('←'),
             ),
           ),
           Flexible(
             child: RaisedButton(
-              onPressed: () => basicSlider.nextPage(
+              onPressed: () => buttonCarouselController.nextPage(
                   duration: Duration(milliseconds: 300), curve: Curves.linear),
               child: Text('→'),
             ),
@@ -170,7 +181,8 @@ class CarouselDemo extends StatelessWidget {
           ...Iterable<int>.generate(imgList.length).map(
             (int pageIndex) => Flexible(
               child: RaisedButton(
-                onPressed: () => basicSlider.animateToPage(pageIndex,
+                onPressed: () => buttonCarouselController.animateToPage(
+                    pageIndex,
                     duration: Duration(milliseconds: 300),
                     curve: Curves.linear),
                 child: Text("$pageIndex"),
@@ -183,10 +195,12 @@ class CarouselDemo extends StatelessWidget {
 
     //Pages covers entire carousel
     final CarouselSlider coverScreenExample = CarouselSlider(
-      viewportFraction: 1.0,
-      aspectRatio: 2.0,
-      autoPlay: false,
-      enlargeCenterPage: false,
+      options: CarouselOptions(
+        viewportFraction: 1.0,
+        aspectRatio: 2.0,
+        autoPlay: false,
+        enlargeCenterPage: false,
+      ),
       items: map<Widget>(
         imgList,
         (index, i) {
@@ -201,11 +215,13 @@ class CarouselDemo extends StatelessWidget {
 
     //User input pauses carousels automatic playback
     final CarouselSlider touchDetectionDemo = CarouselSlider(
-      viewportFraction: 0.9,
-      aspectRatio: 2.0,
-      autoPlay: true,
-      enlargeCenterPage: true,
-      pauseAutoPlayOnTouch: Duration(seconds: 3),
+      options: CarouselOptions(
+        viewportFraction: 0.9,
+        aspectRatio: 2.0,
+        autoPlay: true,
+        enlargeCenterPage: true,
+        pauseAutoPlayOnTouch: Duration(seconds: 3),
+      ),
       items: imgList.map(
         (url) {
           return Container(
@@ -225,23 +241,26 @@ class CarouselDemo extends StatelessWidget {
 
     //Non-looping manual Carousel
     final CarouselSlider nonLoopingCarousel = CarouselSlider(
-      items: child,
-      scrollPhysics: BouncingScrollPhysics(),
-      enableInfiniteScroll: false,
-      autoPlay: false,
-      enlargeCenterPage: true,
-      viewportFraction: 0.9,
-      aspectRatio: 2.0,
-    );
+        items: child,
+        options: CarouselOptions(
+          scrollPhysics: BouncingScrollPhysics(),
+          enableInfiniteScroll: false,
+          autoPlay: false,
+          enlargeCenterPage: true,
+          viewportFraction: 0.9,
+          aspectRatio: 2.0,
+        ));
 
     //Vertical carousel
     final CarouselSlider verticalScrollCarousel = CarouselSlider(
-      scrollDirection: Axis.vertical,
-      aspectRatio: 2.0,
-      autoPlay: true,
-      enlargeCenterPage: true,
-      viewportFraction: 0.9,
-      pauseAutoPlayOnTouch: Duration(seconds: 3),
+      options: CarouselOptions(
+        scrollDirection: Axis.vertical,
+        aspectRatio: 2.0,
+        autoPlay: true,
+        enlargeCenterPage: true,
+        viewportFraction: 0.9,
+        pauseAutoPlayOnTouch: Duration(seconds: 3),
+      ),
       items: imgList.map(
         (url) {
           return Container(
@@ -262,9 +281,11 @@ class CarouselDemo extends StatelessWidget {
     //create full screen Carousel with context
     CarouselSlider getFullScreenCarousel(BuildContext mediaContext) {
       return CarouselSlider(
-        autoPlay: true,
-        viewportFraction: 1.0,
-        aspectRatio: MediaQuery.of(mediaContext).size.aspectRatio,
+        options: CarouselOptions(
+          autoPlay: true,
+          viewportFraction: 1.0,
+          aspectRatio: MediaQuery.of(mediaContext).size.aspectRatio,
+        ),
         items: imgList.map(
           (url) {
             return Container(
@@ -284,12 +305,13 @@ class CarouselDemo extends StatelessWidget {
 
     CarouselSlider getOnDemandCarousel(BuildContext mediaContext) {
       return CarouselSlider.builder(
-        scrollDirection: Axis.horizontal,
+        options: CarouselOptions(
+          scrollDirection: Axis.horizontal,
+        ),
         itemCount: 15,
-        itemBuilder: (BuildContext context, int itemIndex) =>
-            Container(
-              child: Text(itemIndex.toString()),
-            ),
+        itemBuilder: (BuildContext context, int itemIndex) => Container(
+          child: Text(itemIndex.toString()),
+        ),
       );
     }
 
