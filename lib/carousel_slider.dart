@@ -113,6 +113,14 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
 
   void pauseOnTouch() {
     timer.cancel();
+
+    // currently we can't listen to the `onPanUp` event(it doesn't work with pageview widget),
+    // so we can't resume the auto play when user finish swiping. here we use a hardcode
+    // duration to automatically triggering next auto play. This should be fixed when
+    // we find a solution to listen to the `onPanUp` event.
+    timer = Timer(Duration(seconds: 1), () {
+      timer = getTimer();
+    });
   }
 
   Widget getWrapper(Widget child) {

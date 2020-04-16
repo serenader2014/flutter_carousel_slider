@@ -342,7 +342,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Vertical sliding carousel demo')),
+      appBar: AppBar(title: Text('Carousel with indicator demo')),
       body: Column(
         children: [
           CarouselSlider(
@@ -412,7 +412,7 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Complicated image slider demo')),
+      appBar: AppBar(title: Text('Prefetch image slider demo')),
       body: Container(
         child: CarouselSlider.builder(
           itemCount: images.length,
