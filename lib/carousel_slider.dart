@@ -215,17 +215,20 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
 
             if (widget.options.scrollDirection == Axis.horizontal) {
               return Center(
-                child: SizedBox(
-                  height: distortionValue * height,
-                  child: child,
-                ),
-              );
+                child: Transform.scale(
+                        scale: distortionValue,
+                        child: Container(height: height, child: child)
+                       )
+                );
             } else {
               return Center(
-                child: SizedBox(
-                  width: distortionValue * MediaQuery.of(context).size.width,
-                  child: child,
-                ),
+                child: Transform.scale(
+                  scale: distortionValue, 
+                  child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: child
+                  ),
+                )
               );
             }
           },
