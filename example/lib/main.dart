@@ -29,6 +29,9 @@ class CarouselDemo extends StatelessWidget {
         '/ondemand': (ctx) => OnDemandCarouselDemo(),
         '/indicator': (ctx) => CarouselWithIndicatorDemo(),
         '/prefetch': (ctx) => PrefetchImageDemo(),
+        '/reason': (ctx) => CarouselChangeReasonDemo(),
+        '/position': (ctx) => KeepPageviewPositionDemo(),
+        '/multiple': (ctx) => MultipleItemDemo(),
       }
     );
   }
@@ -67,6 +70,8 @@ class CarouselDemoHome extends StatelessWidget {
           DemoItem('Carousel with indicator demo', '/indicator'),
           DemoItem('On-demand carousel slider', '/ondemand'),
           DemoItem('Image carousel slider with prefetch demo', '/prefetch'),
+          DemoItem('Carousel change reason demo', '/reason'),
+          DemoItem('Keep pageview position demo', '/position'),
           DemoItem('Multiple item in one screen demo', '/multiple'),
         ],
       ),
@@ -207,25 +212,20 @@ class _ManuallyControlledSliderState extends State<ManuallyControlledSlider> {
             children: <Widget>[
               Flexible(
                 child: RaisedButton(
-                  onPressed: () => _controller.previousPage(
-                      duration: Duration(milliseconds: 300), curve: Curves.linear),
+                  onPressed: () => _controller.previousPage(),
                   child: Text('←'),
                 ),
               ),
               Flexible(
                 child: RaisedButton(
-                  onPressed: () => _controller.nextPage(
-                      duration: Duration(milliseconds: 300), curve: Curves.linear),
+                  onPressed: () => _controller.nextPage(),
                   child: Text('→'),
                 ),
               ),
               ...Iterable<int>.generate(imgList.length).map(
                 (int pageIndex) => Flexible(
                   child: RaisedButton(
-                    onPressed: () => _controller.animateToPage(
-                        pageIndex,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.linear),
+                    onPressed: () => _controller.animateToPage(pageIndex),
                     child: Text("$pageIndex"),
                   ),
                 ),
@@ -249,7 +249,8 @@ class NoonLoopingDemo extends StatelessWidget {
             aspectRatio: 2.0,
             enlargeCenterPage: true,
             enableInfiniteScroll: false,
-            initialPage: 5,
+            initialPage: 2,
+            autoPlay: true,
           ),
           items: imageSliders,
         )
@@ -426,6 +427,142 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
               child: Center(
                 child: Image.network(images[index], fit: BoxFit.cover, width: 1000)
               ),
+            );
+          },
+        )
+      ),
+    );
+  }
+}
+
+class CarouselChangeReasonDemo extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _CarouselChangeReasonDemoState();
+  }
+}
+
+class _CarouselChangeReasonDemoState extends State<CarouselChangeReasonDemo> {
+  String reason = '';
+  final CarouselController _controller = CarouselController();
+
+  onPageChange(int index, CarouselPageChangedReason changeReason) {
+    setState(() {
+      reason = changeReason.toString();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Change reason demo')),
+      body: Column(
+        children: <Widget>[
+          CarouselSlider(
+            items: imageSliders,
+            options: CarouselOptions(
+              enlargeCenterPage: true,
+              aspectRatio: 16/9,
+              onPageChanged: onPageChange,
+              autoPlay: true,
+            ),
+            carouselController: _controller,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(
+                child: RaisedButton(
+                  onPressed: () => _controller.previousPage(),
+                  child: Text('←'),
+                ),
+              ),
+              Flexible(
+                child: RaisedButton(
+                  onPressed: () => _controller.nextPage(),
+                  child: Text('→'),
+                ),
+              ),
+              ...Iterable<int>.generate(imgList.length).map(
+                (int pageIndex) => Flexible(
+                  child: RaisedButton(
+                    onPressed: () => _controller.animateToPage(pageIndex),
+                    child: Text("$pageIndex"),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Center(
+            child: Column(children: [
+              Text('page change reason: '),
+              Text(reason),
+            ],),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class KeepPageviewPositionDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Keep pageview position demo')),
+      body: ListView.builder(itemBuilder: (ctx, index) {
+        if (index == 3) {
+          return Container(
+            child: CarouselSlider(
+              options: CarouselOptions(
+                aspectRatio: 2.0,
+                enlargeCenterPage: true,
+                pageViewKey: PageStorageKey('carousel_slider'),
+              ),
+              items: imageSliders,
+            )
+          );
+        } else {
+          return Container(
+            margin: EdgeInsets.symmetric(vertical: 20),
+            color: Colors.blue,
+            height: 200,
+            child: Center(
+              child: Text('other content'),
+            ),
+          );
+        }
+      }),
+    );
+  }
+}
+
+class MultipleItemDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Multiple item in one slide demo')),
+      body: Container(
+        child: CarouselSlider.builder(
+          options: CarouselOptions(
+            aspectRatio: 2.0,
+            enlargeCenterPage: false,
+            viewportFraction: 1,
+          ),
+          itemCount: (imgList.length / 2).round(),
+          itemBuilder: (context, index) {
+            final int first = index * 2;
+            final int second = first + 1;
+            return Row(
+              children: [first, second].map((idx) {
+                return Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    child: Image.network(imgList[idx], fit: BoxFit.cover),
+                  ),
+                );
+              }).toList(),
             );
           },
         )
