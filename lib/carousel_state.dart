@@ -20,8 +20,11 @@ class CarouselState {
   ///
   int initialPage = 0;
 
+  /// The callback to set the Reason Carousel changed
+  Function(CarouselPageChangedReason) changeMode;
+
   /// The widgets count that should be shown at carousel
   int itemCount;
 
-  CarouselState(this.options);
+  CarouselState(this.options, this.changeMode);
 }
