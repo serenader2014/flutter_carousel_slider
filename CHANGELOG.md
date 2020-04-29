@@ -1,3 +1,45 @@
+# 2.0.0
+
+## Breaking change
+
+Instead of passing all the options to the `CarouselSlider`, now you'll need to pass these option to `CarouselOptions`:
+
+```dart
+CarouselSlider(
+  CarouselOptions(height: 400.0),
+  items: [1,2,3,4,5].map((i) {
+    return Builder(
+      builder: (BuildContext context) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          decoration: BoxDecoration(
+            color: Colors.amber
+          ),
+          child: Text('text $i', style: TextStyle(fontSize: 16.0),)
+        );
+      },
+    );
+  }).toList(),
+)
+```
+
+## Add
+
+- `CarouselController`
+
+Since `v2.0.0`, `carousel_slider` plugin provides a way to pass your own `CaourselController`, and you can use `CaouselController` instance to manually control the carousel's position. For a more detailed example please refer to [example project](example/lib/main.dart).
+
+- `CarouselPageChangedReason`
+
+Now you can receive a `CarouselPageChangedReason` in `onPageChanged` callback.
+
+## Remove
+
+- `pauseAutoPlayOnTouch`
+
+`pauseAutoPlayOnTouch` option is removed, because it doesn't fix the problem we have. Currently, when we enable the `autoPlay` feature, we can not stop sliding when the user interact with the carousel. This is [a flutter's issue](https://github.com/flutter/flutter/issues/54875).
+
 # 1.4.1
 
 ## Fix
