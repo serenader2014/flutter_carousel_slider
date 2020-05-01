@@ -128,7 +128,7 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
     if (widget.options.height != null) {
       wrapper = Container(height: widget.options.height, child: child);
     } else {
-      wrapper = AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
+      wrapper = AspectRatio(aspectRatio: (widget.options.aspectRatio / widget.options.viewportFraction), child: child);
     }
 
     Widget listenerWrapper = NotificationListener(
@@ -211,7 +211,7 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
 
             final double height = widget.options.height ??
                 MediaQuery.of(context).size.width *
-                    (1 / widget.options.aspectRatio);
+                    (widget.options.viewportFraction / widget.options.aspectRatio);
 
             if (widget.options.scrollDirection == Axis.horizontal) {
               return Center(
