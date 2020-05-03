@@ -15,6 +15,12 @@ A carousel slider widget.
 * Flutter web
 * Flutter desktop
 
+## Live preview
+
+https://serenader2014.github.io/flutter_carousel_slider/#/
+
+Note: this page is built with flutter-web. For a better user experience, please use a mobile device to open this link.
+
 ## Installation
 
 Add `carousel_slider: ^2.0.0` to your `pubspec.yaml` dependencies. And import it:
