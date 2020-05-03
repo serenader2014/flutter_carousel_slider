@@ -35,7 +35,7 @@ Simply create a `CarouselSlider` widget, and pass the required params:
 
 ```dart
 CarouselSlider(
-  CarouselOptions(height: 400.0),
+  options: CarouselOptions(height: 400.0),
   items: [1,2,3,4,5].map((i) {
     return Builder(
       builder: (BuildContext context) {
@@ -59,7 +59,7 @@ CarouselSlider(
 
 CarouselSlider(
    items: items,
-   CarouselOptions(
+   options: CarouselOptions(
       height: 400,
       aspectRatio: 16/9,
       viewportFraction: 0.8,
