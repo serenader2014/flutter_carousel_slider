@@ -200,40 +200,42 @@ class _ManuallyControlledSliderState extends State<ManuallyControlledSlider> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Manually controlled slider')),
-      body: Column(
-        children: <Widget>[
-          CarouselSlider(
-            items: imageSliders,
-            options: CarouselOptions(enlargeCenterPage: true, aspectRatio: 16/9),
-            carouselController: _controller,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Flexible(
-                child: RaisedButton(
-                  onPressed: () => _controller.previousPage(),
-                  child: Text('←'),
-                ),
-              ),
-              Flexible(
-                child: RaisedButton(
-                  onPressed: () => _controller.nextPage(),
-                  child: Text('→'),
-                ),
-              ),
-              ...Iterable<int>.generate(imgList.length).map(
-                (int pageIndex) => Flexible(
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            CarouselSlider(
+              items: imageSliders,
+              options: CarouselOptions(enlargeCenterPage: true, height: 200),
+              carouselController: _controller,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
                   child: RaisedButton(
-                    onPressed: () => _controller.animateToPage(pageIndex),
-                    child: Text("$pageIndex"),
+                    onPressed: () => _controller.previousPage(),
+                    child: Text('←'),
                   ),
                 ),
-              ),
-            ],
-          )
-        ],
-      ),
+                Flexible(
+                  child: RaisedButton(
+                    onPressed: () => _controller.nextPage(),
+                    child: Text('→'),
+                  ),
+                ),
+                ...Iterable<int>.generate(imgList.length).map(
+                  (int pageIndex) => Flexible(
+                    child: RaisedButton(
+                      onPressed: () => _controller.animateToPage(pageIndex),
+                      child: Text("$pageIndex"),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      )
     );
   }
 }
@@ -456,51 +458,53 @@ class _CarouselChangeReasonDemoState extends State<CarouselChangeReasonDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Change reason demo')),
-      body: Column(
-        children: <Widget>[
-          CarouselSlider(
-            items: imageSliders,
-            options: CarouselOptions(
-              enlargeCenterPage: true,
-              aspectRatio: 16/9,
-              onPageChanged: onPageChange,
-              autoPlay: true,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            CarouselSlider(
+              items: imageSliders,
+              options: CarouselOptions(
+                enlargeCenterPage: true,
+                aspectRatio: 16/9,
+                onPageChanged: onPageChange,
+                autoPlay: true,
+              ),
+              carouselController: _controller,
             ),
-            carouselController: _controller,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Flexible(
-                child: RaisedButton(
-                  onPressed: () => _controller.previousPage(),
-                  child: Text('←'),
-                ),
-              ),
-              Flexible(
-                child: RaisedButton(
-                  onPressed: () => _controller.nextPage(),
-                  child: Text('→'),
-                ),
-              ),
-              ...Iterable<int>.generate(imgList.length).map(
-                (int pageIndex) => Flexible(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
                   child: RaisedButton(
-                    onPressed: () => _controller.animateToPage(pageIndex),
-                    child: Text("$pageIndex"),
+                    onPressed: () => _controller.previousPage(),
+                    child: Text('←'),
                   ),
                 ),
-              ),
-            ],
-          ),
-          Center(
-            child: Column(children: [
-              Text('page change reason: '),
-              Text(reason),
-            ],),
-          )
-        ],
-      ),
+                Flexible(
+                  child: RaisedButton(
+                    onPressed: () => _controller.nextPage(),
+                    child: Text('→'),
+                  ),
+                ),
+                ...Iterable<int>.generate(imgList.length).map(
+                  (int pageIndex) => Flexible(
+                    child: RaisedButton(
+                      onPressed: () => _controller.animateToPage(pageIndex),
+                      child: Text("$pageIndex"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Center(
+              child: Column(children: [
+                Text('page change reason: '),
+                Text(reason),
+              ],),
+            )
+          ],
+        ),
+      )
     );
   }
 }

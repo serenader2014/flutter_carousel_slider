@@ -193,10 +193,6 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
     clearTimer();
   }
 
-  itemWrapper(BuildContext context, double distortionValue) {
-
-  }
-
   @override
   Widget build(BuildContext context) {
     return getWrapper(PageView.builder(

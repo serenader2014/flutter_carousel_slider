@@ -8,7 +8,7 @@ A carousel slider widget.
 * Custom child widgets
 * Auto play
 
-## Support platforms
+## Supported platforms
 
 * Flutter Android
 * Flutter iOS
