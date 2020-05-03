@@ -1,3 +1,31 @@
+# 2.1.0
+
+## Add
+
+- `pauseAutoPlayOnTouch` option
+
+This option controls whether the carousel slider should pause the auto play function when user is touching the slider
+
+- `pauseAutoPlayOnManualNavigate` option
+
+This option controls whether the carousel slider should pause the auto play function when user is calling controller's method.
+
+- `pauseAutoPlayInFiniteScroll` option
+
+This option decide the carousel should go to the first item when it reach the last item or not.
+
+- `pageViewKey` option
+
+This option is useful when you want to keep the pageview's position when it was recreated.
+
+## Fix
+
+- Fix `CarouselPageChangedReason` bug
+
+## Other updates
+
+- Use `Transform.scale` instead of `SizedBox` to wrap the slider item
+
 # 2.0.0
 
 ## Breaking change

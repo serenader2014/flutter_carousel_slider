@@ -14,12 +14,12 @@ class CarouselOptions {
   /// The fraction of the viewport that each page should occupy.
   ///
   /// Defaults to 0.8, which means each page fills 80% of the carousel.
-  final num viewportFraction;
+  final double viewportFraction;
 
   /// The initial page to show when first creating the [CarouselSlider].
   ///
   /// Defaults to 0.
-  final num initialPage;
+  final int initialPage;
 
   ///Determines if carousel should loop infinitely or be limited to item length.
   ///
@@ -81,6 +81,27 @@ class CarouselOptions {
   /// Defaults to matching platform conventions.
   final ScrollPhysics scrollPhysics;
 
+  /// If `true`, the auto play function will be paused when user is interacting with
+  /// the carousel, and will be resumed when user finish interacting.
+  /// Default to `true`.
+  final bool pauseAutoPlayOnTouch;
+
+  /// If `true`, the auto play function will be paused when user is calling
+  /// pageController's `nextPage` or `previousPage` or `animateToPage` method.
+  /// And after the animation complete, the auto play will be resumed.
+  /// Default to `true`.
+  final bool pauseAutoPlayOnManualNavigate;
+
+  /// If `enableInfiniteScroll` is `false`, and `autoPlay` is `true`, this option
+  /// decide the carousel should go to the first item when it reach the last item or not.
+  /// If set to `true`, the auto play will be paused when it reach the last item.
+  /// If set to `false`, the auto play function will animate to the first item when it was
+  /// in the last item.
+  final bool pauseAutoPlayInFiniteScroll;
+
+  /// Pass a `PageStoragekey` if you want to keep the pageview's position when it was recreated.
+  final PageStorageKey pageViewKey;
+
   CarouselOptions({
     this.height,
     this.aspectRatio: 16 / 9,
@@ -97,6 +118,10 @@ class CarouselOptions {
     this.onScrolled,
     this.scrollPhysics,
     this.scrollDirection: Axis.horizontal,
+    this.pauseAutoPlayOnTouch: true,
+    this.pauseAutoPlayOnManualNavigate: true,
+    this.pauseAutoPlayInFiniteScroll: false,
+    this.pageViewKey,
     carouselController,
   });
 }

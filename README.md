@@ -8,12 +8,18 @@ A carousel slider widget.
 * Custom child widgets
 * Auto play
 
-## Support platforms
+## Supported platforms
 
 * Flutter Android
 * Flutter iOS
 * Flutter web
 * Flutter desktop
+
+## Live preview
+
+https://serenader2014.github.io/flutter_carousel_slider/#/
+
+Note: this page is built with flutter-web. For a better user experience, please use a mobile device to open this link.
 
 ## Installation
 

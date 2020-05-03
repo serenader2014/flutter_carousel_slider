@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:carousel_slider/carousel_state.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'utils.dart';
@@ -78,7 +79,7 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
   @override
   void initState() {
     super.initState();
-    carouselState = CarouselState(this.options);
+    carouselState = CarouselState(this.options, clearTimer, resumeTimer);
 
     carouselState.itemCount = widget.itemCount;
     carouselController.state = carouselState;
@@ -102,25 +103,37 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
       ? Timer.periodic(widget.options.autoPlayInterval, (_) {
           CarouselPageChangedReason previousReason = mode;
           mode = CarouselPageChangedReason.timed;
+          int nextPage = carouselState.pageController.page.round() + 1;
+          int itemCount = widget.itemCount ?? widget.items.length;
+
+          if (nextPage >= itemCount && widget.options.enableInfiniteScroll == false) {
+            if (widget.options.pauseAutoPlayInFiniteScroll) {
+              clearTimer();
+              return;
+            }
+            nextPage = 0;
+          }
+
           carouselState.pageController
-            .nextPage(
+            .animateToPage(
+              nextPage,
               duration: widget.options.autoPlayAnimationDuration,
-              curve: widget.options.autoPlayCurve)
-            .then((_) => mode = previousReason);
+              curve: widget.options.autoPlayCurve
+            ).then((_) => mode = previousReason);
         })
       : null;
   }
 
-  void pauseOnTouch() {
-    timer.cancel();
+  void clearTimer() {
+    if (widget.options.autoPlay) {
+      timer?.cancel();
+    }
+  }
 
-    // currently we can't listen to the `onPanUp` event(it doesn't work with pageview widget),
-    // so we can't resume the auto play when user finish swiping. here we use a hardcode
-    // duration to automatically triggering next auto play. This should be fixed when
-    // we find a solution to listen to the `onPanUp` event.
-    timer = Timer(Duration(seconds: 1), () {
+  void resumeTimer() {
+    if (widget.options.autoPlay) {
       timer = getTimer();
-    });
+    }
   }
 
   Widget getWrapper(Widget child) {
@@ -131,39 +144,53 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
       wrapper = AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
     }
 
-    Widget listenerWrapper = NotificationListener(
-      onNotification: (notification) {
-        if (widget.options.onScrolled != null && notification is ScrollUpdateNotification) {
-          widget.options.onScrolled(carouselState.pageController.page);
-        }
-        return false;
+    return RawGestureDetector(
+      gestures: {
+        _MultipleGestureRecognizer: GestureRecognizerFactoryWithHandlers<_MultipleGestureRecognizer>(
+          () => _MultipleGestureRecognizer(),
+          (_MultipleGestureRecognizer instance) {
+            instance.onDown = (_) {
+              onPanDown();
+            };
+            instance.onEnd = (_) {
+              onPanUp();
+            };
+            instance.onCancel = () {
+              onPanUp();
+            };
+          }
+        ),
       },
-      child: wrapper,
+      child: NotificationListener(
+        onNotification: (notification) {
+          if (widget.options.onScrolled != null && notification is ScrollUpdateNotification) {
+            widget.options.onScrolled(carouselState.pageController.page);
+          }
+          return false;
+        },
+        child: wrapper,
+      ),
     );
-
-    return widget.options.autoPlay
-      ? addGestureDetection(listenerWrapper)
-      : listenerWrapper;
   }
 
   void onPanDown() {
-    if (widget.options.autoPlay) {
-      pauseOnTouch();
+    if (widget.options.pauseAutoPlayOnTouch) {
+      clearTimer();
     }
 
     mode = CarouselPageChangedReason.manual;
   }
 
-  Widget addGestureDetection(Widget child) =>
-    GestureDetector(
-      onPanDown: (_) => onPanDown(),
-      child: child,
-    );
+  void onPanUp() {
+    if (widget.options.pauseAutoPlayOnTouch) {
+      resumeTimer();
+    }
+  }
 
   @override
   void dispose() {
     super.dispose();
-    timer?.cancel();
+    clearTimer();
   }
 
   @override
@@ -174,6 +201,7 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
       controller: carouselState.pageController,
       reverse: widget.options.reverse,
       itemCount: widget.options.enableInfiniteScroll ? null : widget.itemCount,
+      key: widget.options.pageViewKey,
       onPageChanged: (int index) {
         int currentPage = getRealIndex(index + carouselState.initialPage,
             carouselState.realPage, widget.itemCount);
@@ -201,7 +229,13 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
               // so in the first build we calculate the itemoffset manually
               if (carouselState.pageController.position.minScrollExtent == null ||
                   carouselState.pageController.position.maxScrollExtent == null) {
-                itemOffset = carouselState.realPage.toDouble() - idx.toDouble();
+                BuildContext storageContext = carouselState.pageController.position.context.storageContext;
+                final double previousSavedPosition = PageStorage.of(storageContext)?.readState(storageContext) as double;
+                if (previousSavedPosition != null) {
+                  itemOffset = previousSavedPosition - idx.toDouble();
+                } else {
+                  itemOffset = carouselState.realPage.toDouble() - idx.toDouble();
+                }
               } else {
                 itemOffset = carouselState.pageController.page - idx;
               }
@@ -215,16 +249,21 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
 
             if (widget.options.scrollDirection == Axis.horizontal) {
               return Center(
-                child: SizedBox(
-                  height: distortionValue * height,
-                  child: child,
+                child: Transform.scale(
+                  scale: distortionValue,
+                  // height: distortionValue * height,
+                  child: Container(height: height, child: child),
                 ),
               );
             } else {
               return Center(
-                child: SizedBox(
-                  width: distortionValue * MediaQuery.of(context).size.width,
-                  child: child,
+                child: Transform.scale(
+                  // width: distortionValue * MediaQuery.of(context).size.width,
+                  scale: distortionValue,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: child,
+                  ),
                 ),
               );
             }
@@ -232,5 +271,12 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
         );
       },
     ));
+  }
+}
+
+class _MultipleGestureRecognizer extends PanGestureRecognizer {
+  @override
+  void rejectGesture(int pointer) {
+    acceptGesture(pointer);
   }
 }

@@ -43,16 +43,36 @@ class CarouselControllerImpl implements CarouselController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
-  Future<void> nextPage({Duration duration, Curve curve}) {
-    return _state.pageController.nextPage(duration: duration, curve: curve);
+  Future<void> nextPage({
+    Duration duration = const Duration(milliseconds: 300),
+    Curve curve = Curves.linear
+  }) async {
+    final bool isNeedResetTimer = _state.options.pauseAutoPlayOnManualNavigate;
+    if (isNeedResetTimer) {
+      _state.onResetTimer();
+    }
+    await _state.pageController.nextPage(duration: duration, curve: curve);
+    if (isNeedResetTimer) {
+      _state.onResumeTimer();
+    }
   }
 
   /// Animates the controlled [CarouselSlider] to the previous page.
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
-  Future<void> previousPage({Duration duration, Curve curve}) {
-    return _state.pageController.previousPage(duration: duration, curve: curve);
+  Future<void> previousPage({
+    Duration duration = const Duration(milliseconds: 300),
+    Curve curve = Curves.linear
+  }) async {
+    final bool isNeedResetTimer = _state.options.pauseAutoPlayOnManualNavigate;
+    if (isNeedResetTimer) {
+      _state.onResetTimer();
+    }
+    await _state.pageController.previousPage(duration: duration, curve: curve);
+    if (isNeedResetTimer) {
+      _state.onResumeTimer();
+    }
   }
 
   /// Changes which page is displayed in the controlled [CarouselSlider].
@@ -64,7 +84,6 @@ class CarouselControllerImpl implements CarouselController {
         _state.realPage - _state.initialPage, _state.itemCount);
 
     final int pageToJump = _state.pageController.page.toInt() + page - index;
-    print(_state.pageController.page.toInt());
     return _state.pageController.jumpToPage(pageToJump);
   }
 
@@ -72,12 +91,22 @@ class CarouselControllerImpl implements CarouselController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
-  Future<void> animateToPage(int page, {Duration duration, Curve curve}) {
+  Future<void> animateToPage(int page, {
+    Duration duration = const Duration(milliseconds: 300),
+    Curve curve = Curves.linear
+  }) async {
+    final bool isNeedResetTimer = _state.options.pauseAutoPlayOnManualNavigate;
+    if (isNeedResetTimer) {
+      _state.onResetTimer();
+    }
     final index = getRealIndex(_state.pageController.page.toInt(),
         _state.realPage - _state.initialPage, _state.itemCount);
-    return _state.pageController.animateToPage(
+    await _state.pageController.animateToPage(
         _state.pageController.page.toInt() + page - index,
         duration: duration,
         curve: curve);
+    if (isNeedResetTimer) {
+      _state.onResumeTimer();
+    }
   }
 }
