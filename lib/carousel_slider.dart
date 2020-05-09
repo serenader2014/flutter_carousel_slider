@@ -31,38 +31,41 @@ class CarouselSlider extends StatefulWidget {
 
   final int itemCount;
 
-  CarouselSlider({
-    @required this.items,
-    @required this.options,
-    carouselController,
-    Key key
-  }) : itemBuilder = null,
-    itemCount = items != null ? items.length : 0,
-    _carouselController = carouselController ?? CarouselController(),
-    super(key: key);
+  CarouselSlider(
+      {@required this.items,
+      @required this.options,
+      carouselController,
+      Key key})
+      : itemBuilder = null,
+        itemCount = items != null ? items.length : 0,
+        _carouselController = carouselController ?? CarouselController(),
+        super(key: key);
 
   /// The on demand item builder constructor
-  CarouselSlider.builder({
-    @required this.itemCount,
-    @required this.itemBuilder,
-    @required this.options,
-    carouselController,
-    Key key
-  }) : items = null,
-    _carouselController = carouselController ?? CarouselController(),
-    super(key: key);
+  CarouselSlider.builder(
+      {@required this.itemCount,
+      @required this.itemBuilder,
+      @required this.options,
+      carouselController,
+      Key key})
+      : items = null,
+        _carouselController = carouselController ?? CarouselController(),
+        super(key: key);
 
   @override
   CarouselSliderState createState() => CarouselSliderState(_carouselController);
 }
 
-class CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
+class CarouselSliderState extends State<CarouselSlider>
+    with TickerProviderStateMixin {
   final CarouselControllerImpl carouselController;
   Timer timer;
 
   CarouselOptions get options => widget.options ?? CarouselOptions();
 
   CarouselState carouselState;
+
+  PageController pageController;
 
   /// mode is related to why the page is being changed
   CarouselPageChangedReason mode = CarouselPageChangedReason.controller;
@@ -73,24 +76,37 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
   void didUpdateWidget(CarouselSlider oldWidget) {
     carouselState.options = options;
     carouselState.itemCount = widget.itemCount;
+
+    // Using this new method to handle animations when state changes
+    handleAutoPlay();
+
+    // pagecontroller needed to be re-initialized to respond to state changes
+    // I'm not too sure how bad this is for performance but it works :D
+    pageController = PageController(
+      viewportFraction: options.viewportFraction,
+      initialPage: carouselState.realPage,
+    );
+
+    carouselState.pageController = pageController;
+
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void initState() {
     super.initState();
-    carouselState = CarouselState(this.options, clearTimer, resumeTimer);
+    carouselState = CarouselState(this.options, stopAutoPlay, startAutoPlay);
 
     carouselState.itemCount = widget.itemCount;
     carouselController.state = carouselState;
     carouselState.initialPage = widget.options.initialPage;
     carouselState.realPage = options.enableInfiniteScroll
-      ? carouselState.realPage + carouselState.initialPage
-      : carouselState.initialPage;
-    timer = getTimer();
+        ? carouselState.realPage + carouselState.initialPage
+        : carouselState.initialPage;
 
+    handleAutoPlay();
 
-    PageController pageController = PageController(
+    pageController = PageController(
       viewportFraction: options.viewportFraction,
       initialPage: carouselState.realPage,
     );
@@ -98,42 +114,51 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
     carouselState.pageController = pageController;
   }
 
-  Timer getTimer() {
-    return widget.options.autoPlay
-      ? Timer.periodic(widget.options.autoPlayInterval, (_) {
-          CarouselPageChangedReason previousReason = mode;
-          mode = CarouselPageChangedReason.timed;
-          int nextPage = carouselState.pageController.page.round() + 1;
-          int itemCount = widget.itemCount ?? widget.items.length;
+  void handleAutoPlay() {
+    bool autoPlayEnabled = widget.options.autoPlay;
 
-          if (nextPage >= itemCount && widget.options.enableInfiniteScroll == false) {
-            if (widget.options.pauseAutoPlayInFiniteScroll) {
-              clearTimer();
-              return;
-            }
-            nextPage = 0;
-          }
-
-          carouselState.pageController
-            .animateToPage(
-              nextPage,
-              duration: widget.options.autoPlayAnimationDuration,
-              curve: widget.options.autoPlayCurve
-            ).then((_) => mode = previousReason);
-        })
-      : null;
-  }
-
-  void clearTimer() {
-    if (widget.options.autoPlay) {
-      timer?.cancel();
+    if (autoPlayEnabled && timer != null) return;
+    stopAutoPlay();
+    if (autoPlayEnabled) {
+      startAutoPlay();
     }
   }
 
-  void resumeTimer() {
-    if (widget.options.autoPlay) {
+  void startAutoPlay() {
+    if (timer == null) {
       timer = getTimer();
     }
+  }
+
+  void stopAutoPlay() {
+    if (timer != null) {
+      timer.cancel();
+      timer = null;
+    }
+  }
+
+  Timer getTimer() {
+    return Timer.periodic(widget.options.autoPlayInterval, (_) {
+      CarouselPageChangedReason previousReason = mode;
+      mode = CarouselPageChangedReason.timed;
+      int nextPage = carouselState.pageController.page.round() + 1;
+      int itemCount = widget.itemCount ?? widget.items.length;
+
+      if (nextPage >= itemCount &&
+          widget.options.enableInfiniteScroll == false) {
+        if (widget.options.pauseAutoPlayInFiniteScroll) {
+          stopAutoPlay();
+          return;
+        }
+        nextPage = 0;
+      }
+
+      carouselState.pageController
+          .animateToPage(nextPage,
+              duration: widget.options.autoPlayAnimationDuration,
+              curve: widget.options.autoPlayCurve)
+          .then((_) => mode = previousReason);
+    });
   }
 
   Widget getWrapper(Widget child) {
@@ -141,29 +166,31 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
     if (widget.options.height != null) {
       wrapper = Container(height: widget.options.height, child: child);
     } else {
-      wrapper = AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
+      wrapper =
+          AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
     }
 
     return RawGestureDetector(
       gestures: {
-        _MultipleGestureRecognizer: GestureRecognizerFactoryWithHandlers<_MultipleGestureRecognizer>(
-          () => _MultipleGestureRecognizer(),
-          (_MultipleGestureRecognizer instance) {
-            instance.onDown = (_) {
-              onPanDown();
-            };
-            instance.onEnd = (_) {
-              onPanUp();
-            };
-            instance.onCancel = () {
-              onPanUp();
-            };
-          }
-        ),
+        _MultipleGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<_MultipleGestureRecognizer>(
+                () => _MultipleGestureRecognizer(),
+                (_MultipleGestureRecognizer instance) {
+          instance.onDown = (_) {
+            onPanDown();
+          };
+          instance.onEnd = (_) {
+            onPanUp();
+          };
+          instance.onCancel = () {
+            onPanUp();
+          };
+        }),
       },
       child: NotificationListener(
         onNotification: (notification) {
-          if (widget.options.onScrolled != null && notification is ScrollUpdateNotification) {
+          if (widget.options.onScrolled != null &&
+              notification is ScrollUpdateNotification) {
             widget.options.onScrolled(carouselState.pageController.page);
           }
           return false;
@@ -175,7 +202,7 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
 
   void onPanDown() {
     if (widget.options.pauseAutoPlayOnTouch) {
-      clearTimer();
+      stopAutoPlay();
     }
 
     mode = CarouselPageChangedReason.manual;
@@ -183,14 +210,14 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
 
   void onPanUp() {
     if (widget.options.pauseAutoPlayOnTouch) {
-      resumeTimer();
+      startAutoPlay();
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    clearTimer();
+    stopAutoPlay();
   }
 
   @override
@@ -223,23 +250,31 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
             // to display the visual effect
-            if (widget.options.enlargeCenterPage != null && widget.options.enlargeCenterPage == true) {
+            if (widget.options.enlargeCenterPage != null &&
+                widget.options.enlargeCenterPage == true) {
               double itemOffset;
               // pageController.page can only be accessed after the first build,
               // so in the first build we calculate the itemoffset manually
-              if (carouselState.pageController.position.minScrollExtent == null ||
-                  carouselState.pageController.position.maxScrollExtent == null) {
-                BuildContext storageContext = carouselState.pageController.position.context.storageContext;
-                final double previousSavedPosition = PageStorage.of(storageContext)?.readState(storageContext) as double;
+              if (carouselState.pageController.position.minScrollExtent ==
+                      null ||
+                  carouselState.pageController.position.maxScrollExtent ==
+                      null) {
+                BuildContext storageContext = carouselState
+                    .pageController.position.context.storageContext;
+                final double previousSavedPosition =
+                    PageStorage.of(storageContext)?.readState(storageContext)
+                        as double;
                 if (previousSavedPosition != null) {
                   itemOffset = previousSavedPosition - idx.toDouble();
                 } else {
-                  itemOffset = carouselState.realPage.toDouble() - idx.toDouble();
+                  itemOffset =
+                      carouselState.realPage.toDouble() - idx.toDouble();
                 }
               } else {
                 itemOffset = carouselState.pageController.page - idx;
               }
-              final distortionRatio = (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
+              final distortionRatio =
+                  (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
               distortionValue = Curves.easeOut.transform(distortionRatio);
             }
 
