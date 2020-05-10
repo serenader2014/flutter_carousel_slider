@@ -77,9 +77,6 @@ class CarouselSliderState extends State<CarouselSlider>
     carouselState.options = options;
     carouselState.itemCount = widget.itemCount;
 
-    // Using this new method to handle animations when state changes
-    handleAutoPlay();
-
     // pagecontroller needed to be re-initialized to respond to state changes
     // I'm not too sure how bad this is for performance but it works :D
     pageController = PageController(
@@ -89,13 +86,16 @@ class CarouselSliderState extends State<CarouselSlider>
 
     carouselState.pageController = pageController;
 
+    // Using this new method to handle animations when state changes
+    handleAutoPlay();
+
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void initState() {
     super.initState();
-    carouselState = CarouselState(this.options, stopAutoPlay, startAutoPlay);
+    carouselState = CarouselState(this.options, clearTimer, resumeTimer);
 
     carouselState.itemCount = widget.itemCount;
     carouselController.state = carouselState;
@@ -118,19 +118,19 @@ class CarouselSliderState extends State<CarouselSlider>
     bool autoPlayEnabled = widget.options.autoPlay;
 
     if (autoPlayEnabled && timer != null) return;
-    stopAutoPlay();
+    clearTimer();
     if (autoPlayEnabled) {
-      startAutoPlay();
+      resumeTimer();
     }
   }
 
-  void startAutoPlay() {
+  void resumeTimer() {
     if (timer == null) {
       timer = getTimer();
     }
   }
 
-  void stopAutoPlay() {
+  void clearTimer() {
     if (timer != null) {
       timer.cancel();
       timer = null;
@@ -147,7 +147,7 @@ class CarouselSliderState extends State<CarouselSlider>
       if (nextPage >= itemCount &&
           widget.options.enableInfiniteScroll == false) {
         if (widget.options.pauseAutoPlayInFiniteScroll) {
-          stopAutoPlay();
+          clearTimer();
           return;
         }
         nextPage = 0;
@@ -202,7 +202,7 @@ class CarouselSliderState extends State<CarouselSlider>
 
   void onPanDown() {
     if (widget.options.pauseAutoPlayOnTouch) {
-      stopAutoPlay();
+      clearTimer();
     }
 
     mode = CarouselPageChangedReason.manual;
@@ -210,14 +210,14 @@ class CarouselSliderState extends State<CarouselSlider>
 
   void onPanUp() {
     if (widget.options.pauseAutoPlayOnTouch) {
-      startAutoPlay();
+      resumeTimer();
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    stopAutoPlay();
+    clearTimer();
   }
 
   @override
