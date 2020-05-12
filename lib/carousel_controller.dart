@@ -111,9 +111,10 @@ class CarouselControllerImpl implements CarouselController {
     }
   }
 
-  /// Starts the controlled [CarouselSlider] autoplaying.
+  /// Starts the controlled [CarouselSlider] autoplay.
   ///
-  /// The carousel will only autoPlay if the [autoPlay] is true.
+  /// The carousel will only autoPlay if the [autoPlay] parameter
+  /// in [CarouselOptions] is true.
   void startAutoPlay() {
     _state.onResumeTimer();
   }
@@ -121,7 +122,7 @@ class CarouselControllerImpl implements CarouselController {
   /// Stops the controlled [CarouselSlider] from autoplaying.
   ///
   /// This is a more on-demand way of doing this. Use the [autoPlay]
-  /// parameter to specify the autoPlay behaviour of the carousel.
+  /// parameter in [CarouselOptions] to specify the autoPlay behaviour of the carousel.
   void stopAutoPlay() {
     _state.onResetTimer();
   }

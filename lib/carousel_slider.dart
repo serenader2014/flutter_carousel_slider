@@ -77,13 +77,11 @@ class CarouselSliderState extends State<CarouselSlider>
     carouselState.options = options;
     carouselState.itemCount = widget.itemCount;
 
-    // pagecontroller needed to be re-initialized to respond to state changes
-    // I'm not too sure how bad this is for performance but it works :D
+    // pageController needed to be re-initialized to respond to state changes
     pageController = PageController(
       viewportFraction: options.viewportFraction,
       initialPage: carouselState.realPage,
     );
-
     carouselState.pageController = pageController;
 
     // Using this new method to handle animations when state changes
@@ -118,6 +116,7 @@ class CarouselSliderState extends State<CarouselSlider>
     bool autoPlayEnabled = widget.options.autoPlay;
 
     if (autoPlayEnabled && timer != null) return;
+
     clearTimer();
     if (autoPlayEnabled) {
       resumeTimer();
@@ -138,27 +137,29 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 
   Timer getTimer() {
-    return Timer.periodic(widget.options.autoPlayInterval, (_) {
-      CarouselPageChangedReason previousReason = mode;
-      mode = CarouselPageChangedReason.timed;
-      int nextPage = carouselState.pageController.page.round() + 1;
-      int itemCount = widget.itemCount ?? widget.items.length;
+    return widget.options.autoPlay
+        ? Timer.periodic(widget.options.autoPlayInterval, (_) {
+            CarouselPageChangedReason previousReason = mode;
+            mode = CarouselPageChangedReason.timed;
+            int nextPage = carouselState.pageController.page.round() + 1;
+            int itemCount = widget.itemCount ?? widget.items.length;
 
-      if (nextPage >= itemCount &&
-          widget.options.enableInfiniteScroll == false) {
-        if (widget.options.pauseAutoPlayInFiniteScroll) {
-          clearTimer();
-          return;
-        }
-        nextPage = 0;
-      }
+            if (nextPage >= itemCount &&
+                widget.options.enableInfiniteScroll == false) {
+              if (widget.options.pauseAutoPlayInFiniteScroll) {
+                clearTimer();
+                return;
+              }
+              nextPage = 0;
+            }
 
-      carouselState.pageController
-          .animateToPage(nextPage,
-              duration: widget.options.autoPlayAnimationDuration,
-              curve: widget.options.autoPlayCurve)
-          .then((_) => mode = previousReason);
-    });
+            carouselState.pageController
+                .animateToPage(nextPage,
+                    duration: widget.options.autoPlayAnimationDuration,
+                    curve: widget.options.autoPlayCurve)
+                .then((_) => mode = previousReason);
+          })
+        : null;
   }
 
   Widget getWrapper(Widget child) {
