@@ -7,12 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'utils.dart';
-import 'carousel_options.dart';
 import 'carousel_controller.dart';
-
-export 'carousel_options.dart';
-export 'carousel_controller.dart';
+import 'carousel_options.dart';
+import 'utils.dart';
 
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
@@ -69,6 +66,10 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
 
   CarouselSliderState(this.carouselController);
 
+  void changeMode(CarouselPageChangedReason _mode) {
+    mode = _mode;
+  }
+
   @override
   void didUpdateWidget(CarouselSlider oldWidget) {
     carouselState.options = options;
@@ -79,7 +80,8 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
   @override
   void initState() {
     super.initState();
-    carouselState = CarouselState(this.options, clearTimer, resumeTimer);
+    carouselState =
+        CarouselState(this.options, clearTimer, resumeTimer, this.changeMode);
 
     carouselState.itemCount = widget.itemCount;
     carouselController.state = carouselState;
@@ -102,7 +104,7 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
     return widget.options.autoPlay
       ? Timer.periodic(widget.options.autoPlayInterval, (_) {
           CarouselPageChangedReason previousReason = mode;
-          mode = CarouselPageChangedReason.timed;
+            changeMode(CarouselPageChangedReason.timed);
           int nextPage = carouselState.pageController.page.round() + 1;
           int itemCount = widget.itemCount ?? widget.items.length;
 
@@ -118,8 +120,8 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
             .animateToPage(
               nextPage,
               duration: widget.options.autoPlayAnimationDuration,
-              curve: widget.options.autoPlayCurve
-            ).then((_) => mode = previousReason);
+                    curve: widget.options.autoPlayCurve)
+                .then((_) => changeMode(previousReason));
         })
       : null;
   }
@@ -149,6 +151,9 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
         _MultipleGestureRecognizer: GestureRecognizerFactoryWithHandlers<_MultipleGestureRecognizer>(
           () => _MultipleGestureRecognizer(),
           (_MultipleGestureRecognizer instance) {
+          instance.onStart = (_) {
+            onStart();
+          };
             instance.onDown = (_) {
               onPanDown();
             };
@@ -173,12 +178,16 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
     );
   }
 
+  void onStart() {
+    changeMode(CarouselPageChangedReason.manual);
+  }
+
   void onPanDown() {
     if (widget.options.pauseAutoPlayOnTouch) {
       clearTimer();
     }
 
-    mode = CarouselPageChangedReason.manual;
+    changeMode(CarouselPageChangedReason.manual);
   }
 
   void onPanUp() {
@@ -208,7 +217,6 @@ class CarouselSliderState extends State<CarouselSlider> with TickerProviderState
         if (widget.options.onPageChanged != null) {
           widget.options.onPageChanged(currentPage, mode);
         }
-        mode = CarouselPageChangedReason.controller;
       },
       itemBuilder: (BuildContext context, int idx) {
         final int index = getRealIndex(idx + carouselState.initialPage,
