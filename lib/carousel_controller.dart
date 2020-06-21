@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'carousel_options.dart';
 import 'carousel_state.dart';
 import 'utils.dart';
 
@@ -33,6 +34,9 @@ class CarouselControllerImpl implements CarouselController {
     }
   }
 
+  void _setModeController() =>
+      _state.changeMode(CarouselPageChangedReason.controller);
+
   @override
   bool get ready => _state != null;
 
@@ -52,6 +56,7 @@ class CarouselControllerImpl implements CarouselController {
       _state.onResetTimer();
     }
     await _state.pageController.nextPage(duration: duration, curve: curve);
+    _setModeController();
     if (isNeedResetTimer) {
       _state.onResumeTimer();
     }
@@ -69,6 +74,7 @@ class CarouselControllerImpl implements CarouselController {
     if (isNeedResetTimer) {
       _state.onResetTimer();
     }
+    _setModeController();
     await _state.pageController.previousPage(duration: duration, curve: curve);
     if (isNeedResetTimer) {
       _state.onResumeTimer();
@@ -83,6 +89,7 @@ class CarouselControllerImpl implements CarouselController {
     final index = getRealIndex(_state.pageController.page.toInt(),
         _state.realPage - _state.initialPage, _state.itemCount);
 
+    _setModeController();
     final int pageToJump = _state.pageController.page.toInt() + page - index;
     return _state.pageController.jumpToPage(pageToJump);
   }
@@ -101,6 +108,7 @@ class CarouselControllerImpl implements CarouselController {
     }
     final index = getRealIndex(_state.pageController.page.toInt(),
         _state.realPage - _state.initialPage, _state.itemCount);
+    _setModeController();
     await _state.pageController.animateToPage(
         _state.pageController.page.toInt() + page - index,
         duration: duration,
