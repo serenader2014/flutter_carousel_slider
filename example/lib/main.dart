@@ -22,8 +22,10 @@ class CarouselDemo extends StatelessWidget {
       routes: {
         '/': (ctx) => CarouselDemoHome(),
         '/basic': (ctx) => BasicDemo(),
+        '/nocenter': (ctx) => NoCenterDemo(),
         '/image': (ctx) => ImageSliderDemo(),
         '/complicated': (ctx) => CompilcatedImageDemo(),
+        '/enlarge': (ctx) => EnlargeStrategyDemo(),
         '/manual': (ctx) => ManuallyControlledSlider(),
         '/noloop': (ctx) => NoonLoopingDemo(),
         '/vertical': (ctx) => VerticalSliderDemo(),
@@ -63,8 +65,10 @@ class CarouselDemoHome extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           DemoItem('Basic demo', '/basic'),
+          DemoItem('No center mode demo', '/nocenter'),
           DemoItem('Image carousel slider', '/image'),
           DemoItem('More complicated image slider', '/complicated'),
+          DemoItem('Enlarge strategy demo slider', '/enlarge'),
           DemoItem('Manually controlled slider', '/manual'),
           DemoItem('Noon-looping carousel slider', '/noloop'),
           DemoItem('Vertical carousel slider', '/vertical'),
@@ -94,6 +98,27 @@ class BasicDemo extends StatelessWidget {
             child: Center(
               child: Text(item.toString())
             ),
+            color: Colors.green,
+          )).toList(),
+        )
+      ),
+    );
+  }
+}
+
+class NoCenterDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    List<int> list = [1,2,3,4,5];
+    return Scaffold(
+      appBar: AppBar(title: Text('Basic demo')),
+      body: Container(
+        child: CarouselSlider(
+          options: CarouselOptions(
+            disableCenter: true,
+          ),
+          items: list.map((item) => Container(
+            child: Text(item.toString()),
             color: Colors.green,
           )).toList(),
         )
@@ -174,6 +199,29 @@ class CompilcatedImageDemo extends StatelessWidget {
               autoPlay: true,
               aspectRatio: 2.0,
               enlargeCenterPage: true,
+            ),
+            items: imageSliders,
+          ),
+        ],)
+      ),
+    );
+  }
+}
+
+class EnlargeStrategyDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(title: Text('Complicated image slider demo')),
+      body: Container(
+        child: Column(children: <Widget>[
+          CarouselSlider(
+            options: CarouselOptions(
+              autoPlay: true,
+              aspectRatio: 2.0,
+              enlargeCenterPage: true,
+              enlargeStrategy: CenterPageEnlargeStrategy.height,
             ),
             items: imageSliders,
           ),

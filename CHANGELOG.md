@@ -1,3 +1,19 @@
+# 2.2.0
+
+## Add
+
+- `disableCenter` option
+
+This option controls whether the carousel slider item should be wrapped in a `Center` widget or not.
+
+- `enlargeStrategy` option
+
+This option allow user to set which enlarge strategy to enlarge the center slide. Use `CenterPageEnlargeStrategy.height` if you want to improve the performance.
+
+## Fix
+
+- Fixed `CarousePageChangedReason.manual` never being emitted
+
 # 2.1.0
 
 ## Add

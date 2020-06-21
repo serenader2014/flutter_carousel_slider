@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 enum CarouselPageChangedReason { timed, manual, controller }
 
+enum CenterPageEnlargeStrategy { scale, height }
+
 class CarouselOptions {
   /// Set carousel height and overrides any existing [aspectRatio].
   final double height;
@@ -102,6 +104,12 @@ class CarouselOptions {
   /// Pass a `PageStoragekey` if you want to keep the pageview's position when it was recreated.
   final PageStorageKey pageViewKey;
 
+  /// Use `enlargeStrategy` to determine which method to enlarge the center page.
+  final CenterPageEnlargeStrategy enlargeStrategy;
+
+  /// Whether or not to disable the `Center` widget for each slide.
+  final bool disableCenter;
+
   CarouselOptions({
     this.height,
     this.aspectRatio: 16 / 9,
@@ -122,6 +130,8 @@ class CarouselOptions {
     this.pauseAutoPlayOnManualNavigate: true,
     this.pauseAutoPlayInFiniteScroll: false,
     this.pageViewKey,
+    this.enlargeStrategy: CenterPageEnlargeStrategy.scale,
+    this.disableCenter: false,
     carouselController,
   });
 }

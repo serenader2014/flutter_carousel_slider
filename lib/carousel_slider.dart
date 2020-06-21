@@ -138,7 +138,7 @@ class CarouselSliderState extends State<CarouselSlider>
     }
   }
 
-  Widget getWrapper(Widget child) {
+  Widget getGestureWrapper(Widget child) {
     Widget wrapper;
     if (widget.options.height != null) {
       wrapper = Container(height: widget.options.height, child: child);
@@ -180,6 +180,25 @@ class CarouselSliderState extends State<CarouselSlider>
     );
   }
 
+  Widget getCenterWrapper(Widget child) {
+    if (widget.options.disableCenter) {
+      return Container(
+        child: child,
+      );
+    }
+    return Center(child: child);
+  }
+
+  Widget getEnlargeWrapper(Widget child,
+      {double width, double height, double scale}) {
+    if (widget.options.enlargeStrategy == CenterPageEnlargeStrategy.height) {
+      return SizedBox(child: child, width: width, height: height);
+    }
+    return Transform.scale(
+        scale: scale,
+        child: Container(child: child, width: width, height: height));
+  }
+
   void onStart() {
     changeMode(CarouselPageChangedReason.manual);
   }
@@ -206,7 +225,7 @@ class CarouselSliderState extends State<CarouselSlider>
 
   @override
   Widget build(BuildContext context) {
-    return getWrapper(PageView.builder(
+    return getGestureWrapper(PageView.builder(
       physics: widget.options.scrollPhysics,
       scrollDirection: widget.options.scrollDirection,
       controller: carouselState.pageController,
@@ -266,24 +285,12 @@ class CarouselSliderState extends State<CarouselSlider>
                     (1 / widget.options.aspectRatio);
 
             if (widget.options.scrollDirection == Axis.horizontal) {
-              return Center(
-                child: Transform.scale(
-                  scale: distortionValue,
-                  // height: distortionValue * height,
-                  child: Container(height: height, child: child),
-                ),
-              );
+              return getCenterWrapper(getEnlargeWrapper(child,
+                  height: distortionValue * height, scale: distortionValue));
             } else {
-              return Center(
-                child: Transform.scale(
-                  // width: distortionValue * MediaQuery.of(context).size.width,
-                  scale: distortionValue,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: child,
-                  ),
-                ),
-              );
+              return getCenterWrapper(getEnlargeWrapper(child,
+                  width: distortionValue * MediaQuery.of(context).size.width,
+                  scale: distortionValue));
             }
           },
         );
