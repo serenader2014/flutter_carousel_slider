@@ -25,12 +25,12 @@ class CarouselState {
   /// The widgets count that should be shown at carousel
   int itemCount;
 
-  /// Will be called when using pageController to go to next page or 
+  /// Will be called when using pageController to go to next page or
   /// previous page. It will clear the autoPlay timer.
   /// Internal use only
   Function onResetTimer;
 
-  /// Will be called when using pageController to go to next page or 
+  /// Will be called when using pageController to go to next page or
   /// previous page. It will restart the autoPlay timer.
   /// Internal use only
   Function onResumeTimer;
