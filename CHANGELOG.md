@@ -1,3 +1,9 @@
+# 2.2.1
+
+## Fix
+
+- Fixed `carousel_options.dart` and `carousel_controller` not being exported by default.
+
 # 2.2.0
 
 ## Add
