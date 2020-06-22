@@ -11,6 +11,9 @@ import 'carousel_controller.dart';
 import 'carousel_options.dart';
 import 'utils.dart';
 
+export 'carousel_controller.dart';
+export 'carousel_options.dart';
+
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
   ///
