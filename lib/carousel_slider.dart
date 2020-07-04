@@ -31,24 +31,24 @@ class CarouselSlider extends StatefulWidget {
 
   final int itemCount;
 
-  CarouselSlider(
-      {@required this.items,
+  CarouselSlider({
+      @required this.items,
       @required this.options,
       carouselController,
-      Key key})
-      : itemBuilder = null,
+      Key key
+      }) : itemBuilder = null,
         itemCount = items != null ? items.length : 0,
         _carouselController = carouselController ?? CarouselController(),
         super(key: key);
 
   /// The on demand item builder constructor
-  CarouselSlider.builder(
-      {@required this.itemCount,
+  CarouselSlider.builder({
+      @required this.itemCount,
       @required this.itemBuilder,
       @required this.options,
       carouselController,
-      Key key})
-      : items = null,
+      Key key
+      }) : items = null,
         _carouselController = carouselController ?? CarouselController(),
         super(key: key);
 
@@ -56,8 +56,7 @@ class CarouselSlider extends StatefulWidget {
   CarouselSliderState createState() => CarouselSliderState(_carouselController);
 }
 
-class CarouselSliderState extends State<CarouselSlider>
-    with TickerProviderStateMixin {
+class CarouselSliderState extends State<CarouselSlider> with TickerProviderStateMixin {
   final CarouselControllerImpl carouselController;
   Timer timer;
 
@@ -144,8 +143,7 @@ class CarouselSliderState extends State<CarouselSlider>
             int nextPage = carouselState.pageController.page.round() + 1;
             int itemCount = widget.itemCount ?? widget.items.length;
 
-            if (nextPage >= itemCount &&
-                widget.options.enableInfiniteScroll == false) {
+            if (nextPage >= itemCount && widget.options.enableInfiniteScroll == false) {
               if (widget.options.pauseAutoPlayInFiniteScroll) {
                 clearTimer();
                 return;
@@ -154,10 +152,11 @@ class CarouselSliderState extends State<CarouselSlider>
             }
 
             carouselState.pageController
-                .animateToPage(nextPage,
+                .animateToPage(
+                    nextPage,
                     duration: widget.options.autoPlayAnimationDuration,
-                    curve: widget.options.autoPlayCurve)
-                .then((_) => mode = previousReason);
+                    curve: widget.options.autoPlayCurve
+                ).then((_) => mode = previousReason);
           })
         : null;
   }
@@ -167,14 +166,12 @@ class CarouselSliderState extends State<CarouselSlider>
     if (widget.options.height != null) {
       wrapper = Container(height: widget.options.height, child: child);
     } else {
-      wrapper =
-          AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
+      wrapper = AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
     }
 
     return RawGestureDetector(
       gestures: {
-        _MultipleGestureRecognizer:
-            GestureRecognizerFactoryWithHandlers<_MultipleGestureRecognizer>(
+        _MultipleGestureRecognizer: GestureRecognizerFactoryWithHandlers<_MultipleGestureRecognizer>(
                 () => _MultipleGestureRecognizer(),
                 (_MultipleGestureRecognizer instance) {
           instance.onDown = (_) {
@@ -186,12 +183,12 @@ class CarouselSliderState extends State<CarouselSlider>
           instance.onCancel = () {
             onPanUp();
           };
-        }),
+        }
+       ),
       },
       child: NotificationListener(
         onNotification: (notification) {
-          if (widget.options.onScrolled != null &&
-              notification is ScrollUpdateNotification) {
+          if (widget.options.onScrolled != null && notification is ScrollUpdateNotification) {
             widget.options.onScrolled(carouselState.pageController.page);
           }
           return false;
@@ -251,31 +248,23 @@ class CarouselSliderState extends State<CarouselSlider>
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
             // to display the visual effect
-            if (widget.options.enlargeCenterPage != null &&
-                widget.options.enlargeCenterPage == true) {
+            if (widget.options.enlargeCenterPage != null && widget.options.enlargeCenterPage == true) {
               double itemOffset;
               // pageController.page can only be accessed after the first build,
               // so in the first build we calculate the itemoffset manually
-              if (carouselState.pageController.position.minScrollExtent ==
-                      null ||
-                  carouselState.pageController.position.maxScrollExtent ==
-                      null) {
-                BuildContext storageContext = carouselState
-                    .pageController.position.context.storageContext;
-                final double previousSavedPosition =
-                    PageStorage.of(storageContext)?.readState(storageContext)
-                        as double;
+              if (carouselState.pageController.position.minScrollExtent == null ||
+                  carouselState.pageController.position.maxScrollExtent == null) {
+                      BuildContext storageContext = carouselState.pageController.position.context.storageContext;
+                final double previousSavedPosition = PageStorage.of(storageContext)?.readState(storageContext) as double;
                 if (previousSavedPosition != null) {
                   itemOffset = previousSavedPosition - idx.toDouble();
                 } else {
-                  itemOffset =
-                      carouselState.realPage.toDouble() - idx.toDouble();
+                  itemOffset = carouselState.realPage.toDouble() - idx.toDouble();
                 }
               } else {
                 itemOffset = carouselState.pageController.page - idx;
               }
-              final distortionRatio =
-                  (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
+              final distortionRatio = (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
               distortionValue = Curves.easeOut.transform(distortionRatio);
             }
 
