@@ -11,13 +11,17 @@ abstract class CarouselController {
 
   Future<Null> get onReady;
 
-  void nextPage({Duration duration, Curve curve});
+  Future<void> nextPage({Duration duration, Curve curve});
 
-  void previousPage({Duration duration, Curve curve});
+  Future<void> previousPage({Duration duration, Curve curve});
 
   void jumpToPage(int page);
 
-  void animateToPage(int page, {Duration duration, Curve curve});
+  Future<void> animateToPage(int page, {Duration duration, Curve curve});
+
+  void startAutoPlay();
+
+  void stopAutoPlay();
 
   factory CarouselController() => CarouselControllerImpl();
 }
@@ -113,5 +117,21 @@ class CarouselControllerImpl implements CarouselController {
     if (isNeedResetTimer) {
       _state.onResumeTimer();
     }
+  }
+
+  /// Starts the controlled [CarouselSlider] autoplay.
+  ///
+  /// The carousel will only autoPlay if the [autoPlay] parameter
+  /// in [CarouselOptions] is true.
+  void startAutoPlay() {
+    _state.onResumeTimer();
+  }
+
+  /// Stops the controlled [CarouselSlider] from autoplaying.
+  ///
+  /// This is a more on-demand way of doing this. Use the [autoPlay]
+  /// parameter in [CarouselOptions] to specify the autoPlay behaviour of the carousel.
+  void stopAutoPlay() {
+    _state.onResetTimer();
   }
 }
