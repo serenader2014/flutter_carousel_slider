@@ -24,7 +24,7 @@ class CarouselDemo extends StatelessWidget {
         '/basic': (ctx) => BasicDemo(),
         '/nocenter': (ctx) => NoCenterDemo(),
         '/image': (ctx) => ImageSliderDemo(),
-        '/complicated': (ctx) => CompilcatedImageDemo(),
+        '/complicated': (ctx) => ComplicatedImageDemo(),
         '/enlarge': (ctx) => EnlargeStrategyDemo(),
         '/manual': (ctx) => ManuallyControlledSlider(),
         '/noloop': (ctx) => NoonLoopingDemo(),
@@ -186,7 +186,7 @@ final List<Widget> imageSliders = imgList.map((item) => Container(
   ),
 )).toList();
 
-class CompilcatedImageDemo extends StatelessWidget {
+class ComplicatedImageDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
