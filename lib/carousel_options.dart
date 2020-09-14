@@ -83,6 +83,11 @@ class CarouselOptions {
   /// Defaults to matching platform conventions.
   final ScrollPhysics scrollPhysics;
 
+  /// Set to false to disable page snapping, useful for custom scroll behavior.
+  ///
+  /// Default to `true`.
+  final bool pageSnapping;
+
   /// If `true`, the auto play function will be paused when user is interacting with
   /// the carousel, and will be resumed when user finish interacting.
   /// Default to `true`.
@@ -125,6 +130,7 @@ class CarouselOptions {
     this.onPageChanged,
     this.onScrolled,
     this.scrollPhysics,
+    this.pageSnapping = true,
     this.scrollDirection: Axis.horizontal,
     this.pauseAutoPlayOnTouch: true,
     this.pauseAutoPlayOnManualNavigate: true,
