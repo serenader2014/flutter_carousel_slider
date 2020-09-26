@@ -147,7 +147,7 @@ class CarouselSliderState extends State<CarouselSlider>
         : null;
   }
 
- void clearTimer() {
+  void clearTimer() {
     if (timer != null) {
       timer?.cancel();
       timer = null;
