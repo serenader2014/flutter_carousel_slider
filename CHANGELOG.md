@@ -1,3 +1,15 @@
+# 2.3.0
+
+## Fix
+
+- Fixed unresponsiveness to state changes
+
+## Add
+
+- Added start/stop autoplay functionality
+- Pause auto play if not current route
+- Add `pageSnapping` option for disable page snapping for the carousel
+
 # 2.2.1
 
 ## Fix
