@@ -1,3 +1,7 @@
+# 2.3.1
+
+- Fix code formatting
+
 # 2.3.0
 
 ## Fix
