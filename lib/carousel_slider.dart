@@ -65,6 +65,8 @@ class CarouselSliderState extends State<CarouselSlider>
 
   CarouselState carouselState;
 
+  PageController pageController;
+
   /// mode is related to why the page is being changed
   CarouselPageChangedReason mode = CarouselPageChangedReason.controller;
 
@@ -78,6 +80,17 @@ class CarouselSliderState extends State<CarouselSlider>
   void didUpdateWidget(CarouselSlider oldWidget) {
     carouselState.options = options;
     carouselState.itemCount = widget.itemCount;
+
+    // pageController needs to be re-initialized to respond to state changes
+    pageController = PageController(
+      viewportFraction: options.viewportFraction,
+      initialPage: carouselState.realPage,
+    );
+    carouselState.pageController = pageController;
+
+    // handle autoplay when state changes
+    handleAutoPlay();
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -93,9 +106,9 @@ class CarouselSliderState extends State<CarouselSlider>
     carouselState.realPage = options.enableInfiniteScroll
         ? carouselState.realPage + carouselState.initialPage
         : carouselState.initialPage;
-    timer = getTimer();
+    handleAutoPlay();
 
-    PageController pageController = PageController(
+    pageController = PageController(
       viewportFraction: options.viewportFraction,
       initialPage: carouselState.realPage,
     );
@@ -129,15 +142,27 @@ class CarouselSliderState extends State<CarouselSlider>
         : null;
   }
 
-  void clearTimer() {
-    if (widget.options.autoPlay) {
+ void clearTimer() {
+    if (timer != null) {
       timer?.cancel();
+      timer = null;
     }
   }
 
   void resumeTimer() {
-    if (widget.options.autoPlay) {
+    if (timer == null) {
       timer = getTimer();
+    }
+  }
+
+  void handleAutoPlay() {
+    bool autoPlayEnabled = widget.options.autoPlay;
+
+    if (autoPlayEnabled && timer != null) return;
+
+    clearTimer();
+    if (autoPlayEnabled) {
+      resumeTimer();
     }
   }
 
