@@ -498,7 +498,7 @@ class _CarouselChangeReasonDemoState extends State<CarouselChangeReasonDemo> {
   String reason = '';
   final CarouselController _controller = CarouselController();
 
-  onPageChange(int index, CarouselPageChangedReason changeReason) {
+  void onPageChange(int index, CarouselPageChangedReason changeReason) {
     setState(() {
       reason = changeReason.toString();
     });
@@ -571,7 +571,7 @@ class KeepPageviewPositionDemo extends StatelessWidget {
               options: CarouselOptions(
                 aspectRatio: 2.0,
                 enlargeCenterPage: true,
-                pageViewKey: PageStorageKey('carousel_slider'),
+                pageViewKey: PageStorageKey<String>('carousel_slider'),
               ),
               items: imageSliders,
             )
