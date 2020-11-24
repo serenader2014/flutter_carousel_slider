@@ -116,35 +116,77 @@ class CarouselSliderState extends State<CarouselSlider>
     carouselState.pageController = pageController;
   }
 
+  Future playWhenEachItemHasSpecificDuration () async{
+    for(int i =0 ; i  < widget.options.listOfDurationForEachItem.length ; i ++){
+      await Future.delayed( Duration(seconds: widget.options.listOfDurationForEachItem[i]), () {
+        // setState(() {
+        final route = ModalRoute.of(context);
+        if (route?.isCurrent == false) {
+          return null;
+        }
+
+        CarouselPageChangedReason previousReason = mode;
+        changeMode(CarouselPageChangedReason.timed);
+        int nextPage = carouselState.pageController.page.round() + 1;
+        int itemCount = widget.itemCount ?? widget.items.length;
+
+        if (nextPage >= itemCount &&
+            widget.options.enableInfiniteScroll == false) {
+          if (widget.options.pauseAutoPlayInFiniteScroll) {
+            clearTimer();
+            return null;
+          }
+          nextPage = 0;
+        }
+
+        carouselState.pageController
+            .animateToPage(nextPage,
+            duration: widget.options.autoPlayAnimationDuration,
+            curve: widget.options.autoPlayCurve)
+            .then((_) => changeMode(previousReason));
+
+      });
+      // });
+    }
+  }
+
+  Timer playAuto() {
+    if (widget.options.eachItemHasSpecificDuration) {
+      playWhenEachItemHasSpecificDuration();
+    }
+
+    else {
+      Timer.periodic(widget.options.autoPlayInterval, (_) {
+        final route = ModalRoute.of(context);
+        if (route?.isCurrent == false) {
+          return;
+        }
+
+        CarouselPageChangedReason previousReason = mode;
+        changeMode(CarouselPageChangedReason.timed);
+        int nextPage = carouselState.pageController.page.round() + 1;
+        int itemCount = widget.itemCount ?? widget.items.length;
+
+        if (nextPage >= itemCount &&
+            widget.options.enableInfiniteScroll == false) {
+          if (widget.options.pauseAutoPlayInFiniteScroll) {
+            clearTimer();
+            return;
+          }
+          nextPage = 0;
+        }
+
+        carouselState.pageController
+            .animateToPage(nextPage,
+            duration: widget.options.autoPlayAnimationDuration,
+            curve: widget.options.autoPlayCurve)
+            .then((_) => changeMode(previousReason));
+      });
+    }
+  }
+
   Timer getTimer() {
-    return widget.options.autoPlay
-        ? Timer.periodic(widget.options.autoPlayInterval, (_) {
-            final route = ModalRoute.of(context);
-            if (route?.isCurrent == false) {
-              return;
-            }
-
-            CarouselPageChangedReason previousReason = mode;
-            changeMode(CarouselPageChangedReason.timed);
-            int nextPage = carouselState.pageController.page.round() + 1;
-            int itemCount = widget.itemCount ?? widget.items.length;
-
-            if (nextPage >= itemCount &&
-                widget.options.enableInfiniteScroll == false) {
-              if (widget.options.pauseAutoPlayInFiniteScroll) {
-                clearTimer();
-                return;
-              }
-              nextPage = 0;
-            }
-
-            carouselState.pageController
-                .animateToPage(nextPage,
-                    duration: widget.options.autoPlayAnimationDuration,
-                    curve: widget.options.autoPlayCurve)
-                .then((_) => changeMode(previousReason));
-          })
-        : null;
+    return widget.options.autoPlay ? playAuto() : null;
   }
 
   void clearTimer() {

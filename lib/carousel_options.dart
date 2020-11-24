@@ -115,6 +115,13 @@ class CarouselOptions {
   /// Whether or not to disable the `Center` widget for each slide.
   final bool disableCenter;
 
+  /// if you want to give each item specific duration
+  /// like if you want to add a videos in your slider and each of them has specific duration
+  final bool eachItemHasSpecificDuration;
+
+  /// List of durations of items sequentially
+  final List<int> listOfDurationForEachItem;
+
   CarouselOptions({
     this.height,
     this.aspectRatio: 16 / 9,
@@ -138,5 +145,7 @@ class CarouselOptions {
     this.pageViewKey,
     this.enlargeStrategy: CenterPageEnlargeStrategy.scale,
     this.disableCenter: false,
+    this.eachItemHasSpecificDuration: false,
+    this.listOfDurationForEachItem,
   });
 }
