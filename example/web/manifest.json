@@ -1,8 +1,8 @@
 {
-    "name": "example",
-    "short_name": "example",
+    "name": "carouselsliderexample",
+    "short_name": "carouselsliderexample",
     "start_url": ".",
-    "display": "minimal-ui",
+    "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
     "description": "A new Flutter project.",
