@@ -1,3 +1,9 @@
+# 2.3.2-nullsafety.0
+
+- Migrated to Null Safety
+- Bumped up Version
+- Upgraded example app
+
 # 2.3.1
 
 - Fix code formatting
