@@ -1,3 +1,14 @@
+# 2.3.2
+
+## Fix
+
+- Double pointer down and up will cause a exception
+- Fix `CarouselPageChangedReason`
+
+## Add
+
+- Allow Hero and infinite scroll to coexist
+
 # 2.3.1
 
 - Fix code formatting
