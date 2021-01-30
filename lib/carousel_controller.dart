@@ -58,7 +58,7 @@ class CarouselControllerImpl implements CarouselController {
     if (isNeedResetTimer) {
       _state.onResetTimer();
     }
-     _setModeController();
+    _setModeController();
     await _state.pageController.nextPage(duration: duration, curve: curve);
     if (isNeedResetTimer) {
       _state.onResumeTimer();
