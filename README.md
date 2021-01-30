@@ -23,7 +23,7 @@ Note: this page is built with flutter-web. For a better user experience, please 
 
 ## Installation
 
-Add `carousel_slider: ^3.0.0` to your `pubspec.yaml` dependencies. And import it:
+Add `carousel_slider: ^4.0.0-nullsafety.0` to your `pubspec.yaml` dependencies. And import it:
 
 ```dart
 import 'package:carousel_slider/carousel_slider.dart';
