@@ -330,9 +330,4 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 }
 
-class _MultipleGestureRecognizer extends PanGestureRecognizer {
-  @override
-  void rejectGesture(int pointer) {
-    acceptGesture(pointer);
-  }
-}
+class _MultipleGestureRecognizer extends PanGestureRecognizer {}
