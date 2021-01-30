@@ -1,3 +1,13 @@
+# 3.0.0
+
+## Add
+
+- Add third argument in `itemBuilder`, allow Hero and infinite scroll to coexist
+
+## Breaking change
+
+- `itemBuilder` needs to accept three arguments, instead of two.
+
 # 2.3.4
 
 ## Fix
