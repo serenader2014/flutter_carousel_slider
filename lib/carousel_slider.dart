@@ -14,8 +14,10 @@ import 'utils.dart';
 export 'carousel_controller.dart';
 export 'carousel_options.dart';
 
-typedef Widget ExtendedIndexedWidgetBuilder(
-    BuildContext context, int index, int realIndex);
+typedef Widget ExtendedIndexedWidgetBuilder(BuildContext context, int index,
+    int realIndex, PageController pageController);
+
+typedef Widget ExtendedPageControllerBuilder(PageController pageController);
 
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
@@ -30,13 +32,12 @@ class CarouselSlider extends StatefulWidget {
   /// The third argument is the PageView's real index, can be used to cooperate
   /// with Hero.
   final ExtendedIndexedWidgetBuilder? itemBuilder;
+  final ExtendedPageControllerBuilder? pageController;
 
   /// A [MapController], used to control the map.
   final CarouselControllerImpl _carouselController;
 
   final int itemCount;
-
-  
 
   CarouselSlider(
       {required this.items,
@@ -44,8 +45,10 @@ class CarouselSlider extends StatefulWidget {
       carouselController,
       Key? key})
       : itemBuilder = null,
+        pageController = null,
         itemCount = items != null ? items.length : 0,
-        _carouselController = carouselController ?? CarouselController() as CarouselControllerImpl,
+        _carouselController = carouselController ??
+            CarouselController() as CarouselControllerImpl,
         super(key: key);
 
   /// The on demand item builder constructor
@@ -54,9 +57,11 @@ class CarouselSlider extends StatefulWidget {
       required this.itemBuilder,
       required this.options,
       carouselController,
+      required this.pageController,
       Key? key})
       : items = null,
-        _carouselController = carouselController ?? CarouselController() as CarouselControllerImpl,
+        _carouselController = carouselController ??
+            CarouselController() as CarouselControllerImpl,
         super(key: key);
 
   @override
@@ -83,7 +88,7 @@ class CarouselSliderState extends State<CarouselSlider>
     mode = _mode;
   }
 
-   double _currentPageValue = 0.0;
+  double _currentPageValue = 0.0;
 
   @override
   void didUpdateWidget(CarouselSlider oldWidget) {
@@ -129,6 +134,8 @@ class CarouselSliderState extends State<CarouselSlider>
         _currentPageValue = pageController!.page!;
       });
     });
+
+    widget.pageController!(pageController!);
   }
 
   Timer? getTimer() {
@@ -247,7 +254,7 @@ class CarouselSliderState extends State<CarouselSlider>
         child: Container(child: child, width: width, height: height));
   }
 
-    Widget getParalaxEnlargeWrapper(Widget child,
+  Widget getParalaxEnlargeWrapper(Widget child,
       {double? width, double? scale, int? position}) {
     var ofset = Offset((_currentPageValue - position!) * width! / 4, 0);
 
@@ -317,7 +324,7 @@ class CarouselSliderState extends State<CarouselSlider>
           animation: carouselState!.pageController!,
           child: (widget.items != null)
               ? (widget.items!.length > 0 ? widget.items![index] : Container())
-              : widget.itemBuilder!(context, index, idx),
+              : widget.itemBuilder!(context, index, idx, pageController!),
           builder: (BuildContext context, child) {
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
@@ -343,23 +350,20 @@ class CarouselSliderState extends State<CarouselSlider>
               }
               final num distortionRatio =
                   (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
-              distortionValue = Curves.easeOut.transform(distortionRatio as double);
+              distortionValue =
+                  Curves.easeOut.transform(distortionRatio as double);
             }
 
-             final double height = widget.options.height ??
+            final double height = widget.options.height ??
                 MediaQuery.of(context).size.width *
                     (1 / widget.options.aspectRatio);
 
-
             if (widget.options.paralaxEffect) {
-
               return getParalaxEnlargeWrapper(child!,
                   width: distortionValue * MediaQuery.of(context).size.width,
                   scale: distortionValue,
                   position: idx);
             }
-
-           
 
             if (widget.options.scrollDirection == Axis.horizontal) {
               return getCenterWrapper(getEnlargeWrapper(child,

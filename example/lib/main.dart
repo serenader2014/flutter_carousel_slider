@@ -17,7 +17,7 @@ void main() => runApp(CarouselDemo());
 class CarouselDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(initialRoute: '/fullscreen', routes: {
+    return MaterialApp(initialRoute: '/paralax', routes: {
       '/': (ctx) => CarouselDemoHome(),
       '/basic': (ctx) => BasicDemo(),
       '/nocenter': (ctx) => NoCenterDemo(),
@@ -27,7 +27,7 @@ class CarouselDemo extends StatelessWidget {
       '/manual': (ctx) => ManuallyControlledSlider(),
       '/noloop': (ctx) => NoonLoopingDemo(),
       '/vertical': (ctx) => VerticalSliderDemo(),
-      '/fullscreen': (ctx) => FullscreenParalaxSliderDemo(),
+      '/paralax': (ctx) => ParalaxSliderDemo(),
       '/ondemand': (ctx) => OnDemandCarouselDemo(),
       '/indicator': (ctx) => CarouselWithIndicatorDemo(),
       '/prefetch': (ctx) => PrefetchImageDemo(),
@@ -330,7 +330,7 @@ class VerticalSliderDemo extends StatelessWidget {
   }
 }
 
-class FullscreenParalaxSliderDemo extends StatelessWidget {
+class ParalaxSliderDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -339,8 +339,10 @@ class FullscreenParalaxSliderDemo extends StatelessWidget {
       body: Builder(
         builder: (context) {
           final double height = 300;
-          //MediaQuery.of(context).size.height;
-          return CarouselSlider(
+
+          return Container(
+              child: CarouselSlider.builder(
+            itemCount: imgList.length,
             options: CarouselOptions(
               height: height,
               viewportFraction: 1.0,
@@ -348,22 +350,43 @@ class FullscreenParalaxSliderDemo extends StatelessWidget {
               enableInfiniteScroll: false,
               initialPage: 0,
               paralaxEffect: true,
-              // autoPlay: false,
             ),
-            items: imgList
-                .map((item) => Container(
-                    color: Colors.red,
-                    child: Image.network(
-                      item,
-                      fit: BoxFit.fill,
-                      height: height,
-                      width: MediaQuery.of(context).size.width,
-                    )
-                    //Center(child: Text("sddcdscdscsd")
+            pageController: (p) {
+              print("");
+            },
+            itemBuilder: (context, index, realIdx, p) {
+              return Container(
+                child: Center(
+                    child: Image.network(imgList[index],
+                        fit: BoxFit.cover, width: 1000)),
+              );
+            },
+          ));
+          //MediaQuery.of(context).size.height;
+          // return CarouselSlider(
+          //   options: CarouselOptions(
+          //     height: height,
+          //     viewportFraction: 1.0,
+          //     enlargeCenterPage: false,
+          //     enableInfiniteScroll: false,
+          //     initialPage: 0,
+          //     paralaxEffect: true,
+          //     // autoPlay: false,
+          //   ),
+          //   items: imgList
+          //       .map((item) => Container(
+          //           color: Colors.red,
+          //           child: Image.network(
+          //             item,
+          //             fit: BoxFit.fill,
+          //             height: height,
+          //             width: MediaQuery.of(context).size.width,
+          //           )
+          //           //Center(child: Text("sddcdscdscsd")
 
-                    ))
-                .toList(),
-          );
+          //           ))
+          //       .toList(),
+          // );
         },
       ),
     );
@@ -383,7 +406,7 @@ class OnDemandCarouselDemo extends StatelessWidget {
           enlargeCenterPage: true,
           autoPlay: true,
         ),
-        itemBuilder: (ctx, index, realIdx) {
+        itemBuilder: (ctx, index, realIdx, p) {
           return Container(
             child: Text(index.toString()),
           );
@@ -482,7 +505,7 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
           aspectRatio: 2.0,
           enlargeCenterPage: true,
         ),
-        itemBuilder: (context, index, realIdx) {
+        itemBuilder: (context, index, realIdx, p) {
           return Container(
             child: Center(
                 child: Image.network(images[index],
@@ -611,7 +634,7 @@ class MultipleItemDemo extends StatelessWidget {
           viewportFraction: 1,
         ),
         itemCount: (imgList.length / 2).round(),
-        itemBuilder: (context, index, realIdx) {
+        itemBuilder: (context, index, realIdx, p) {
           final int first = index * 2;
           final int second = first + 1;
           return Row(
