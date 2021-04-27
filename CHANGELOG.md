@@ -1,3 +1,8 @@
+# 4.0.0
+
+- Support null safety (Null safety isn't a breaking change and is Backward compatible meaning you can use it with non-null safe code too)
+- Update example code to null safety and add Dark theme support and controller support to indicators in on of the examples and also fix overflow errors. 
+
 # 3.0.0
 
 ## Add

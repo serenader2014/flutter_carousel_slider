@@ -9,7 +9,7 @@ class CarouselState {
 
   /// [pageController] is created using the properties passed to the constructor
   /// and can be used to control the [PageView] it is passed to.
-  PageController pageController;
+  PageController? pageController;
 
   /// The actual index of the [PageView].
   ///
@@ -23,7 +23,7 @@ class CarouselState {
   int initialPage = 0;
 
   /// The widgets count that should be shown at carousel
-  int itemCount;
+  int? itemCount;
 
   /// Will be called when using pageController to go to next page or
   /// previous page. It will clear the autoPlay timer.
