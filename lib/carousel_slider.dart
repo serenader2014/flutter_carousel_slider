@@ -36,6 +36,8 @@ class CarouselSlider extends StatefulWidget {
 
   final int itemCount;
 
+  
+
   CarouselSlider(
       {required this.items,
       required this.options,
@@ -81,6 +83,8 @@ class CarouselSliderState extends State<CarouselSlider>
     mode = _mode;
   }
 
+   double _currentPageValue = 0.0;
+
   @override
   void didUpdateWidget(CarouselSlider oldWidget) {
     carouselState!.options = options;
@@ -119,6 +123,12 @@ class CarouselSliderState extends State<CarouselSlider>
     );
 
     carouselState!.pageController = pageController;
+
+    pageController!.addListener(() {
+      setState(() {
+        _currentPageValue = pageController!.page!;
+      });
+    });
   }
 
   Timer? getTimer() {
@@ -237,6 +247,27 @@ class CarouselSliderState extends State<CarouselSlider>
         child: Container(child: child, width: width, height: height));
   }
 
+    Widget getParalaxEnlargeWrapper(Widget child,
+      {double? width, double? scale, int? position}) {
+    var ofset = Offset((_currentPageValue - position!) * width! / 4, 0);
+
+    double value = (1 - ((_currentPageValue - position).abs() * (1 - 1.0)))
+        .clamp(0.0, 1.0);
+
+    return Padding(
+      padding: const EdgeInsets.all(1.0),
+      child: SizedBox(
+        height: Curves.ease.transform(value) * widget.options.height!,
+        child: ClipRRect(
+          child: Transform.translate(
+            offset: ofset,
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
   void onStart() {
     changeMode(CarouselPageChangedReason.manual);
   }
@@ -315,9 +346,20 @@ class CarouselSliderState extends State<CarouselSlider>
               distortionValue = Curves.easeOut.transform(distortionRatio as double);
             }
 
-            final double height = widget.options.height ??
+             final double height = widget.options.height ??
                 MediaQuery.of(context).size.width *
                     (1 / widget.options.aspectRatio);
+
+
+            if (widget.options.paralaxEffect) {
+
+              return getParalaxEnlargeWrapper(child!,
+                  width: distortionValue * MediaQuery.of(context).size.width,
+                  scale: distortionValue,
+                  position: idx);
+            }
+
+           
 
             if (widget.options.scrollDirection == Axis.horizontal) {
               return getCenterWrapper(getEnlargeWrapper(child,
