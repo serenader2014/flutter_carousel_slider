@@ -1,6 +1,7 @@
 library carousel_slider;
 
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_state.dart';
 import 'package:flutter/foundation.dart';
@@ -17,7 +18,7 @@ export 'carousel_options.dart';
 typedef Widget ExtendedIndexedWidgetBuilder(BuildContext context, int index,
     int realIndex);
 
-typedef Widget ExtendedPageControllerBuilder(PageController? pageController);
+typedef Void ExtendedPageControllerBuilder(PageController? pageController);
 
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
