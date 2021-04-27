@@ -18,7 +18,7 @@ export 'carousel_options.dart';
 typedef Widget ExtendedIndexedWidgetBuilder(BuildContext context, int index,
     int realIndex);
 
-typedef Void ExtendedPageControllerBuilder(PageController? pageController);
+typedef int ExtendedPageControllerBuilder(PageController? pageController);
 
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
