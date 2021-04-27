@@ -18,7 +18,7 @@ export 'carousel_options.dart';
 typedef Widget ExtendedIndexedWidgetBuilder(
     BuildContext context, int index, int realIndex);
 
-typedef void ExtendedPageControllerBuilder(PageController? pageController);
+//typedef void ExtendedPageControllerBuilder(PageController? pageController);
 
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
@@ -33,7 +33,7 @@ class CarouselSlider extends StatefulWidget {
   /// The third argument is the PageView's real index, can be used to cooperate
   /// with Hero.
   final ExtendedIndexedWidgetBuilder? itemBuilder;
-  final ExtendedPageControllerBuilder? pageController;
+ // final ExtendedPageControllerBuilder? pageController;
 
   /// A [MapController], used to control the map.
   final CarouselControllerImpl _carouselController;
@@ -46,7 +46,6 @@ class CarouselSlider extends StatefulWidget {
       carouselController,
       Key? key})
       : itemBuilder = null,
-        pageController = null,
         itemCount = items != null ? items.length : 0,
         _carouselController = carouselController ??
             CarouselController() as CarouselControllerImpl,
@@ -58,7 +57,6 @@ class CarouselSlider extends StatefulWidget {
       required this.itemBuilder,
       required this.options,
       carouselController,
-      required this.pageController,
       Key? key})
       : items = null,
         _carouselController = carouselController ??
@@ -136,7 +134,7 @@ class CarouselSliderState extends State<CarouselSlider>
       });
     });
 
-    widget.pageController!(pageController!);
+    
   }
 
   Timer? getTimer() {
@@ -302,6 +300,9 @@ class CarouselSliderState extends State<CarouselSlider>
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return getGestureWrapper(PageView.builder(
       physics: widget.options.scrollPhysics,
       scrollDirection: widget.options.scrollDirection,
