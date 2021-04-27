@@ -15,9 +15,9 @@ export 'carousel_controller.dart';
 export 'carousel_options.dart';
 
 typedef Widget ExtendedIndexedWidgetBuilder(BuildContext context, int index,
-    int realIndex, PageController pageController);
+    int realIndex);
 
-typedef Widget ExtendedPageControllerBuilder(PageController pageController);
+typedef Widget ExtendedPageControllerBuilder(PageController? pageController);
 
 class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
@@ -324,7 +324,7 @@ class CarouselSliderState extends State<CarouselSlider>
           animation: carouselState!.pageController!,
           child: (widget.items != null)
               ? (widget.items!.length > 0 ? widget.items![index] : Container())
-              : widget.itemBuilder!(context, index, idx, pageController!),
+              : widget.itemBuilder!(context, index, idx!),
           builder: (BuildContext context, child) {
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
