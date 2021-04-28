@@ -33,7 +33,7 @@ class CarouselSlider extends StatefulWidget {
   /// The third argument is the PageView's real index, can be used to cooperate
   /// with Hero.
   final ExtendedIndexedWidgetBuilder? itemBuilder;
- // final ExtendedPageControllerBuilder? pageController;
+  // final ExtendedPageControllerBuilder? pageController;
 
   /// A [MapController], used to control the map.
   final CarouselControllerImpl _carouselController;
@@ -133,8 +133,6 @@ class CarouselSliderState extends State<CarouselSlider>
         _currentPageValue = pageController!.page!;
       });
     });
-
-    
   }
 
   Timer? getTimer() {
@@ -260,10 +258,12 @@ class CarouselSliderState extends State<CarouselSlider>
     double value = (1 - ((_currentPageValue - position).abs() * (1 - 1.0)))
         .clamp(0.0, 1.0);
 
+    var curve = Curves.ease.transform(value) * widget.options.height!;
+
     return Padding(
       padding: const EdgeInsets.all(1.0),
       child: SizedBox(
-        height: Curves.ease.transform(value) * widget.options.height!,
+        height: curve,
         child: ClipRRect(
           child: Transform.translate(
             offset: ofset,
@@ -300,9 +300,6 @@ class CarouselSliderState extends State<CarouselSlider>
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return getGestureWrapper(PageView.builder(
       physics: widget.options.scrollPhysics,
       scrollDirection: widget.options.scrollDirection,
@@ -314,8 +311,12 @@ class CarouselSliderState extends State<CarouselSlider>
       onPageChanged: (int index) {
         int currentPage = getRealIndex(index + carouselState!.initialPage,
             carouselState!.realPage, widget.itemCount);
-        if (widget.options.onPageChanged != null) {
-          widget.options.onPageChanged!(currentPage, mode);
+        //  if (widget.options.onPageChanged != null) {
+        //    widget.options.onPageChanged!(currentPage,mode);
+        //  }
+
+        if (widget.options.onPageChangedTest != null) {
+          widget.options.onPageChangedTest!(currentPage);
         }
       },
       itemBuilder: (BuildContext context, int idx) {
@@ -361,6 +362,8 @@ class CarouselSliderState extends State<CarouselSlider>
                     (1 / widget.options.aspectRatio);
 
             if (widget.options.paralaxEffect) {
+             // debugPrint("idx $idx");
+
               return getParalaxEnlargeWrapper(child!,
                   width: distortionValue * MediaQuery.of(context).size.width,
                   scale: distortionValue,

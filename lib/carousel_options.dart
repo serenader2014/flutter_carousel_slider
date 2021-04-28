@@ -68,9 +68,10 @@ class CarouselOptions {
 
   /// Called whenever the page in the center of the viewport changes.
   final Function(int index, CarouselPageChangedReason reason)? onPageChanged;
-
   /// Called whenever the carousel is scrolled
   final ValueChanged<double?>? onScrolled;
+
+    final Function(int index)? onPageChangedTest;
 
   /// How the carousel should respond to user input.
   ///
@@ -141,6 +142,7 @@ class CarouselOptions {
     this.enlargeStrategy: CenterPageEnlargeStrategy.scale,
     this.disableCenter: false,
     this.paralaxEffect: false,
+     this.onPageChangedTest
   });
 
  

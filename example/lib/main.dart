@@ -329,7 +329,13 @@ class VerticalSliderDemo extends StatelessWidget {
   }
 }
 
-class ParalaxSliderDemo extends StatelessWidget {
+class ParalaxSliderDemo extends StatefulWidget {
+  @override
+  _ParalaxSliderDemoState createState() => _ParalaxSliderDemoState();
+}
+
+class _ParalaxSliderDemoState extends State<ParalaxSliderDemo> {
+  int index = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -345,6 +351,7 @@ class ParalaxSliderDemo extends StatelessWidget {
                 return Container(
                     child: CarouselSlider.builder(
                   itemCount: imgList.length,
+                  // key: GlobalKey(),
                   options: CarouselOptions(
                     height: height,
                     viewportFraction: 1.0,
@@ -353,7 +360,10 @@ class ParalaxSliderDemo extends StatelessWidget {
                     initialPage: 0,
                     paralaxEffect: true,
                     onPageChanged: (index, reason) {
-                      print("index ");
+                      setState(() {
+                        // print("");
+                        this.index = index;
+                      });
                     },
                   ),
                   itemBuilder: (
@@ -363,7 +373,9 @@ class ParalaxSliderDemo extends StatelessWidget {
                   ) {
                     return Stack(
                       children: [
-                        Container(child: Image.network(imgList[index])),
+                        Container(
+                            child: Image.network(
+                                "https://img.piri.net/mnresize/840/-/resim/imagecrop/2021/04/28/10/51/resized_c77e6-79c7d38b04157c54cc91593a5a0fb3da.jpg")),
                         Text("sdcsdvdvsvsdvsdsd")
                       ],
                     );
