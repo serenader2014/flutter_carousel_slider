@@ -265,14 +265,16 @@ class CarouselSliderState extends State<CarouselSlider>
 
   Widget getParalaxEnlargeWrapper(Widget child,
       {double? width, double? scale, int? position, double? itemOffset}) {
-
     double value = (1 - ((_currentPageValue - position!).abs() * (1 - scale!)))
         .clamp(0.0, 1.0);
 
     var curve = Curves.ease.transform(value) * widget.options.height!;
 
+    var paralaxEffectValue =
+        2.0; // burada paralax değeri veriyoruz. Sayfaya paralax değeri buradan ayırılıyor
+
     var ofset =
-        Offset((_currentPageValue -position) * width! / 2, 0);
+        Offset((_currentPageValue - position) * width! / paralaxEffectValue, 0);
 
     return Padding(
       padding: const EdgeInsets.all(1.0),
