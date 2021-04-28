@@ -265,7 +265,8 @@ class CarouselSliderState extends State<CarouselSlider>
 
   Widget getParalaxEnlargeWrapper(Widget child,
       {double? width, double? scale, int? position, double? itemOffset}) {
-    double value = (1 - ((_currentPageValue - position!).abs() * (1 - 1.0)))
+        
+    double value = (1 - ((_currentPageValue - position!).abs() * (1 - scale!)))
         .clamp(0.0, 1.0);
 
     var curve = Curves.ease.transform(value) * widget.options.height!;
