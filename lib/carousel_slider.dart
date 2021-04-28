@@ -264,7 +264,7 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 
   Widget getParalaxEnlargeWrapper(Widget child,
-      {double? width, double? scale, int? position, double? itemOffset}) {
+      {double? width, double? scale, int? position}) {
     double value = (1 - ((_currentPageValue - position!).abs() * (1 - scale!)))
         .clamp(0.0, 1.0);
 
@@ -349,44 +349,42 @@ class CarouselSliderState extends State<CarouselSlider>
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
             // to display the visual effect
-            // if (widget.options.enlargeCenterPage == true) {
-            double itemOffset;
-            // pageController.page can only be accessed after the first build,
-            // so in the first build we calculate the itemoffset manually
-            try {
-              itemOffset = carouselState!.pageController!.page! - idx;
-            } catch (e) {
-              BuildContext storageContext = carouselState!
-                  .pageController!.position.context.storageContext;
-              final double? previousSavedPosition =
-                  PageStorage.of(storageContext)?.readState(storageContext)
-                      as double?;
-              if (previousSavedPosition != null) {
-                itemOffset = previousSavedPosition - idx.toDouble();
-              } else {
-                itemOffset =
-                    carouselState!.realPage.toDouble() - idx.toDouble();
+            if (widget.options.enlargeCenterPage == true) {
+              double itemOffset;
+              // pageController.page can only be accessed after the first build,
+              // so in the first build we calculate the itemoffset manually
+              try {
+                itemOffset = carouselState!.pageController!.page! - idx;
+              } catch (e) {
+                BuildContext storageContext = carouselState!
+                    .pageController!.position.context.storageContext;
+                final double? previousSavedPosition =
+                    PageStorage.of(storageContext)?.readState(storageContext)
+                        as double?;
+                if (previousSavedPosition != null) {
+                  itemOffset = previousSavedPosition - idx.toDouble();
+                } else {
+                  itemOffset =
+                      carouselState!.realPage.toDouble() - idx.toDouble();
+                }
               }
+              final num distortionRatio =
+                  (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
+              distortionValue =
+                  Curves.easeOut.transform(distortionRatio as double);
             }
-            final num distortionRatio =
-                (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
-            distortionValue =
-                Curves.easeOut.transform(distortionRatio as double);
-            // }
 
             final double height = widget.options.height ??
                 MediaQuery.of(context).size.width *
                     (1 / widget.options.aspectRatio);
 
             if (widget.options.paralaxEffect) {
-              var d = itemOffset;
-              var f = _currentPageValue;
-
-              return getParalaxEnlargeWrapper(child!,
-                  width: distortionValue * MediaQuery.of(context).size.width,
-                  scale: distortionValue,
-                  position: index,
-                  itemOffset: itemOffset);
+              return getParalaxEnlargeWrapper(
+                child!,
+                width: distortionValue * MediaQuery.of(context).size.width,
+                scale: distortionValue,
+                position: index,
+              );
             }
 
             if (widget.options.scrollDirection == Axis.horizontal) {
