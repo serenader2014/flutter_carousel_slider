@@ -361,7 +361,6 @@ class _ParalaxSliderDemoState extends State<ParalaxSliderDemo> {
                     paralaxEffect: true,
                     onPageChanged: (index, reason) {
                       setState(() {
-                        // print("");
                         this.index = index;
                       });
                     },

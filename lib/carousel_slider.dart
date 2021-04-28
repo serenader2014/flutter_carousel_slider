@@ -101,6 +101,15 @@ class CarouselSliderState extends State<CarouselSlider>
     );
     carouselState!.pageController = pageController;
 
+    pageController!.addListener(() {
+      // setState(() {
+      //   _currentPageValue = pageController!.page!;
+      // });
+      _currentPageValue = pageController!.page!;
+
+      // debugPrint("   _currentPageValue1 $_currentPageValue");
+    });
+
     // handle autoplay when state changes
     handleAutoPlay();
 
@@ -126,13 +135,16 @@ class CarouselSliderState extends State<CarouselSlider>
       initialPage: carouselState!.realPage,
     );
 
-    carouselState!.pageController = pageController;
-
     pageController!.addListener(() {
-      setState(() {
-        _currentPageValue = pageController!.page!;
-      });
+      // setState(() {
+      //   _currentPageValue = pageController!.page!;
+      // });
+      _currentPageValue = pageController!.page!;
+
+      //debugPrint("   _currentPageValue2 $_currentPageValue");
     });
+
+    carouselState!.pageController = pageController;
   }
 
   Timer? getTimer() {
@@ -252,13 +264,14 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 
   Widget getParalaxEnlargeWrapper(Widget child,
-      {double? width, double? scale, int? position}) {
-    var ofset = Offset((_currentPageValue - position!) * width! / 4, 0);
-
-    double value = (1 - ((_currentPageValue - position).abs() * (1 - 1.0)))
+      {double? width, double? scale, int? position, double? itemOffset}) {
+    double value = (1 - ((_currentPageValue - position!).abs() * (1 - 1.0)))
         .clamp(0.0, 1.0);
 
     var curve = Curves.ease.transform(value) * widget.options.height!;
+
+    var ofset =
+        Offset((_currentPageValue - position) * width! / widget.itemCount, 0);
 
     return Padding(
       padding: const EdgeInsets.all(1.0),
@@ -311,9 +324,10 @@ class CarouselSliderState extends State<CarouselSlider>
       onPageChanged: (int index) {
         int currentPage = getRealIndex(index + carouselState!.initialPage,
             carouselState!.realPage, widget.itemCount);
-        //  if (widget.options.onPageChanged != null) {
-        //    widget.options.onPageChanged!(currentPage,mode);
-        //  }
+
+        if (widget.options.onPageChanged != null) {
+          widget.options.onPageChanged!(currentPage, mode);
+        }
 
         if (widget.options.onPageChangedTest != null) {
           widget.options.onPageChangedTest!(currentPage);
@@ -332,42 +346,44 @@ class CarouselSliderState extends State<CarouselSlider>
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
             // to display the visual effect
-            if (widget.options.enlargeCenterPage == true) {
-              double itemOffset;
-              // pageController.page can only be accessed after the first build,
-              // so in the first build we calculate the itemoffset manually
-              try {
-                itemOffset = carouselState!.pageController!.page! - idx;
-              } catch (e) {
-                BuildContext storageContext = carouselState!
-                    .pageController!.position.context.storageContext;
-                final double? previousSavedPosition =
-                    PageStorage.of(storageContext)?.readState(storageContext)
-                        as double?;
-                if (previousSavedPosition != null) {
-                  itemOffset = previousSavedPosition - idx.toDouble();
-                } else {
-                  itemOffset =
-                      carouselState!.realPage.toDouble() - idx.toDouble();
-                }
+            // if (widget.options.enlargeCenterPage == true) {
+            double itemOffset;
+            // pageController.page can only be accessed after the first build,
+            // so in the first build we calculate the itemoffset manually
+            try {
+              itemOffset = carouselState!.pageController!.page! - idx;
+            } catch (e) {
+              BuildContext storageContext = carouselState!
+                  .pageController!.position.context.storageContext;
+              final double? previousSavedPosition =
+                  PageStorage.of(storageContext)?.readState(storageContext)
+                      as double?;
+              if (previousSavedPosition != null) {
+                itemOffset = previousSavedPosition - idx.toDouble();
+              } else {
+                itemOffset =
+                    carouselState!.realPage.toDouble() - idx.toDouble();
               }
-              final num distortionRatio =
-                  (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
-              distortionValue =
-                  Curves.easeOut.transform(distortionRatio as double);
             }
+            final num distortionRatio =
+                (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
+            distortionValue =
+                Curves.easeOut.transform(distortionRatio as double);
+            // }
 
             final double height = widget.options.height ??
                 MediaQuery.of(context).size.width *
                     (1 / widget.options.aspectRatio);
 
             if (widget.options.paralaxEffect) {
-             // debugPrint("idx $idx");
+              var d = itemOffset;
+              var f = _currentPageValue;
 
               return getParalaxEnlargeWrapper(child!,
                   width: distortionValue * MediaQuery.of(context).size.width,
                   scale: distortionValue,
-                  position: idx);
+                  position: index,
+                  itemOffset: itemOffset);
             }
 
             if (widget.options.scrollDirection == Axis.horizontal) {
