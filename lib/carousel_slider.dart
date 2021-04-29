@@ -270,14 +270,14 @@ class CarouselSliderState extends State<CarouselSlider>
 
     var curve = Curves.ease.transform(value) * widget.options.height!;
 
-    var paralaxEffectValue =
-        2.0; // burada paralax değeri veriyoruz. Sayfaya paralax değeri buradan ayırılıyor
+// burada paralax değeri veriyoruz. Sayfaya paralax değeri buradan ayırılıyor
+    var paralaxEffectValue = 2.0;
 
     var ofset =
         Offset((_currentPageValue - position) * width! / paralaxEffectValue, 0);
 
     return Padding(
-      padding: const EdgeInsets.all(1.0),
+      padding: const EdgeInsets.only(left: 0.0, right: 1.0),
       child: SizedBox(
         height: curve,
         child: ClipRRect(
