@@ -17,3 +17,8 @@ steps:
   inputs:
     channel: 'stable'
     version: 'latest'
+- task: FlutterBuild@0
+  inputs:
+    target: 'ios'
+    projectDirectory: '.'
+    iosTargetPlatform: 'simulator'
