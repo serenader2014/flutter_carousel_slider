@@ -1,6 +1,6 @@
-# Flutter build
 variables:
-  projectDirectory: sample_project
+  projectDirectory: flutter_carousel_slider
+
 
 jobs:
   - job: Android
@@ -11,9 +11,6 @@ jobs:
     - task: FlutterBuild@0
       inputs:
         target: apk
-        projectDirectory: $(projectDirectory)
-    - task: FlutterTest@0
-      inputs:
         projectDirectory: $(projectDirectory)
     - task: CopyFiles@2
       inputs:
