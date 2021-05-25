@@ -1,4 +1,5 @@
 variables:
+
   projectDirectory: flutter_carousel_slider
 
 
