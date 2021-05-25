@@ -1,7 +1,5 @@
 variables:
 
-  projectDirectory: flutter_carousel_slider
-
 
 jobs:
   - job: deneme
@@ -16,8 +14,8 @@ jobs:
 
     - task: FlutterBuild@0
       inputs:
-        target: apk
-        projectDirectory: $(projectDirectory)
+        target: all
+        projectDirectory: '.'
     - task: CopyFiles@2
       inputs:
         contents: '**/*.apk'
