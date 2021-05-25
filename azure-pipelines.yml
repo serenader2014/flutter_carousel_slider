@@ -10,9 +10,9 @@ variables:
   projectDirectory: sample_project
 
 jobs:
-  - job: Android
+  - job: ios
     pool:
-      vmImage: 'macOS-lates'
+      vmImage: 'macos-latest'
     steps:
     - task: FlutterInstall@0
     - task: FlutterBuild@0
