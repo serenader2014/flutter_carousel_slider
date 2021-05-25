@@ -3,7 +3,7 @@ variables:
 
 
 jobs:
-  - job: Android
+  - job: deneme
     pool:
       vmImage: 'macOS-latest'
     steps:
