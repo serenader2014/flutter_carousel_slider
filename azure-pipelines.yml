@@ -1,4 +1,3 @@
-variables:
 
 
 jobs:
@@ -6,6 +5,7 @@ jobs:
 
     pool:
       vmImage: 'macOS-latest'
+
     steps:
     - task: FlutterInstall@0
       inputs:
