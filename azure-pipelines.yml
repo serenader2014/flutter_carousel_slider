@@ -18,7 +18,6 @@ jobs:
     - task: FlutterBuild@0
       inputs:
         target: ios
-        projectDirectory: $(projectDirectory)
 
     - task: CopyFiles@2
       inputs:
