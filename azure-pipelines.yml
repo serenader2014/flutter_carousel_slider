@@ -12,7 +12,7 @@ variables:
 jobs:
   - job: Android
     pool:
-      vmImage: 'macOS-10.13'
+      vmImage: 'macOS-lates'
     steps:
     - task: FlutterInstall@0
     - task: FlutterBuild@0
