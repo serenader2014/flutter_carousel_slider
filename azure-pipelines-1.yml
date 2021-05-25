@@ -1,0 +1,4 @@
+- task: FlutterInstall@0
+  inputs:
+    channel: 'stable'
+    version: 'latest'
