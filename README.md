@@ -90,7 +90,7 @@ It can be used to build different child item widgets related to content or by it
 
 CarouselSlider.builder(
   itemCount: 15,
-  itemBuilder: (BuildContext context, int itemIndex) =>
+  itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
     Container(
       child: Text(itemIndex.toString()),
     ),
