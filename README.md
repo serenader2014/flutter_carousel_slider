@@ -21,13 +21,31 @@ https://serenader2014.github.io/flutter_carousel_slider/#/
 
 Note: this page is built with flutter-web. For a better user experience, please use a mobile device to open this link.
 
-## Installation
+<!-- ## Installation
 
 Add `carousel_slider: ^4.0.0` to your `pubspec.yaml` dependencies. And import it:
 
 ```dart
 import 'package:carousel_slider/carousel_slider.dart';
+``` -->
+## Getting started
+
+In the `pubspec.yaml` of your flutter project, add the following dependency:
+
+```yaml
+dependencies:
+  ...
+  carousel_slider: <latest_version>
 ```
+
+In your library add the following import:
+
+```dart
+import 'package:carousel_slider/carousel_slider.dart';
+```
+
+For help getting started with Flutter, view the online [documentation](https://pub.dev/packages/carousel_slider).
+
 
 ## How to use
 
