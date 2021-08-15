@@ -296,9 +296,11 @@ class CarouselSliderState extends State<CarouselSlider>
               double itemOffset;
               // pageController.page can only be accessed after the first build,
               // so in the first build we calculate the itemoffset manually
-              try {
-                itemOffset = carouselState!.pageController!.page! - idx;
-              } catch (e) {
+
+              var _page = carouselState?.pageController?.page;
+              if (_page != null) {
+                itemOffset = _page - idx;
+              } else {
                 BuildContext storageContext = carouselState!
                     .pageController!.position.context.storageContext;
                 final double? previousSavedPosition =
@@ -311,6 +313,7 @@ class CarouselSliderState extends State<CarouselSlider>
                       carouselState!.realPage.toDouble() - idx.toDouble();
                 }
               }
+
               final num distortionRatio =
                   (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
               distortionValue =
