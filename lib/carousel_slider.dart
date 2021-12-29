@@ -264,6 +264,7 @@ class CarouselSliderState extends State<CarouselSlider>
   @override
   Widget build(BuildContext context) {
     return getGestureWrapper(PageView.builder(
+      padEnds: widget.options.padEnds,
       physics: widget.options.scrollPhysics,
       scrollDirection: widget.options.scrollDirection,
       pageSnapping: widget.options.pageSnapping,
