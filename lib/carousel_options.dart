@@ -55,7 +55,7 @@ class CarouselOptions {
   /// Defaults to [Curves.fastOutSlowIn].
   final Curve autoPlayCurve;
 
-  /// Determines if current page should be larger then the side images,
+  /// Determines if current page should be larger than the side images,
   /// creating a feeling of depth in the carousel.
   ///
   /// Defaults to false.
