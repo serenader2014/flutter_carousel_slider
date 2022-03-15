@@ -139,4 +139,58 @@ class CarouselOptions {
     this.enlargeStrategy: CenterPageEnlargeStrategy.scale,
     this.disableCenter: false,
   });
+
+  ///Generate new [CarouselOptions] based on old ones.
+
+  CarouselOptions copyWith({
+    height,
+    aspectRatio,
+    viewportFraction,
+    initialPage,
+    enableInfiniteScroll,
+    reverse,
+    autoPlay,
+    autoPlayInterval,
+    autoPlayAnimationDuration,
+    autoPlayCurve,
+    enlargeCenterPage,
+    onPageChanged,
+    onScrolled,
+    scrollPhysics,
+    pageSnapping,
+    scrollDirection,
+    pauseAutoPlayOnTouch,
+    pauseAutoPlayOnManualNavigate,
+    pauseAutoPlayInFiniteScroll,
+    pageViewKey,
+    enlargeStrategy,
+    disableCenter,
+  }) =>
+      CarouselOptions(
+        height: height ?? this.height,
+        aspectRatio: aspectRatio ?? this.aspectRatio,
+        viewportFraction: viewportFraction ?? this.viewportFraction,
+        initialPage: initialPage ?? this.initialPage,
+        enableInfiniteScroll: enableInfiniteScroll ?? this.enableInfiniteScroll,
+        reverse: reverse ?? this.reverse,
+        autoPlay: autoPlay ?? this.autoPlay,
+        autoPlayInterval: autoPlayInterval ?? this.autoPlayInterval,
+        autoPlayAnimationDuration:
+            autoPlayAnimationDuration ?? this.autoPlayAnimationDuration,
+        autoPlayCurve: autoPlayCurve ?? this.autoPlayCurve,
+        enlargeCenterPage: enlargeCenterPage ?? this.enlargeCenterPage,
+        onPageChanged: onPageChanged ?? this.onPageChanged,
+        onScrolled: onScrolled ?? this.onScrolled,
+        scrollPhysics: scrollPhysics ?? this.scrollPhysics,
+        pageSnapping: pageSnapping ?? this.pageSnapping,
+        scrollDirection: scrollDirection ?? this.scrollDirection,
+        pauseAutoPlayOnTouch: pauseAutoPlayOnTouch ?? this.pauseAutoPlayOnTouch,
+        pauseAutoPlayOnManualNavigate:
+            pauseAutoPlayOnManualNavigate ?? this.pauseAutoPlayOnManualNavigate,
+        pauseAutoPlayInFiniteScroll:
+            pauseAutoPlayInFiniteScroll ?? this.pauseAutoPlayInFiniteScroll,
+        pageViewKey: pageViewKey ?? this.pageViewKey,
+        enlargeStrategy: enlargeStrategy ?? this.enlargeStrategy,
+        disableCenter: disableCenter ?? this.disableCenter,
+      );
 }
