@@ -37,12 +37,13 @@ class CarouselSlider extends StatefulWidget {
   CarouselSlider(
       {required this.items,
       required this.options,
-      carouselController,
+      CarouselController? carouselController,
       Key? key})
       : itemBuilder = null,
         itemCount = items != null ? items.length : 0,
-        _carouselController = carouselController ??
-            CarouselController() as CarouselControllerImpl,
+        _carouselController = carouselController != null
+            ? carouselController as CarouselControllerImpl
+            : CarouselController() as CarouselControllerImpl,
         super(key: key);
 
   /// The on demand item builder constructor
@@ -50,11 +51,12 @@ class CarouselSlider extends StatefulWidget {
       {required this.itemCount,
       required this.itemBuilder,
       required this.options,
-      carouselController,
+      CarouselController? carouselController,
       Key? key})
       : items = null,
-        _carouselController = carouselController ??
-            CarouselController() as CarouselControllerImpl,
+        _carouselController = carouselController != null
+            ? carouselController as CarouselControllerImpl
+            : CarouselController() as CarouselControllerImpl,
         super(key: key);
 
   @override
@@ -265,6 +267,12 @@ class CarouselSliderState extends State<CarouselSlider>
   Widget build(BuildContext context) {
     return getGestureWrapper(PageView.builder(
       padEnds: widget.options.padEnds,
+      scrollBehavior: ScrollConfiguration.of(context).copyWith(
+        scrollbars: false,
+        overscroll: false,
+        dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
+      ),
+      clipBehavior: widget.options.clipBehavior,
       physics: widget.options.scrollPhysics,
       scrollDirection: widget.options.scrollDirection,
       pageSnapping: widget.options.pageSnapping,

@@ -55,7 +55,7 @@ class CarouselOptions {
   /// Defaults to [Curves.fastOutSlowIn].
   final Curve autoPlayCurve;
 
-  /// Determines if current page should be larger then the side images,
+  /// Determines if current page should be larger than the side images,
   /// creating a feeling of depth in the carousel.
   ///
   /// Defaults to false.
@@ -120,6 +120,8 @@ class CarouselOptions {
   /// If [viewportFraction] >= 1.0, this property has no effect.
   /// This property defaults to true and must not be null.
   final bool padEnds;
+  /// Exposed clipBehavior of PageView
+  final Clip clipBehavior;
 
   CarouselOptions({
     this.height,
@@ -145,5 +147,6 @@ class CarouselOptions {
     this.enlargeStrategy: CenterPageEnlargeStrategy.scale,
     this.disableCenter: false,
     this.padEnds = true,
+    this.clipBehavior: Clip.hardEdge,
   });
 }
