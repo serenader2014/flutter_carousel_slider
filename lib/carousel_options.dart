@@ -149,4 +149,58 @@ class CarouselOptions {
     this.padEnds = true,
     this.clipBehavior: Clip.hardEdge,
   });
+
+  ///Generate new [CarouselOptions] based on old ones.
+
+  CarouselOptions copyWith({
+    double? height,
+    double? aspectRatio,
+    double? viewportFraction,
+    int? initialPage,
+    bool? enableInfiniteScroll,
+    bool? reverse,
+    bool? autoPlay,
+    Duration? autoPlayInterval,
+    Duration? autoPlayAnimationDuration,
+    Curve? autoPlayCurve,
+    bool? enlargeCenterPage,
+    Function(int index, CarouselPageChangedReason reason)? onPageChanged,
+    ValueChanged<double?>? onScrolled,
+    ScrollPhysics? scrollPhysics,
+    bool? pageSnapping,
+    Axis? scrollDirection,
+    bool? pauseAutoPlayOnTouch,
+    bool? pauseAutoPlayOnManualNavigate,
+    bool? pauseAutoPlayInFiniteScroll,
+    PageStorageKey? pageViewKey,
+    CenterPageEnlargeStrategy? enlargeStrategy,
+    bool? disableCenter,
+  }) =>
+      CarouselOptions(
+        height: height ?? this.height,
+        aspectRatio: aspectRatio ?? this.aspectRatio,
+        viewportFraction: viewportFraction ?? this.viewportFraction,
+        initialPage: initialPage ?? this.initialPage,
+        enableInfiniteScroll: enableInfiniteScroll ?? this.enableInfiniteScroll,
+        reverse: reverse ?? this.reverse,
+        autoPlay: autoPlay ?? this.autoPlay,
+        autoPlayInterval: autoPlayInterval ?? this.autoPlayInterval,
+        autoPlayAnimationDuration:
+            autoPlayAnimationDuration ?? this.autoPlayAnimationDuration,
+        autoPlayCurve: autoPlayCurve ?? this.autoPlayCurve,
+        enlargeCenterPage: enlargeCenterPage ?? this.enlargeCenterPage,
+        onPageChanged: onPageChanged ?? this.onPageChanged,
+        onScrolled: onScrolled ?? this.onScrolled,
+        scrollPhysics: scrollPhysics ?? this.scrollPhysics,
+        pageSnapping: pageSnapping ?? this.pageSnapping,
+        scrollDirection: scrollDirection ?? this.scrollDirection,
+        pauseAutoPlayOnTouch: pauseAutoPlayOnTouch ?? this.pauseAutoPlayOnTouch,
+        pauseAutoPlayOnManualNavigate:
+            pauseAutoPlayOnManualNavigate ?? this.pauseAutoPlayOnManualNavigate,
+        pauseAutoPlayInFiniteScroll:
+            pauseAutoPlayInFiniteScroll ?? this.pauseAutoPlayInFiniteScroll,
+        pageViewKey: pageViewKey ?? this.pageViewKey,
+        enlargeStrategy: enlargeStrategy ?? this.enlargeStrategy,
+        disableCenter: disableCenter ?? this.disableCenter,
+      );
 }
