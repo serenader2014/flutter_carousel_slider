@@ -120,6 +120,7 @@ class CarouselOptions {
   /// If [viewportFraction] >= 1.0, this property has no effect.
   /// This property defaults to true and must not be null.
   final bool padEnds;
+
   /// Exposed clipBehavior of PageView
   final Clip clipBehavior;
 
@@ -152,32 +153,31 @@ class CarouselOptions {
 
   ///Generate new [CarouselOptions] based on old ones.
 
-  CarouselOptions copyWith({
-    double? height,
-    double? aspectRatio,
-    double? viewportFraction,
-    int? initialPage,
-    bool? enableInfiniteScroll,
-    bool? reverse,
-    bool? autoPlay,
-    Duration? autoPlayInterval,
-    Duration? autoPlayAnimationDuration,
-    Curve? autoPlayCurve,
-    bool? enlargeCenterPage,
-    Function(int index, CarouselPageChangedReason reason)? onPageChanged,
-    ValueChanged<double?>? onScrolled,
-    ScrollPhysics? scrollPhysics,
-    bool? pageSnapping,
-    Axis? scrollDirection,
-    bool? pauseAutoPlayOnTouch,
-    bool? pauseAutoPlayOnManualNavigate,
-    bool? pauseAutoPlayInFiniteScroll,
-    PageStorageKey? pageViewKey,
-    CenterPageEnlargeStrategy? enlargeStrategy,
-    bool? disableCenter,
-    Clip? clipBehavior,
-    bool? padEnds
-  }) =>
+  CarouselOptions copyWith(
+          {double? height,
+          double? aspectRatio,
+          double? viewportFraction,
+          int? initialPage,
+          bool? enableInfiniteScroll,
+          bool? reverse,
+          bool? autoPlay,
+          Duration? autoPlayInterval,
+          Duration? autoPlayAnimationDuration,
+          Curve? autoPlayCurve,
+          bool? enlargeCenterPage,
+          Function(int index, CarouselPageChangedReason reason)? onPageChanged,
+          ValueChanged<double?>? onScrolled,
+          ScrollPhysics? scrollPhysics,
+          bool? pageSnapping,
+          Axis? scrollDirection,
+          bool? pauseAutoPlayOnTouch,
+          bool? pauseAutoPlayOnManualNavigate,
+          bool? pauseAutoPlayInFiniteScroll,
+          PageStorageKey? pageViewKey,
+          CenterPageEnlargeStrategy? enlargeStrategy,
+          bool? disableCenter,
+          Clip? clipBehavior,
+          bool? padEnds}) =>
       CarouselOptions(
         height: height ?? this.height,
         aspectRatio: aspectRatio ?? this.aspectRatio,
