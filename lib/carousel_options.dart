@@ -55,7 +55,7 @@ class CarouselOptions {
   /// Defaults to [Curves.fastOutSlowIn].
   final Curve autoPlayCurve;
 
-  /// Determines if current page should be larger then the side images,
+  /// Determines if current page should be larger than the side images,
   /// creating a feeling of depth in the carousel.
   ///
   /// Defaults to false.
@@ -115,6 +115,9 @@ class CarouselOptions {
   /// Whether or not to disable the `Center` widget for each slide.
   final bool disableCenter;
 
+  /// Exposed clipBehavior of PageView
+  final Clip clipBehavior;
+
   CarouselOptions({
     this.height,
     this.aspectRatio: 16 / 9,
@@ -138,5 +141,6 @@ class CarouselOptions {
     this.pageViewKey,
     this.enlargeStrategy: CenterPageEnlargeStrategy.scale,
     this.disableCenter: false,
+    this.clipBehavior: Clip.hardEdge,
   });
 }

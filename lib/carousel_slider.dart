@@ -269,6 +269,7 @@ class CarouselSliderState extends State<CarouselSlider>
         overscroll: false,
         dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
       ),
+      clipBehavior: widget.options.clipBehavior,
       physics: widget.options.scrollPhysics,
       scrollDirection: widget.options.scrollDirection,
       pageSnapping: widget.options.pageSnapping,
