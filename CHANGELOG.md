@@ -1,6 +1,15 @@
-# 4.0.1
+# 4.1.0
+
+## Add
 
 - Exposed `clipBehavior` in `CarouselOptions`
+- Exposed `padEnds` in `CarouselOptions`
+- Add `copyWith` method to `CarouselOptions`
+
+## Fix
+
+- [FIX] Can't swipe on web with Flutter 2.5
+
 
 # 4.0.0
 

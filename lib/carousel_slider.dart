@@ -3,7 +3,6 @@ library carousel_slider;
 import 'dart:async';
 
 import 'package:carousel_slider/carousel_state.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 

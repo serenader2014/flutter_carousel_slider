@@ -175,6 +175,8 @@ class CarouselOptions {
     PageStorageKey? pageViewKey,
     CenterPageEnlargeStrategy? enlargeStrategy,
     bool? disableCenter,
+    Clip? clipBehavior,
+    bool? padEnds
   }) =>
       CarouselOptions(
         height: height ?? this.height,
@@ -202,5 +204,7 @@ class CarouselOptions {
         pageViewKey: pageViewKey ?? this.pageViewKey,
         enlargeStrategy: enlargeStrategy ?? this.enlargeStrategy,
         disableCenter: disableCenter ?? this.disableCenter,
+        clipBehavior: clipBehavior ?? this.clipBehavior,
+        padEnds: padEnds ?? this.padEnds,
       );
 }
