@@ -1,3 +1,7 @@
+# 4.0.1
+
+- Exposed `clipBehavior` in `CarouselOptions`
+
 # 4.0.0
 
 - Support null safety (Null safety isn't a breaking change and is Backward compatible meaning you can use it with non-null safe code too)
