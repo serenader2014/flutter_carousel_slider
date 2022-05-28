@@ -9,7 +9,7 @@ import 'utils.dart';
 abstract class CarouselController {
   bool get ready;
 
-  Future<Null> get onReady;
+  Future<void> get onReady;
 
   Future<void> nextPage({Duration? duration, Curve? curve});
 
@@ -27,7 +27,7 @@ abstract class CarouselController {
 }
 
 class CarouselControllerImpl implements CarouselController {
-  final Completer<Null> _readyCompleter = Completer<Null>();
+  final Completer<void> _readyCompleter = Completer<void>();
 
   CarouselState? _state;
 
@@ -45,12 +45,13 @@ class CarouselControllerImpl implements CarouselController {
   bool get ready => _state != null;
 
   @override
-  Future<Null> get onReady => _readyCompleter.future;
+  Future<void> get onReady => _readyCompleter.future;
 
   /// Animates the controlled [CarouselSlider] to the next page.
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
+  @override
   Future<void> nextPage(
       {Duration? duration = const Duration(milliseconds: 300),
       Curve? curve = Curves.linear}) async {
@@ -69,6 +70,7 @@ class CarouselControllerImpl implements CarouselController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
+  @override
   Future<void> previousPage(
       {Duration? duration = const Duration(milliseconds: 300),
       Curve? curve = Curves.linear}) async {
@@ -88,6 +90,7 @@ class CarouselControllerImpl implements CarouselController {
   ///
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
+  @override
   void jumpToPage(int page) {
     final index = getRealIndex(_state!.pageController!.page!.toInt(),
         _state!.realPage - _state!.initialPage, _state!.itemCount);
@@ -101,6 +104,7 @@ class CarouselControllerImpl implements CarouselController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
+  @override
   Future<void> animateToPage(int page,
       {Duration? duration = const Duration(milliseconds: 300),
       Curve? curve = Curves.linear}) async {
@@ -124,6 +128,7 @@ class CarouselControllerImpl implements CarouselController {
   ///
   /// The carousel will only autoPlay if the [autoPlay] parameter
   /// in [CarouselOptions] is true.
+  @override
   void startAutoPlay() {
     _state!.onResumeTimer();
   }
@@ -132,6 +137,7 @@ class CarouselControllerImpl implements CarouselController {
   ///
   /// This is a more on-demand way of doing this. Use the [autoPlay]
   /// parameter in [CarouselOptions] to specify the autoPlay behaviour of the carousel.
+  @override
   void stopAutoPlay() {
     _state!.onResetTimer();
   }

@@ -13,7 +13,7 @@ import 'utils.dart';
 export 'carousel_controller.dart';
 export 'carousel_options.dart';
 
-typedef Widget ExtendedIndexedWidgetBuilder(
+typedef ExtendedIndexedWidgetBuilder = Widget Function(
     BuildContext context, int index, int realIndex);
 
 class CarouselSlider extends StatefulWidget {
@@ -104,7 +104,7 @@ class CarouselSliderState extends State<CarouselSlider>
   void initState() {
     super.initState();
     carouselState =
-        CarouselState(this.options, clearTimer, resumeTimer, this.changeMode);
+        CarouselState(options, clearTimer, resumeTimer, changeMode);
 
     carouselState!.itemCount = widget.itemCount;
     carouselController.state = carouselState;
@@ -161,9 +161,7 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 
   void resumeTimer() {
-    if (timer == null) {
-      timer = getTimer();
-    }
+    timer ??= getTimer();
   }
 
   void handleAutoPlay() {
@@ -180,7 +178,7 @@ class CarouselSliderState extends State<CarouselSlider>
   Widget getGestureWrapper(Widget child) {
     Widget wrapper;
     if (widget.options.height != null) {
-      wrapper = Container(height: widget.options.height, child: child);
+      wrapper = SizedBox(height: widget.options.height, child: child);
     } else {
       wrapper =
           AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
@@ -235,7 +233,7 @@ class CarouselSliderState extends State<CarouselSlider>
     }
     return Transform.scale(
         scale: scale!,
-        child: Container(child: child, width: width, height: height));
+        child: SizedBox(child: child, width: width, height: height));
   }
 
   void onStart() {
@@ -293,7 +291,7 @@ class CarouselSliderState extends State<CarouselSlider>
         return AnimatedBuilder(
           animation: carouselState!.pageController!,
           child: (widget.items != null)
-              ? (widget.items!.length > 0 ? widget.items![index] : Container())
+              ? (widget.items!.isNotEmpty ? widget.items![index] : const SizedBox())
               : widget.itemBuilder!(context, index, idx),
           builder: (BuildContext context, child) {
             double distortionValue = 1.0;
