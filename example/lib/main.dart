@@ -482,7 +482,7 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
 
   @override
   void initState() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       for (var imageUrl in images) {
         precacheImage(NetworkImage(imageUrl), context);
       }
