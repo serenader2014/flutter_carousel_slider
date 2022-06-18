@@ -190,7 +190,7 @@ class CarouselSliderState extends State<CarouselSlider>
           AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
     }
 
-    if(true == widget.disableGesture){
+    if (true == widget.disableGesture) {
       return wrapper;
     }
 
@@ -272,8 +272,6 @@ class CarouselSliderState extends State<CarouselSlider>
 
   @override
   Widget build(BuildContext context) {
-  
-
     return getGestureWrapper(PageView.builder(
       padEnds: widget.options.padEnds,
       scrollBehavior: ScrollConfiguration.of(context).copyWith(
