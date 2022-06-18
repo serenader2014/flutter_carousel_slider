@@ -191,10 +191,20 @@ class CarouselSliderState extends State<CarouselSlider>
     }
 
     if (true == widget.disableGesture) {
-      return wrapper;
+      return NotificationListener(
+        onNotification: (Notification notification) {
+          if (widget.options.onScrolled != null &&
+              notification is ScrollUpdateNotification) {
+            widget.options.onScrolled!(carouselState!.pageController!.page);
+          }
+          return false;
+        },
+        child: wrapper,
+      );
     }
 
     return RawGestureDetector(
+      behavior: HitTestBehavior.opaque,
       gestures: {
         _MultipleGestureRecognizer:
             GestureRecognizerFactoryWithHandlers<_MultipleGestureRecognizer>(
