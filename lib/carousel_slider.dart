@@ -20,6 +20,8 @@ class CarouselSlider extends StatefulWidget {
   /// [CarouselOptions] to create a [CarouselState] with
   final CarouselOptions options;
 
+  final bool? disableGesture;
+
   /// The widgets to be shown in the carousel of default constructor
   final List<Widget>? items;
 
@@ -36,6 +38,7 @@ class CarouselSlider extends StatefulWidget {
   CarouselSlider(
       {required this.items,
       required this.options,
+      this.disableGesture,
       CarouselController? carouselController,
       Key? key})
       : itemBuilder = null,
@@ -50,6 +53,7 @@ class CarouselSlider extends StatefulWidget {
       {required this.itemCount,
       required this.itemBuilder,
       required this.options,
+      this.disableGesture,
       CarouselController? carouselController,
       Key? key})
       : items = null,
@@ -186,6 +190,10 @@ class CarouselSliderState extends State<CarouselSlider>
           AspectRatio(aspectRatio: widget.options.aspectRatio, child: child);
     }
 
+    if(true == widget.disableGesture){
+      return wrapper;
+    }
+
     return RawGestureDetector(
       gestures: {
         _MultipleGestureRecognizer:
@@ -264,6 +272,8 @@ class CarouselSliderState extends State<CarouselSlider>
 
   @override
   Widget build(BuildContext context) {
+  
+
     return getGestureWrapper(PageView.builder(
       padEnds: widget.options.padEnds,
       scrollBehavior: ScrollConfiguration.of(context).copyWith(
