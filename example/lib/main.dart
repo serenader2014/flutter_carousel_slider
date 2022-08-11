@@ -41,6 +41,7 @@ class CarouselDemo extends StatelessWidget {
             '/reason': (ctx) => CarouselChangeReasonDemo(),
             '/position': (ctx) => KeepPageviewPositionDemo(),
             '/multiple': (ctx) => MultipleItemDemo(),
+            '/zoom': (ctx) => EnlargeStrategyZoomDemo(),
           },
         );
       },
@@ -96,6 +97,7 @@ class CarouselDemoHome extends StatelessWidget {
           DemoItem('Carousel change reason demo', '/reason'),
           DemoItem('Keep pageview position demo', '/position'),
           DemoItem('Multiple item in one screen demo', '/multiple'),
+          DemoItem('Enlarge strategy: zoom demo', '/zoom'),
         ],
       ),
     );
@@ -637,6 +639,26 @@ class MultipleItemDemo extends StatelessWidget {
           );
         },
       )),
+    );
+  }
+}
+
+class EnlargeStrategyZoomDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('enlarge strategy: zoom demo')),
+      body: Container(
+        child: CarouselSlider(
+          options: CarouselOptions(
+            aspectRatio: 2.0,
+            enlargeCenterPage: true,
+            enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+            enlargeFactor: 0.4,
+          ),
+          items: imageSliders,
+        ),
+      ),
     );
   }
 }

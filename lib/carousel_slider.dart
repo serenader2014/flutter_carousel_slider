@@ -229,9 +229,18 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 
   Widget getEnlargeWrapper(Widget? child,
-      {double? width, double? height, double? scale}) {
+      {double? width, double? height, double? scale, required double itemOffset}) {
     if (widget.options.enlargeStrategy == CenterPageEnlargeStrategy.height) {
       return SizedBox(child: child, width: width, height: height);
+    }
+    if (widget.options.enlargeStrategy == CenterPageEnlargeStrategy.zoom) {
+      late Alignment alignment;
+      if (itemOffset > 0) {
+        alignment = Alignment.centerRight;
+      } else {
+        alignment = Alignment.centerLeft;
+      }
+      return Transform.scale(child: child, scale: scale, alignment: alignment);
     }
     return Transform.scale(
         scale: scale!,
@@ -299,12 +308,11 @@ class CarouselSliderState extends State<CarouselSlider>
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
             // to display the visual effect
-
+            double itemOffset = 0;
             if (widget.options.enlargeCenterPage != null &&
                 widget.options.enlargeCenterPage == true) {
               // pageController.page can only be accessed after the first build,
               // so in the first build we calculate the itemoffset manually
-              double itemOffset = 0;
               var position = carouselState?.pageController?.position;
               if (position != null &&
                   position.hasPixels &&
@@ -327,8 +335,10 @@ class CarouselSliderState extends State<CarouselSlider>
                 }
               }
 
+              final double enlargeFactor =
+                options.enlargeFactor.clamp(0.0, 1.0);
               final num distortionRatio =
-                  (1 - (itemOffset.abs() * 0.3)).clamp(0.0, 1.0);
+                  (1 - (itemOffset.abs() * enlargeFactor)).clamp(0.0, 1.0);
               distortionValue =
                   Curves.easeOut.transform(distortionRatio as double);
             }
@@ -339,11 +349,12 @@ class CarouselSliderState extends State<CarouselSlider>
 
             if (widget.options.scrollDirection == Axis.horizontal) {
               return getCenterWrapper(getEnlargeWrapper(child,
-                  height: distortionValue * height, scale: distortionValue));
+                  height: distortionValue * height, scale: distortionValue,
+                  itemOffset: itemOffset));
             } else {
               return getCenterWrapper(getEnlargeWrapper(child,
                   width: distortionValue * MediaQuery.of(context).size.width,
-                  scale: distortionValue));
+                  scale: distortionValue, itemOffset: itemOffset));
             }
           },
         );
