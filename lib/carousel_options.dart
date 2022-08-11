@@ -109,11 +109,11 @@ class CarouselOptions {
   /// Pass a `PageStoragekey` if you want to keep the pageview's position when it was recreated.
   final PageStorageKey? pageViewKey;
 
-  /// Use `enlargeStrategy` to determine which method to enlarge the center page.
+  /// Use [enlargeStrategy] to determine which method to enlarge the center page.
   final CenterPageEnlargeStrategy enlargeStrategy;
 
   /// How much the pages next to the center page will be scaled down.
-  /// If `enlargeCenterPage` is false this will have no effect.
+  /// If `enlargeCenterPage` is false, this property has no effect.
   final double enlargeFactor;
 
   /// Whether or not to disable the `Center` widget for each slide.
