@@ -235,10 +235,11 @@ class CarouselSliderState extends State<CarouselSlider>
     }
     if (widget.options.enlargeStrategy == CenterPageEnlargeStrategy.zoom) {
       late Alignment alignment;
+      final bool horizontal = options.scrollDirection == Axis.horizontal;
       if (itemOffset > 0) {
-        alignment = Alignment.centerRight;
+        alignment = horizontal? Alignment.centerRight : Alignment.bottomCenter;
       } else {
-        alignment = Alignment.centerLeft;
+        alignment = horizontal? Alignment.centerLeft : Alignment.topCenter;
       }
       return Transform.scale(child: child, scale: scale, alignment: alignment);
     }
