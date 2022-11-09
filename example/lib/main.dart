@@ -27,6 +27,7 @@ class CarouselDemo extends StatelessWidget {
           routes: {
             '/': (ctx) => CarouselDemoHome(),
             '/basic': (ctx) => BasicDemo(),
+            '/basicbutton': (ctx) => BasicWithButtonDemo(),
             '/nocenter': (ctx) => NoCenterDemo(),
             '/image': (ctx) => ImageSliderDemo(),
             '/complicated': (ctx) => ComplicatedImageDemo(),
@@ -82,6 +83,7 @@ class CarouselDemoHome extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           DemoItem('Basic demo', '/basic'),
+          DemoItem('Basic with button demo', '/basicbutton'),
           DemoItem('No center mode demo', '/nocenter'),
           DemoItem('Image carousel slider', '/image'),
           DemoItem('More complicated image slider', '/complicated'),
@@ -118,6 +120,29 @@ class BasicDemo extends StatelessWidget {
                 ))
             .toList(),
       )),
+    );
+  }
+}
+
+class BasicWithButtonDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    List<int> list = [1, 2, 3, 4, 5];
+    return Scaffold(
+      appBar: AppBar(title: Text('Basic demo')),
+      body: Container(
+          child: CarouselSlider(
+            options: CarouselOptions(
+              withButtons: true,
+              enableInfiniteScroll: false,
+            ),
+            items: list
+                .map((item) => Container(
+              child: Center(child: Text(item.toString())),
+              color: Colors.green,
+            ))
+                .toList(),
+          )),
     );
   }
 }
@@ -217,6 +242,7 @@ class ComplicatedImageDemo extends StatelessWidget {
             autoPlay: true,
             aspectRatio: 2.0,
             enlargeCenterPage: true,
+            withButtons: true,
           ),
           items: imageSliders,
         ),
@@ -269,7 +295,10 @@ class _ManuallyControlledSliderState extends State<ManuallyControlledSlider> {
             children: <Widget>[
               CarouselSlider(
                 items: imageSliders,
-                options: CarouselOptions(enlargeCenterPage: true, height: 200),
+                options: CarouselOptions(
+                    enlargeCenterPage: true,
+                    height: 200,
+                ),
                 carouselController: _controller,
               ),
               Row(
