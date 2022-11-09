@@ -124,6 +124,12 @@ class CarouselOptions {
   /// Exposed clipBehavior of PageView
   final Clip clipBehavior;
 
+  /// Whether to show previous/next buttons on the side of
+  /// the carousels or not.
+  ///
+  /// Defaults to false.
+  final bool withButtons;
+
   CarouselOptions({
     this.height,
     this.aspectRatio: 16 / 9,
@@ -132,6 +138,7 @@ class CarouselOptions {
     this.enableInfiniteScroll: true,
     this.reverse: false,
     this.autoPlay: false,
+    this.withButtons: false,
     this.autoPlayInterval: const Duration(seconds: 4),
     this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
     this.autoPlayCurve: Curves.fastOutSlowIn,
@@ -161,6 +168,7 @@ class CarouselOptions {
           bool? enableInfiniteScroll,
           bool? reverse,
           bool? autoPlay,
+          bool? withButtons,
           Duration? autoPlayInterval,
           Duration? autoPlayAnimationDuration,
           Curve? autoPlayCurve,
@@ -186,6 +194,7 @@ class CarouselOptions {
         enableInfiniteScroll: enableInfiniteScroll ?? this.enableInfiniteScroll,
         reverse: reverse ?? this.reverse,
         autoPlay: autoPlay ?? this.autoPlay,
+        withButtons: withButtons ?? this.withButtons,
         autoPlayInterval: autoPlayInterval ?? this.autoPlayInterval,
         autoPlayAnimationDuration:
             autoPlayAnimationDuration ?? this.autoPlayAnimationDuration,
