@@ -110,9 +110,19 @@ class CarouselControllerImpl implements CarouselController {
     }
     final index = getRealIndex(_state!.pageController!.page!.toInt(),
         _state!.realPage - _state!.initialPage, _state!.itemCount);
+    int smallestMovement = page - index;
+    if (_state!.options.enableInfiniteScroll &&
+        _state!.itemCount != null &&
+        _state!.options.animateToClosest) {
+      if ((page - index).abs() > (page + _state!.itemCount! - index).abs()) {
+        smallestMovement = page + _state!.itemCount! - index;
+      } else if ((page - index).abs() > (page - _state!.itemCount! - index).abs()) {
+        smallestMovement = page - _state!.itemCount! - index;
+      }
+    }
     _setModeController();
     await _state!.pageController!.animateToPage(
-        _state!.pageController!.page!.toInt() + page - index,
+        _state!.pageController!.page!.toInt() + smallestMovement,
         duration: duration!,
         curve: curve!);
     if (isNeedResetTimer) {

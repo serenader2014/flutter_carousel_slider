@@ -28,6 +28,11 @@ class CarouselOptions {
   ///Defaults to true, i.e. infinite loop.
   final bool enableInfiniteScroll;
 
+  ///Determines if carousel should loop to the closest occurence of requested page.
+  ///
+  ///Defaults to true.
+  final bool animateToClosest;
+
   /// Reverse the order of items if set to true.
   ///
   /// Defaults to false.
@@ -134,6 +139,7 @@ class CarouselOptions {
     this.viewportFraction: 0.8,
     this.initialPage: 0,
     this.enableInfiniteScroll: true,
+    this.animateToClosest: true,
     this.reverse: false,
     this.autoPlay: false,
     this.autoPlayInterval: const Duration(seconds: 4),
