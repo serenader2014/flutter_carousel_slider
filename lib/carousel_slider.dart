@@ -269,7 +269,7 @@ class CarouselSliderState extends State<CarouselSlider>
       scrollBehavior: ScrollConfiguration.of(context).copyWith(
         scrollbars: false,
         overscroll: false,
-        dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
+        dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse, PointerDeviceKind.trackpad},
       ),
       clipBehavior: widget.options.clipBehavior,
       physics: widget.options.scrollPhysics,
