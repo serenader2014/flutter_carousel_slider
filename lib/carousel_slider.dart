@@ -129,7 +129,7 @@ class CarouselSliderState extends State<CarouselSlider>
   Timer? getTimer() {
     return widget.options.autoPlay
         ? Timer.periodic(widget.options.autoPlayInterval, (_) {
-            if(!mounted){
+            if (!mounted) {
               clearTimer();
               return;
             }
@@ -252,7 +252,10 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 
   Widget getEnlargeWrapper(Widget? child,
-      {double? width, double? height, double? scale, required double itemOffset}) {
+      {double? width,
+      double? height,
+      double? scale,
+      required double itemOffset}) {
     if (widget.options.enlargeStrategy == CenterPageEnlargeStrategy.height) {
       return SizedBox(child: child, width: width, height: height);
     }
@@ -260,9 +263,9 @@ class CarouselSliderState extends State<CarouselSlider>
       late Alignment alignment;
       final bool horizontal = options.scrollDirection == Axis.horizontal;
       if (itemOffset > 0) {
-        alignment = horizontal? Alignment.centerRight : Alignment.bottomCenter;
+        alignment = horizontal ? Alignment.centerRight : Alignment.bottomCenter;
       } else {
-        alignment = horizontal? Alignment.centerLeft : Alignment.topCenter;
+        alignment = horizontal ? Alignment.centerLeft : Alignment.topCenter;
       }
       return Transform.scale(child: child, scale: scale, alignment: alignment);
     }
@@ -302,7 +305,11 @@ class CarouselSliderState extends State<CarouselSlider>
       scrollBehavior: ScrollConfiguration.of(context).copyWith(
         scrollbars: false,
         overscroll: false,
-        dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse, PointerDeviceKind.trackpad},
+        dragDevices: {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.trackpad
+        },
       ),
       clipBehavior: widget.options.clipBehavior,
       physics: widget.options.scrollPhysics,
@@ -360,7 +367,7 @@ class CarouselSliderState extends State<CarouselSlider>
               }
 
               final double enlargeFactor =
-                options.enlargeFactor.clamp(0.0, 1.0);
+                  options.enlargeFactor.clamp(0.0, 1.0);
               final num distortionRatio =
                   (1 - (itemOffset.abs() * enlargeFactor)).clamp(0.0, 1.0);
               distortionValue =
@@ -373,12 +380,14 @@ class CarouselSliderState extends State<CarouselSlider>
 
             if (widget.options.scrollDirection == Axis.horizontal) {
               return getCenterWrapper(getEnlargeWrapper(child,
-                  height: distortionValue * height, scale: distortionValue,
+                  height: distortionValue * height,
+                  scale: distortionValue,
                   itemOffset: itemOffset));
             } else {
               return getCenterWrapper(getEnlargeWrapper(child,
                   width: distortionValue * MediaQuery.of(context).size.width,
-                  scale: distortionValue, itemOffset: itemOffset));
+                  scale: distortionValue,
+                  itemOffset: itemOffset));
             }
           },
         );

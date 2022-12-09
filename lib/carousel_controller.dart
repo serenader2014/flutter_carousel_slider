@@ -116,7 +116,8 @@ class CarouselControllerImpl implements CarouselController {
         _state!.options.animateToClosest) {
       if ((page - index).abs() > (page + _state!.itemCount! - index).abs()) {
         smallestMovement = page + _state!.itemCount! - index;
-      } else if ((page - index).abs() > (page - _state!.itemCount! - index).abs()) {
+      } else if ((page - index).abs() >
+          (page - _state!.itemCount! - index).abs()) {
         smallestMovement = page - _state!.itemCount! - index;
       }
     }
