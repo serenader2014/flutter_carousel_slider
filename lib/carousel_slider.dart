@@ -267,7 +267,7 @@ class CarouselSliderState extends State<CarouselSlider>
       } else {
         alignment = horizontal ? Alignment.centerLeft : Alignment.topCenter;
       }
-      return Transform.scale(child: child, scale: scale, alignment: alignment);
+      return Transform.scale(child: child, scale: scale!, alignment: alignment);
     }
     return Transform.scale(
         scale: scale!,
@@ -308,7 +308,6 @@ class CarouselSliderState extends State<CarouselSlider>
         dragDevices: {
           PointerDeviceKind.touch,
           PointerDeviceKind.mouse,
-          PointerDeviceKind.trackpad
         },
       ),
       clipBehavior: widget.options.clipBehavior,
