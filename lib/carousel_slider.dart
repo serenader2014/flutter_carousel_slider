@@ -342,12 +342,12 @@ class CarouselSliderState extends State<CarouselSlider>
             if (widget.options.enlargeCenterPage != null &&
                 widget.options.enlargeCenterPage == true) {
               // pageController.page can only be accessed after the first build,
-              // so in the first build we calculate the itemoffset manually
-              var position = carouselState?.pageController?.position;
+              // so in the first build we calculate the item offset manually
+              final position = carouselState?.pageController?.position;
               if (position != null &&
                   position.hasPixels &&
                   position.hasContentDimensions) {
-                var _page = carouselState?.pageController?.page;
+                final _page = carouselState?.pageController?.page;
                 if (_page != null) {
                   itemOffset = _page - idx;
                 }
@@ -355,7 +355,7 @@ class CarouselSliderState extends State<CarouselSlider>
                 BuildContext storageContext = carouselState!
                     .pageController!.position.context.storageContext;
                 final double? previousSavedPosition =
-                    PageStorage.of(storageContext)?.readState(storageContext)
+                    PageStorage.of(storageContext).readState(storageContext)
                         as double?;
                 if (previousSavedPosition != null) {
                   itemOffset = previousSavedPosition - idx.toDouble();

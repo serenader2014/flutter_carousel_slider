@@ -1,5 +1,9 @@
 # 4.2.1
 
+- [FIX] add compatibility to Dart 3
+
+# 4.2.1
+
 - [FIX] temporary remove `PointerDeviceKind.trackpad`
 - [FIX] fix `'double?'` type
 

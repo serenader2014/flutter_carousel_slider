@@ -37,5 +37,9 @@ class CarouselState {
   Function(CarouselPageChangedReason) changeMode;
 
   CarouselState(
-      this.options, this.onResetTimer, this.onResumeTimer, this.changeMode);
+    this.options,
+    this.onResetTimer,
+    this.onResumeTimer,
+    this.changeMode,
+  );
 }
