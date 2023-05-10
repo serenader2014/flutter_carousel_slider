@@ -34,7 +34,7 @@ class CarouselState {
   Function onResumeTimer;
 
   /// The callback to set the Reason Carousel changed
-  Function(CarouselPageChangedReason) changeMode;
+  ValueChanged<CarouselPageChangedReason> changeMode;
 
   CarouselState(
     this.options,

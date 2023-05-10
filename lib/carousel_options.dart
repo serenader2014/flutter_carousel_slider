@@ -72,7 +72,7 @@ class CarouselOptions {
   final Axis scrollDirection;
 
   /// Called whenever the page in the center of the viewport changes.
-  final Function(int index, CarouselPageChangedReason reason)? onPageChanged;
+  final void Function(int index, CarouselPageChangedReason reason)? onPageChanged;
 
   /// Called whenever the carousel is scrolled
   final ValueChanged<double?>? onScrolled;
@@ -111,8 +111,8 @@ class CarouselOptions {
   /// in the last item.
   final bool pauseAutoPlayInFiniteScroll;
 
-  /// Pass a `PageStorageKey` if you want to keep the pageview's position when it was recreated.
-  final PageStorageKey? pageViewKey;
+  /// Pass a `PageStorageKey` if you want to keep the PageView's position when it was recreated.
+  final PageStorageKey<dynamic>? pageViewKey;
 
   /// Use [enlargeStrategy] to determine which method to enlarge the center page.
   final CenterPageEnlargeStrategy enlargeStrategy;
@@ -164,32 +164,33 @@ class CarouselOptions {
 
   ///Generate new [CarouselOptions] based on old ones.
 
-  CarouselOptions copyWith(
-          {double? height,
-          double? aspectRatio,
-          double? viewportFraction,
-          int? initialPage,
-          bool? enableInfiniteScroll,
-          bool? reverse,
-          bool? autoPlay,
-          Duration? autoPlayInterval,
-          Duration? autoPlayAnimationDuration,
-          Curve? autoPlayCurve,
-          bool? enlargeCenterPage,
-          Function(int index, CarouselPageChangedReason reason)? onPageChanged,
-          ValueChanged<double?>? onScrolled,
-          ScrollPhysics? scrollPhysics,
-          bool? pageSnapping,
-          Axis? scrollDirection,
-          bool? pauseAutoPlayOnTouch,
-          bool? pauseAutoPlayOnManualNavigate,
-          bool? pauseAutoPlayInFiniteScroll,
-          PageStorageKey? pageViewKey,
-          CenterPageEnlargeStrategy? enlargeStrategy,
-          double? enlargeFactor,
-          bool? disableCenter,
-          Clip? clipBehavior,
-          bool? padEnds}) =>
+  CarouselOptions copyWith({
+    double? height,
+    double? aspectRatio,
+    double? viewportFraction,
+    int? initialPage,
+    bool? enableInfiniteScroll,
+    bool? reverse,
+    bool? autoPlay,
+    Duration? autoPlayInterval,
+    Duration? autoPlayAnimationDuration,
+    Curve? autoPlayCurve,
+    bool? enlargeCenterPage,
+    void Function(int index, CarouselPageChangedReason reason)? onPageChanged,
+    ValueChanged<double?>? onScrolled,
+    ScrollPhysics? scrollPhysics,
+    bool? pageSnapping,
+    Axis? scrollDirection,
+    bool? pauseAutoPlayOnTouch,
+    bool? pauseAutoPlayOnManualNavigate,
+    bool? pauseAutoPlayInFiniteScroll,
+    PageStorageKey<dynamic>? pageViewKey,
+    CenterPageEnlargeStrategy? enlargeStrategy,
+    double? enlargeFactor,
+    bool? disableCenter,
+    Clip? clipBehavior,
+    bool? padEnds,
+  }) =>
       CarouselOptions(
         height: height ?? this.height,
         aspectRatio: aspectRatio ?? this.aspectRatio,
