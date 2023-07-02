@@ -39,7 +39,7 @@ class CarouselDemo extends StatelessWidget {
             '/indicator': (ctx) => CarouselWithIndicatorDemo(),
             '/prefetch': (ctx) => PrefetchImageDemo(),
             '/reason': (ctx) => CarouselChangeReasonDemo(),
-            '/position': (ctx) => KeepPageviewPositionDemo(),
+            '/position': (ctx) => KeepPageViewPositionDemo(),
             '/multiple': (ctx) => MultipleItemDemo(),
             '/zoom': (ctx) => EnlargeStrategyZoomDemo(),
           },
@@ -579,11 +579,11 @@ class _CarouselChangeReasonDemoState extends State<CarouselChangeReasonDemo> {
   }
 }
 
-class KeepPageviewPositionDemo extends StatelessWidget {
+class KeepPageViewPositionDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Keep pageview position demo')),
+      appBar: AppBar(title: Text('Keep PageView position demo')),
       body: ListView.builder(itemBuilder: (ctx, index) {
         if (index == 3) {
           return Container(
