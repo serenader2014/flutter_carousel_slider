@@ -55,6 +55,11 @@ class CarouselOptions {
   /// Defaults to 800 ms.
   final Duration autoPlayAnimationDuration;
 
+  /// How long until autoplay starts
+  ///
+  /// Defaults to [autoPlayInterval].
+  final Duration autoPlayDelay;
+
   /// Determines the animation curve physics.
   ///
   /// Defaults to [Curves.fastOutSlowIn].
@@ -144,6 +149,7 @@ class CarouselOptions {
     this.autoPlay: false,
     this.autoPlayInterval: const Duration(seconds: 4),
     this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+    autoPlayDelay,
     this.autoPlayCurve: Curves.fastOutSlowIn,
     this.enlargeCenterPage = false,
     this.onPageChanged,
@@ -160,7 +166,7 @@ class CarouselOptions {
     this.disableCenter: false,
     this.padEnds = true,
     this.clipBehavior: Clip.hardEdge,
-  });
+  }): this.autoPlayDelay = autoPlayDelay ?? autoPlayInterval;
 
   ///Generate new [CarouselOptions] based on old ones.
 
@@ -174,6 +180,7 @@ class CarouselOptions {
           bool? autoPlay,
           Duration? autoPlayInterval,
           Duration? autoPlayAnimationDuration,
+          Duration? autoPlayDelay,
           Curve? autoPlayCurve,
           bool? enlargeCenterPage,
           Function(int index, CarouselPageChangedReason reason)? onPageChanged,
@@ -201,6 +208,7 @@ class CarouselOptions {
         autoPlayInterval: autoPlayInterval ?? this.autoPlayInterval,
         autoPlayAnimationDuration:
             autoPlayAnimationDuration ?? this.autoPlayAnimationDuration,
+        autoPlayDelay: autoPlayDelay ?? this.autoPlayDelay,
         autoPlayCurve: autoPlayCurve ?? this.autoPlayCurve,
         enlargeCenterPage: enlargeCenterPage ?? this.enlargeCenterPage,
         onPageChanged: onPageChanged ?? this.onPageChanged,
