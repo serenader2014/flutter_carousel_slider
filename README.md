@@ -69,6 +69,7 @@ CarouselSlider(
       autoPlay: true,
       autoPlayInterval: Duration(seconds: 3),
       autoPlayAnimationDuration: Duration(milliseconds: 800),
+      autoPlayDelay: Duration(seconds: 1),
       autoPlayCurve: Curves.fastOutSlowIn,
       enlargeCenterPage: true,
       enlargeFactor: 0.3,
