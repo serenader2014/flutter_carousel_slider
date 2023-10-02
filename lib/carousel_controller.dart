@@ -23,6 +23,8 @@ abstract class CarouselController {
 
   void stopAutoPlay();
 
+  bool get isScrolling;
+
   factory CarouselController() => CarouselControllerImpl();
 }
 
@@ -146,4 +148,9 @@ class CarouselControllerImpl implements CarouselController {
   void stopAutoPlay() {
     _state!.onResetTimer();
   }
+
+  /// Returns true if the [CarouselSlider] is currently scrolling.
+  @override
+  bool get isScrolling =>
+      _state!.pageController!.position.activity!.isScrolling;
 }
