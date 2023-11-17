@@ -202,6 +202,13 @@ class CarouselSliderState extends State<CarouselSlider>
               notification is ScrollUpdateNotification) {
             widget.options.onScrolled!(carouselState!.pageController!.page);
           }
+          if (notification is ScrollEndNotification) {
+            widget.options.onEndScroll
+                ?.call(getRealIndex(
+                carouselState!.pageController!.page!.toInt(),
+                carouselState!.realPage - carouselState!.initialPage,
+                carouselState!.itemCount));
+          }
           return false;
         },
         child: wrapper,
@@ -234,6 +241,13 @@ class CarouselSliderState extends State<CarouselSlider>
           if (widget.options.onScrolled != null &&
               notification is ScrollUpdateNotification) {
             widget.options.onScrolled!(carouselState!.pageController!.page);
+          }
+          if (notification is ScrollEndNotification) {
+            widget.options.onEndScroll
+                ?.call(getRealIndex(
+                carouselState!.pageController!.page!.toInt(),
+                carouselState!.realPage - carouselState!.initialPage,
+                carouselState!.itemCount));
           }
           return false;
         },
