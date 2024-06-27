@@ -31,7 +31,7 @@ class CarouselSlider extends StatefulWidget {
   final ExtendedIndexedWidgetBuilder? itemBuilder;
 
   /// A [MapController], used to control the map.
-  final CarouselControllerImpl _carouselController;
+  final SliderCarouselControllerImpl _sliderCarouselController;
 
   final int? itemCount;
 
@@ -39,13 +39,13 @@ class CarouselSlider extends StatefulWidget {
       {required this.items,
       required this.options,
       this.disableGesture,
-      CarouselController? carouselController,
+      SliderCarouselController? sliderCarouselController,
       Key? key})
       : itemBuilder = null,
         itemCount = items != null ? items.length : 0,
-        _carouselController = carouselController != null
-            ? carouselController as CarouselControllerImpl
-            : CarouselController() as CarouselControllerImpl,
+        _sliderCarouselController = sliderCarouselController != null
+            ? sliderCarouselController as SliderCarouselControllerImpl
+            : SliderCarouselController() as SliderCarouselControllerImpl,
         super(key: key);
 
   /// The on demand item builder constructor
@@ -54,21 +54,21 @@ class CarouselSlider extends StatefulWidget {
       required this.itemBuilder,
       required this.options,
       this.disableGesture,
-      CarouselController? carouselController,
+      SliderCarouselController? sliderCarouselController,
       Key? key})
       : items = null,
-        _carouselController = carouselController != null
-            ? carouselController as CarouselControllerImpl
-            : CarouselController() as CarouselControllerImpl,
+        _sliderCarouselController = sliderCarouselController != null
+            ? sliderCarouselController as SliderCarouselControllerImpl
+            : SliderCarouselController() as SliderCarouselControllerImpl,
         super(key: key);
 
   @override
-  CarouselSliderState createState() => CarouselSliderState(_carouselController);
+  CarouselSliderState createState() => CarouselSliderState(_sliderCarouselController);
 }
 
 class CarouselSliderState extends State<CarouselSlider>
     with TickerProviderStateMixin {
-  final CarouselControllerImpl carouselController;
+  final SliderCarouselControllerImpl sliderCarouselController;
   Timer? timer;
 
   CarouselOptions get options => widget.options;
@@ -80,7 +80,7 @@ class CarouselSliderState extends State<CarouselSlider>
   /// mode is related to why the page is being changed
   CarouselPageChangedReason mode = CarouselPageChangedReason.controller;
 
-  CarouselSliderState(this.carouselController);
+  CarouselSliderState(this.sliderCarouselController);
 
   void changeMode(CarouselPageChangedReason _mode) {
     mode = _mode;
@@ -111,7 +111,7 @@ class CarouselSliderState extends State<CarouselSlider>
         CarouselState(this.options, clearTimer, resumeTimer, this.changeMode);
 
     carouselState!.itemCount = widget.itemCount;
-    carouselController.state = carouselState;
+    sliderCarouselController.state = carouselState;
     carouselState!.initialPage = widget.options.initialPage;
     carouselState!.realPage = options.enableInfiniteScroll
         ? carouselState!.realPage + carouselState!.initialPage
