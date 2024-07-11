@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide CarouselController;
 
 enum CarouselPageChangedReason { timed, manual, controller }
 
