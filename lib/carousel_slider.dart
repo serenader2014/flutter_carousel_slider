@@ -39,13 +39,13 @@ class CarouselSlider extends StatefulWidget {
       {required this.items,
       required this.options,
       this.disableGesture,
-      CarouselController? carouselController,
+      CarouselSliderController? carouselController,
       Key? key})
       : itemBuilder = null,
         itemCount = items != null ? items.length : 0,
         _carouselController = carouselController != null
             ? carouselController as CarouselControllerImpl
-            : CarouselController() as CarouselControllerImpl,
+            : CarouselSliderController() as CarouselControllerImpl,
         super(key: key);
 
   /// The on demand item builder constructor
@@ -54,12 +54,12 @@ class CarouselSlider extends StatefulWidget {
       required this.itemBuilder,
       required this.options,
       this.disableGesture,
-      CarouselController? carouselController,
+      CarouselSliderController? carouselController,
       Key? key})
       : items = null,
         _carouselController = carouselController != null
             ? carouselController as CarouselControllerImpl
-            : CarouselController() as CarouselControllerImpl,
+            : CarouselSliderController() as CarouselControllerImpl,
         super(key: key);
 
   @override
@@ -355,7 +355,7 @@ class CarouselSliderState extends State<CarouselSlider>
                 BuildContext storageContext = carouselState!
                     .pageController!.position.context.storageContext;
                 final double? previousSavedPosition =
-                    PageStorage.of(storageContext)?.readState(storageContext)
+                    PageStorage.of(storageContext).readState(storageContext)
                         as double?;
                 if (previousSavedPosition != null) {
                   itemOffset = previousSavedPosition - idx.toDouble();
