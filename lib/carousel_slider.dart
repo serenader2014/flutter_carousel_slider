@@ -31,7 +31,7 @@ class CarouselSlider extends StatefulWidget {
   final ExtendedIndexedWidgetBuilder? itemBuilder;
 
   /// A [MapController], used to control the map.
-  final CarouselControllerImpl _carouselController;
+  final CarouselSliderControllerImpl _carouselController;
 
   final int? itemCount;
 
@@ -44,8 +44,8 @@ class CarouselSlider extends StatefulWidget {
       : itemBuilder = null,
         itemCount = items != null ? items.length : 0,
         _carouselController = carouselController != null
-            ? carouselController as CarouselControllerImpl
-            : CarouselSliderController() as CarouselControllerImpl,
+            ? carouselController as CarouselSliderControllerImpl
+            : CarouselSliderController() as CarouselSliderControllerImpl,
         super(key: key);
 
   /// The on demand item builder constructor
@@ -58,8 +58,8 @@ class CarouselSlider extends StatefulWidget {
       Key? key})
       : items = null,
         _carouselController = carouselController != null
-            ? carouselController as CarouselControllerImpl
-            : CarouselSliderController() as CarouselControllerImpl,
+            ? carouselController as CarouselSliderControllerImpl
+            : CarouselSliderController() as CarouselSliderControllerImpl,
         super(key: key);
 
   @override
@@ -68,7 +68,7 @@ class CarouselSlider extends StatefulWidget {
 
 class CarouselSliderState extends State<CarouselSlider>
     with TickerProviderStateMixin {
-  final CarouselControllerImpl carouselController;
+  final CarouselSliderControllerImpl carouselController;
   Timer? timer;
 
   CarouselOptions get options => widget.options;

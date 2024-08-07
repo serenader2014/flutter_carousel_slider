@@ -23,10 +23,10 @@ abstract class CarouselSliderController {
 
   void stopAutoPlay();
 
-  factory CarouselSliderController() => CarouselControllerImpl();
+  factory CarouselSliderController() => CarouselSliderControllerImpl();
 }
 
-class CarouselControllerImpl implements CarouselSliderController {
+class CarouselSliderControllerImpl implements CarouselSliderController {
   final Completer<Null> _readyCompleter = Completer<Null>();
 
   CarouselState? _state;
