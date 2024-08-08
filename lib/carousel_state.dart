@@ -1,7 +1,17 @@
+// Flutter imports:
+import 'package:flutter/material.dart' hide CarouselController;
+
+// Project imports:
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart';
 
 class CarouselState {
+  CarouselState(
+    this.options,
+    this.onResetTimer,
+    this.onResumeTimer,
+    this.changeMode,
+  );
+
   /// The [CarouselOptions] to create this state
   CarouselOptions options;
 
@@ -26,16 +36,13 @@ class CarouselState {
   /// Will be called when using pageController to go to next page or
   /// previous page. It will clear the autoPlay timer.
   /// Internal use only
-  Function onResetTimer;
+  VoidCallback onResetTimer;
 
   /// Will be called when using pageController to go to next page or
   /// previous page. It will restart the autoPlay timer.
   /// Internal use only
-  Function onResumeTimer;
+  VoidCallback onResumeTimer;
 
   /// The callback to set the Reason Carousel changed
-  Function(CarouselPageChangedReason) changeMode;
-
-  CarouselState(
-      this.options, this.onResetTimer, this.onResumeTimer, this.changeMode);
+  void Function(CarouselPageChangedReason reason) changeMode;
 }

@@ -1,10 +1,43 @@
-import 'package:flutter/material.dart';
+// Flutter imports:
+import 'package:flutter/material.dart' hide CarouselController;
+
+// Project imports:
+import 'package:carousel_slider/carousel_slider.dart';
 
 enum CarouselPageChangedReason { timed, manual, controller }
 
 enum CenterPageEnlargeStrategy { scale, height, zoom }
 
 class CarouselOptions {
+  CarouselOptions({
+    this.height,
+    this.aspectRatio = 16 / 9,
+    this.viewportFraction = 0.8,
+    this.initialPage = 0,
+    this.enableInfiniteScroll = true,
+    this.animateToClosest = true,
+    this.reverse = false,
+    this.autoPlay = false,
+    this.autoPlayInterval = const Duration(seconds: 4),
+    this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
+    this.autoPlayCurve = Curves.fastOutSlowIn,
+    this.enlargeCenterPage = false,
+    this.onPageChanged,
+    this.onScrolled,
+    this.scrollPhysics,
+    this.pageSnapping = true,
+    this.scrollDirection = Axis.horizontal,
+    this.pauseAutoPlayOnTouch = true,
+    this.pauseAutoPlayOnManualNavigate = true,
+    this.pauseAutoPlayInFiniteScroll = false,
+    this.pageViewKey,
+    this.enlargeStrategy = CenterPageEnlargeStrategy.scale,
+    this.enlargeFactor = 0.3,
+    this.disableCenter = false,
+    this.padEnds = true,
+    this.clipBehavior = Clip.hardEdge,
+  });
+
   /// Set carousel height and overrides any existing [aspectRatio].
   final double? height;
 
@@ -28,7 +61,7 @@ class CarouselOptions {
   ///Defaults to true, i.e. infinite loop.
   final bool enableInfiniteScroll;
 
-  ///Determines if carousel should loop to the closest occurence of requested page.
+  ///Determines if carousel should loop to the closest occurrence of requested page.
   ///
   ///Defaults to true.
   final bool animateToClosest;
@@ -72,7 +105,8 @@ class CarouselOptions {
   final Axis scrollDirection;
 
   /// Called whenever the page in the center of the viewport changes.
-  final Function(int index, CarouselPageChangedReason reason)? onPageChanged;
+  final void Function(int index, CarouselPageChangedReason reason)?
+      onPageChanged;
 
   /// Called whenever the carousel is scrolled
   final ValueChanged<double?>? onScrolled;
@@ -112,7 +146,7 @@ class CarouselOptions {
   final bool pauseAutoPlayInFiniteScroll;
 
   /// Pass a `PageStoragekey` if you want to keep the pageview's position when it was recreated.
-  final PageStorageKey? pageViewKey;
+  final PageStorageKey<dynamic>? pageViewKey;
 
   /// Use [enlargeStrategy] to determine which method to enlarge the center page.
   final CenterPageEnlargeStrategy enlargeStrategy;
@@ -133,63 +167,35 @@ class CarouselOptions {
   /// Exposed clipBehavior of PageView
   final Clip clipBehavior;
 
-  CarouselOptions({
-    this.height,
-    this.aspectRatio: 16 / 9,
-    this.viewportFraction: 0.8,
-    this.initialPage: 0,
-    this.enableInfiniteScroll: true,
-    this.animateToClosest: true,
-    this.reverse: false,
-    this.autoPlay: false,
-    this.autoPlayInterval: const Duration(seconds: 4),
-    this.autoPlayAnimationDuration = const Duration(milliseconds: 800),
-    this.autoPlayCurve: Curves.fastOutSlowIn,
-    this.enlargeCenterPage = false,
-    this.onPageChanged,
-    this.onScrolled,
-    this.scrollPhysics,
-    this.pageSnapping = true,
-    this.scrollDirection: Axis.horizontal,
-    this.pauseAutoPlayOnTouch: true,
-    this.pauseAutoPlayOnManualNavigate: true,
-    this.pauseAutoPlayInFiniteScroll: false,
-    this.pageViewKey,
-    this.enlargeStrategy: CenterPageEnlargeStrategy.scale,
-    this.enlargeFactor: 0.3,
-    this.disableCenter: false,
-    this.padEnds = true,
-    this.clipBehavior: Clip.hardEdge,
-  });
-
   ///Generate new [CarouselOptions] based on old ones.
 
-  CarouselOptions copyWith(
-          {double? height,
-          double? aspectRatio,
-          double? viewportFraction,
-          int? initialPage,
-          bool? enableInfiniteScroll,
-          bool? reverse,
-          bool? autoPlay,
-          Duration? autoPlayInterval,
-          Duration? autoPlayAnimationDuration,
-          Curve? autoPlayCurve,
-          bool? enlargeCenterPage,
-          Function(int index, CarouselPageChangedReason reason)? onPageChanged,
-          ValueChanged<double?>? onScrolled,
-          ScrollPhysics? scrollPhysics,
-          bool? pageSnapping,
-          Axis? scrollDirection,
-          bool? pauseAutoPlayOnTouch,
-          bool? pauseAutoPlayOnManualNavigate,
-          bool? pauseAutoPlayInFiniteScroll,
-          PageStorageKey? pageViewKey,
-          CenterPageEnlargeStrategy? enlargeStrategy,
-          double? enlargeFactor,
-          bool? disableCenter,
-          Clip? clipBehavior,
-          bool? padEnds}) =>
+  CarouselOptions copyWith({
+    double? height,
+    double? aspectRatio,
+    double? viewportFraction,
+    int? initialPage,
+    bool? enableInfiniteScroll,
+    bool? reverse,
+    bool? autoPlay,
+    Duration? autoPlayInterval,
+    Duration? autoPlayAnimationDuration,
+    Curve? autoPlayCurve,
+    bool? enlargeCenterPage,
+    void Function(int index, CarouselPageChangedReason reason)? onPageChanged,
+    ValueChanged<double?>? onScrolled,
+    ScrollPhysics? scrollPhysics,
+    bool? pageSnapping,
+    Axis? scrollDirection,
+    bool? pauseAutoPlayOnTouch,
+    bool? pauseAutoPlayOnManualNavigate,
+    bool? pauseAutoPlayInFiniteScroll,
+    PageStorageKey<dynamic>? pageViewKey,
+    CenterPageEnlargeStrategy? enlargeStrategy,
+    double? enlargeFactor,
+    bool? disableCenter,
+    Clip? clipBehavior,
+    bool? padEnds,
+  }) =>
       CarouselOptions(
         height: height ?? this.height,
         aspectRatio: aspectRatio ?? this.aspectRatio,
