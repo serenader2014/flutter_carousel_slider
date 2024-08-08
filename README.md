@@ -2,18 +2,18 @@
 
 A carousel slider widget.
 
-## Features 
+## Features
 
-* Infinite scroll 
-* Custom child widgets
-* Auto play
+- Infinite scroll
+- Custom child widgets
+- Auto play
 
 ## Supported platforms
 
-* Flutter Android
-* Flutter iOS
-* Flutter web
-* Flutter desktop
+- Flutter Android
+- Flutter iOS
+- Flutter web
+- Flutter desktop
 
 ## Live preview
 
@@ -102,7 +102,7 @@ CarouselSlider.builder(
 
 In order to manually control the pageview's position, you can create your own `CarouselController`, and pass it to `CarouselSlider`. Then you can use the `CarouselController` instance to manipulate the position.
 
-```dart 
+```dart
 class CarouselDemo extends StatelessWidget {
   CarouselController buttonCarouselController = CarouselController();
 

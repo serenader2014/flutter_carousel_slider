@@ -28,11 +28,10 @@
 
 - [FIX] Can't swipe on web with Flutter 2.5
 
-
 # 4.0.0
 
 - Support null safety (Null safety isn't a breaking change and is Backward compatible meaning you can use it with non-null safe code too)
-- Update example code to null safety and add Dark theme support and controller support to indicators in on of the examples and also fix overflow errors. 
+- Update example code to null safety and add Dark theme support and controller support to indicators in on of the examples and also fix overflow errors.
 
 # 3.0.0
 
@@ -199,7 +198,6 @@ Now you can receive a `CarouselPageChangedReason` in `onPageChanged` callback.
 
 - onPage indexing bug
 
-
 # 1.3.0
 
 ## Deprecation
@@ -208,7 +206,7 @@ Now you can receive a `CarouselPageChangedReason` in `onPageChanged` callback.
 
 ## Fix
 
--  Fix `enlargeCenterPage` option is not working in `vertical` carousel slider.
+- Fix `enlargeCenterPage` option is not working in `vertical` carousel slider.
 
 # 1.2.0
 
@@ -236,7 +234,6 @@ Now you can receive a `CarouselPageChangedReason` in `onPageChanged` callback.
 
 - Added `distortion` option
 
-
 # 0.0.6
 
 ## Fix
@@ -248,7 +245,6 @@ Now you can receive a `CarouselPageChangedReason` in `onPageChanged` callback.
 ## Fix
 
 - Fix `initialPage` bug, fix crash when widget is disposed.
-
 
 # v0.0.2
 
