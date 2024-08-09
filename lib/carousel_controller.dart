@@ -11,9 +11,9 @@ abstract class CarouselSliderController {
 
   Future<Null> get onReady;
 
-  Future<void> nextPage({Duration? duration, Curve? curve});
+  Future<void> nextPage({Duration duration, Curve curve});
 
-  Future<void> previousPage({Duration? duration, Curve? curve});
+  Future<void> previousPage({Duration duration, Curve curve});
 
   void jumpToPage(int page);
 
@@ -52,16 +52,16 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> nextPage(
-      {Duration? duration = const Duration(milliseconds: 300),
-      Curve? curve = Curves.linear}) async {
-    final bool isNeedResetTimer = _state!.options.pauseAutoPlayOnManualNavigate;
+      {Duration duration = const Duration(milliseconds: 300),
+        Curve curve = Curves.linear}) async {
+    final bool isNeedResetTimer = _state?.options.pauseAutoPlayOnManualNavigate ?? false;
     if (isNeedResetTimer) {
-      _state!.onResetTimer();
+      _state?.onResetTimer();
     }
     _setModeController();
-    await _state!.pageController!.nextPage(duration: duration!, curve: curve!);
+    await _state?.pageController?.nextPage(duration: duration, curve: curve);
     if (isNeedResetTimer) {
-      _state!.onResumeTimer();
+      _state?.onResumeTimer();
     }
   }
 
@@ -70,17 +70,16 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
   Future<void> previousPage(
-      {Duration? duration = const Duration(milliseconds: 300),
-      Curve? curve = Curves.linear}) async {
-    final bool isNeedResetTimer = _state!.options.pauseAutoPlayOnManualNavigate;
+      {Duration duration = const Duration(milliseconds: 300),
+        Curve curve = Curves.linear}) async {
+    final bool isNeedResetTimer = _state?.options.pauseAutoPlayOnManualNavigate ?? false;
     if (isNeedResetTimer) {
-      _state!.onResetTimer();
+      _state?.onResetTimer();
     }
     _setModeController();
-    await _state!.pageController!
-        .previousPage(duration: duration!, curve: curve!);
+    await _state?.pageController?.previousPage(duration: duration, curve: curve);
     if (isNeedResetTimer) {
-      _state!.onResumeTimer();
+      _state?.onResumeTimer();
     }
   }
 
