@@ -51,6 +51,7 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
+  @override
   Future<void> nextPage(
       {Duration? duration = const Duration(milliseconds: 300),
       Curve? curve = Curves.linear}) async {
@@ -69,6 +70,7 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
+  @override
   Future<void> previousPage(
       {Duration? duration = const Duration(milliseconds: 300),
       Curve? curve = Curves.linear}) async {
@@ -88,6 +90,7 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   ///
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
+  @override
   void jumpToPage(int page) {
     final index = getRealIndex(_state!.pageController!.page!.toInt(),
         _state!.realPage - _state!.initialPage, _state!.itemCount);
@@ -101,6 +104,7 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
+  @override
   Future<void> animateToPage(int page,
       {Duration? duration = const Duration(milliseconds: 300),
       Curve? curve = Curves.linear}) async {
@@ -135,6 +139,7 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   ///
   /// The carousel will only autoPlay if the [autoPlay] parameter
   /// in [CarouselOptions] is true.
+  @override
   void startAutoPlay() {
     _state!.onResumeTimer();
   }
@@ -143,6 +148,7 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   ///
   /// This is a more on-demand way of doing this. Use the [autoPlay]
   /// parameter in [CarouselOptions] to specify the autoPlay behaviour of the carousel.
+  @override
   void stopAutoPlay() {
     _state!.onResetTimer();
   }
