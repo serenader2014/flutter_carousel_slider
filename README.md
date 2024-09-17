@@ -190,4 +190,4 @@ All screenshots above can be found at the example project.
 
 ## License
 
-MIT
+This project is licensed under the MIT License.
