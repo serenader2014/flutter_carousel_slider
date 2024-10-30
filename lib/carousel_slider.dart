@@ -365,6 +365,12 @@ class CarouselSliderState extends State<CarouselSlider>
                 }
               }
 
+              // Check if the text direction is right-to-left (RTL)
+              if (Directionality.of(context) == TextDirection.rtl) {
+                // If RTL, invert the item offset
+                itemOffset = -itemOffset;
+              }
+
               final double enlargeFactor =
                   options.enlargeFactor.clamp(0.0, 1.0);
               final num distortionRatio =
