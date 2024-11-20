@@ -333,7 +333,9 @@ class CarouselSliderState extends State<CarouselSlider>
           animation: carouselState!.pageController!,
           child: (widget.items != null)
               ? (widget.items!.length > 0 ? widget.items![index] : Container())
-              : widget.itemBuilder!(context, index, idx),
+              : (widget.itemCount! > 0
+                  ? widget.itemBuilder!(context, index, idx)
+                  : Container()),
           builder: (BuildContext context, child) {
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
