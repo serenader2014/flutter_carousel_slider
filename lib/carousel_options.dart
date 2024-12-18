@@ -64,7 +64,7 @@ class CarouselOptions {
   /// creating a feeling of depth in the carousel.
   ///
   /// Defaults to false.
-  final bool? enlargeCenterPage;
+  final bool enlargeCenterPage;
 
   /// The axis along which the page view scrolls.
   ///

@@ -33,7 +33,7 @@ class CarouselSlider extends StatefulWidget {
   /// A [MapController], used to control the map.
   final CarouselSliderControllerImpl _carouselController;
 
-  final int? itemCount;
+  final int itemCount;
 
   CarouselSlider(
       {required this.items,
@@ -96,7 +96,7 @@ class CarouselSliderState extends State<CarouselSlider>
       viewportFraction: options.viewportFraction,
       initialPage: carouselState!.realPage,
     );
-    carouselState!.pageController = pageController;
+    carouselState!.pageController = pageController!;
 
     // handle autoplay when state changes
     handleAutoPlay();
@@ -107,8 +107,8 @@ class CarouselSliderState extends State<CarouselSlider>
   @override
   void initState() {
     super.initState();
-    carouselState =
-        CarouselState(this.options, clearTimer, resumeTimer, this.changeMode);
+    carouselState = CarouselState(this.options, clearTimer, resumeTimer,
+        this.changeMode, widget.itemCount);
 
     carouselState!.itemCount = widget.itemCount;
     carouselController.state = carouselState;
@@ -123,7 +123,7 @@ class CarouselSliderState extends State<CarouselSlider>
       initialPage: carouselState!.realPage,
     );
 
-    carouselState!.pageController = pageController;
+    carouselState!.pageController = pageController!;
   }
 
   Timer? getTimer() {
@@ -141,10 +141,9 @@ class CarouselSliderState extends State<CarouselSlider>
 
             CarouselPageChangedReason previousReason = mode;
             changeMode(CarouselPageChangedReason.timed);
-            int nextPage = carouselState!.pageController!.page!.round() + 1;
-            int itemCount = widget.itemCount ?? widget.items!.length;
+            int nextPage = carouselState!.pageController.page!.round() + 1;
 
-            if (nextPage >= itemCount &&
+            if (nextPage >= widget.itemCount &&
                 widget.options.enableInfiniteScroll == false) {
               if (widget.options.pauseAutoPlayInFiniteScroll) {
                 clearTimer();
@@ -153,7 +152,7 @@ class CarouselSliderState extends State<CarouselSlider>
               nextPage = 0;
             }
 
-            carouselState!.pageController!
+            carouselState?.pageController
                 .animateToPage(nextPage,
                     duration: widget.options.autoPlayAnimationDuration,
                     curve: widget.options.autoPlayCurve)
@@ -200,7 +199,7 @@ class CarouselSliderState extends State<CarouselSlider>
         onNotification: (Notification notification) {
           if (widget.options.onScrolled != null &&
               notification is ScrollUpdateNotification) {
-            widget.options.onScrolled!(carouselState!.pageController!.page);
+            widget.options.onScrolled!(carouselState?.pageController.page);
           }
           return false;
         },
@@ -233,7 +232,7 @@ class CarouselSliderState extends State<CarouselSlider>
         onNotification: (Notification notification) {
           if (widget.options.onScrolled != null &&
               notification is ScrollUpdateNotification) {
-            widget.options.onScrolled!(carouselState!.pageController!.page);
+            widget.options.onScrolled!(carouselState!.pageController.page);
           }
           return false;
         },
@@ -330,30 +329,28 @@ class CarouselSliderState extends State<CarouselSlider>
             carouselState!.realPage, widget.itemCount);
 
         return AnimatedBuilder(
-          animation: carouselState!.pageController!,
-          child: (widget.items != null)
-              ? (widget.items!.length > 0 ? widget.items![index] : Container())
-              : widget.itemBuilder!(context, index, idx),
+          animation: carouselState!.pageController,
+          child: widget.itemBuilder?.call(context, index, idx) ??
+              widget.items![index],
           builder: (BuildContext context, child) {
             double distortionValue = 1.0;
             // if `enlargeCenterPage` is true, we must calculate the carousel item's height
             // to display the visual effect
             double itemOffset = 0;
-            if (widget.options.enlargeCenterPage != null &&
-                widget.options.enlargeCenterPage == true) {
+            if (widget.options.enlargeCenterPage == true) {
               // pageController.page can only be accessed after the first build,
               // so in the first build we calculate the itemoffset manually
-              var position = carouselState?.pageController?.position;
-              if (position != null &&
-                  position.hasPixels &&
-                  position.hasContentDimensions) {
-                var _page = carouselState?.pageController?.page;
+              var position = carouselState?.pageController.position;
+              if (position!.hasPixels && position.hasContentDimensions) {
+                var _page = carouselState?.pageController.page;
+
                 if (_page != null) {
                   itemOffset = _page - idx;
                 }
               } else {
                 BuildContext storageContext = carouselState!
-                    .pageController!.position.context.storageContext;
+                    .pageController.position.context.storageContext;
+
                 final double? previousSavedPosition =
                     PageStorage.of(storageContext).readState(storageContext)
                         as double?;
@@ -374,7 +371,7 @@ class CarouselSliderState extends State<CarouselSlider>
             }
 
             final double height = widget.options.height ??
-                MediaQuery.of(context).size.width *
+                MediaQuery.sizeOf(context).width *
                     (1 / widget.options.aspectRatio);
 
             if (widget.options.scrollDirection == Axis.horizontal) {
@@ -384,7 +381,7 @@ class CarouselSliderState extends State<CarouselSlider>
                   itemOffset: itemOffset));
             } else {
               return getCenterWrapper(getEnlargeWrapper(child,
-                  width: distortionValue * MediaQuery.of(context).size.width,
+                  width: distortionValue * MediaQuery.sizeOf(context).width,
                   scale: distortionValue,
                   itemOffset: itemOffset));
             }
