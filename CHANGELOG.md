@@ -1,3 +1,7 @@
+# 5.1.1
+
+- [Fix] Fix lint issue
+
 # 5.1.0
 
 - [Feat] Support Apple Pencil
