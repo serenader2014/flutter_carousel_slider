@@ -1,3 +1,8 @@
+# 5.1.0
+
+- [Feat] Support Apple Pencil
+- [Fix] Fix RangeError (length): Invalid value: Valid value range is empty: 0
+
 # 5.0.0
 
 - [FIX] Rename CarouselController to CarouselSliderController
