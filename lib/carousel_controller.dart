@@ -89,11 +89,14 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
   /// Jumps the page position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
   void jumpToPage(int page) {
-    final index = getRealIndex(_state!.pageController!.page!.toInt(),
+    double? currentPage = _state!.pageController!.page;
+    if (currentPage == null) return; // Prevent null pointer exception
+    
+    final index = getRealIndex(currentPage.toInt(),
         _state!.realPage - _state!.initialPage, _state!.itemCount);
 
     _setModeController();
-    final int pageToJump = _state!.pageController!.page!.toInt() + page - index;
+    final int pageToJump = currentPage.toInt() + page - index;
     return _state!.pageController!.jumpToPage(pageToJump);
   }
 
@@ -108,7 +111,10 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
     if (isNeedResetTimer) {
       _state!.onResetTimer();
     }
-    final index = getRealIndex(_state!.pageController!.page!.toInt(),
+    double? currentPage = _state!.pageController!.page;
+    if (currentPage == null) return; // Prevent null pointer exception
+    
+    final index = getRealIndex(currentPage.toInt(),
         _state!.realPage - _state!.initialPage, _state!.itemCount);
     int smallestMovement = page - index;
     if (_state!.options.enableInfiniteScroll &&
@@ -123,7 +129,7 @@ class CarouselSliderControllerImpl implements CarouselSliderController {
     }
     _setModeController();
     await _state!.pageController!.animateToPage(
-        _state!.pageController!.page!.toInt() + smallestMovement,
+        currentPage.toInt() + smallestMovement,
         duration: duration!,
         curve: curve!);
     if (isNeedResetTimer) {
