@@ -98,6 +98,12 @@ class CarouselOptions {
   /// Default to `true`.
   final bool pauseAutoPlayOnTouch;
 
+  /// If `true`, the auto play function will be stopped (not paused) when user is interacting with
+  /// the carousel, and will NOT be resumed when user finishes interacting.
+  /// This option takes precedence over `pauseAutoPlayOnTouch`.
+  /// Default to `false`.
+  final bool stopAutoPlayOnTouch;
+
   /// If `true`, the auto play function will be paused when user is calling
   /// pageController's `nextPage` or `previousPage` or `animateToPage` method.
   /// And after the animation complete, the auto play will be resumed.
@@ -160,6 +166,7 @@ class CarouselOptions {
     this.disableCenter = false,
     this.padEnds = true,
     this.clipBehavior = Clip.hardEdge,
+    this.stopAutoPlayOnTouch = false,
   });
 
   ///Generate new [CarouselOptions] based on old ones.
@@ -189,7 +196,8 @@ class CarouselOptions {
           double? enlargeFactor,
           bool? disableCenter,
           Clip? clipBehavior,
-          bool? padEnds}) =>
+          bool? padEnds,
+          bool? stopAutoPlayOnTouch}) =>
       CarouselOptions(
         height: height ?? this.height,
         aspectRatio: aspectRatio ?? this.aspectRatio,
@@ -219,5 +227,6 @@ class CarouselOptions {
         disableCenter: disableCenter ?? this.disableCenter,
         clipBehavior: clipBehavior ?? this.clipBehavior,
         padEnds: padEnds ?? this.padEnds,
+        stopAutoPlayOnTouch: stopAutoPlayOnTouch ?? this.stopAutoPlayOnTouch,
       );
 }

@@ -279,7 +279,10 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 
   void onPanDown() {
-    if (widget.options.pauseAutoPlayOnTouch) {
+    // stopAutoPlayOnTouch takes precedence over pauseAutoPlayOnTouch
+    if (widget.options.stopAutoPlayOnTouch) {
+      clearTimer();
+    } else if (widget.options.pauseAutoPlayOnTouch) {
       clearTimer();
     }
 
@@ -287,7 +290,9 @@ class CarouselSliderState extends State<CarouselSlider>
   }
 
   void onPanUp() {
-    if (widget.options.pauseAutoPlayOnTouch) {
+    // Only resume if stopAutoPlayOnTouch is false
+    // If stopAutoPlayOnTouch is true, the timer stays stopped
+    if (!widget.options.stopAutoPlayOnTouch && widget.options.pauseAutoPlayOnTouch) {
       resumeTimer();
     }
   }
