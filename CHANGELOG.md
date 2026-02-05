@@ -1,3 +1,8 @@
+# 5.1.2
+
+- [Fix] Fix memory leak by properly disposing PageController (#493)
+- [Fix] Prevent crash when calling animateToPage/jumpToPage before PageController is ready (#491)
+
 # 5.1.1
 
 - [Fix] Fix lint issue
