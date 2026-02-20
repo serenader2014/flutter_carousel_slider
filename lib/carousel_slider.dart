@@ -208,26 +208,16 @@ class CarouselSliderState extends State<CarouselSlider>
       );
     }
 
-    return RawGestureDetector(
+    return Listener(
       behavior: HitTestBehavior.opaque,
-      gestures: {
-        _MultipleGestureRecognizer:
-            GestureRecognizerFactoryWithHandlers<_MultipleGestureRecognizer>(
-                () => _MultipleGestureRecognizer(),
-                (_MultipleGestureRecognizer instance) {
-          instance.onStart = (_) {
-            onStart();
-          };
-          instance.onDown = (_) {
-            onPanDown();
-          };
-          instance.onEnd = (_) {
-            onPanUp();
-          };
-          instance.onCancel = () {
-            onPanUp();
-          };
-        }),
+      onPointerDown: (_) {
+        onPanDown();
+      },
+      onPointerCancel: (_) {
+        onPanUp();
+      },
+      onPointerUp: (_) {
+        onPanUp();
       },
       child: NotificationListener(
         onNotification: (Notification notification) {
@@ -272,10 +262,6 @@ class CarouselSliderState extends State<CarouselSlider>
     return Transform.scale(
         scale: scale!,
         child: Container(child: child, width: width, height: height));
-  }
-
-  void onStart() {
-    changeMode(CarouselPageChangedReason.manual);
   }
 
   void onPanDown() {
@@ -404,5 +390,3 @@ class CarouselSliderState extends State<CarouselSlider>
     ));
   }
 }
-
-class _MultipleGestureRecognizer extends PanGestureRecognizer {}
